@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b63f6">
+  <title>DWGC2E - DWG/DXF CAD 图纸 AI 翻译工具</title>
+  <meta name="description" content="DWGC2E 是专业的 DWG/DXF CAD 图纸智能翻译工具，支持图纸文字提取、AI 翻译、批量处理和工程专业术语优化。">
+  <meta name="keywords" content="DWG翻译,DXF翻译,CAD翻译,CAD图纸翻译,DWG英文翻译,CAD AI翻译,工程图纸翻译,DWGC2E">
+  <link rel="canonical" href="https://cad.pocketter.dpdns.org/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DWGC2E - DWG/DXF CAD 图纸 AI 翻译工具">
+  <meta property="og:description" content="让 CAD 图纸翻译更简单。DWG / DXF 本地解析，AI 智能翻译并自动写回。">
+  <meta property="og:url" content="https://cad.pocketter.dpdns.org/">
+  <meta property="og:image" content="https://cad.pocketter.dpdns.org/assets/og-cover.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"DWGC2E",
+    "applicationCategory":"BusinessApplication",
+    "operatingSystem":"Windows 10, Windows 11",
+    "url":"https://cad.pocketter.dpdns.org/",
+    "description":"DWG / DXF CAD 图纸智能翻译工具。"
+  }
+  </script>
+</head>
+<body>
+  <div class="page-glow" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" aria-label="DWGC2E 首页">
+        <img src="assets/logo.svg" alt="" width="34" height="34">
+        <span>DWGC2E</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="主导航">
+        <a href="#top" class="active">首页</a>
+        <a href="#features">功能</a>
+        <a href="#workflow">工作流程</a>
+        <a href="#scenes">应用场景</a>
+        <a href="#pricing">价格</a>
+        <a href="#faq">FAQ</a>
+        <a href="#download">下载</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="text-btn" data-toast="会员中心即将上线">登录</button>
+        <a class="btn btn-primary btn-sm magnetic" data-download href="#">免费下载</a>
+        <button class="menu-btn" aria-label="打开菜单" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-nav" aria-hidden="true">
+      <a href="#features">功能</a>
+      <a href="#workflow">工作流程</a>
+      <a href="#scenes">应用场景</a>
+      <a href="#pricing">价格</a>
+      <a href="#faq">FAQ</a>
+      <a href="#download">下载</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero section-pad">
+      <div class="hero-grid container">
+        <div class="hero-copy reveal">
+          <div class="eyebrow">
+            <span class="live-dot"></span>
+            专为工程图纸设计的 AI 翻译工具
+          </div>
+          <h1>让 CAD 图纸翻译<br><span>更简单</span></h1>
+          <p class="hero-lead">
+            DWGC2E 提取 DWG / DXF 图纸中的文字，使用 AI 进行工程领域智能翻译，
+            并将结果写回图纸，尽可能保留原有位置和格式。
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary btn-lg magnetic" data-download href="#">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+              免费下载
+            </a>
+            <a class="btn btn-ghost btn-lg" href="#features">查看功能
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+            </a>
+          </div>
+          <div class="hero-meta">
+            <span><i class="meta-icon windows"></i>Windows 10 / 11</span>
+            <span><i class="meta-icon tag"></i>当前版本 V<span data-version>1.0.0</span></span>
+            <a href="https://cad.pocketter.dpdns.org"><i class="meta-icon link"></i>cad.pocketter.dpdns.org</a>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal reveal-delay-1" data-tilt>
+          <div class="orb orb-a"></div>
+          <div class="orb orb-b"></div>
+
+          <div class="app-window hero-app">
+            <div class="app-titlebar">
+              <div class="app-title-left">
+                <img src="assets/logo.svg" alt="" width="22" height="22">
+                <strong>DWGC2E · CAD 图纸智能翻译工具</strong>
+              </div>
+              <div class="window-controls"><span>—</span><span>□</span><span>×</span></div>
+            </div>
+            <div class="app-toolbar">
+              <button>＋ 添加文件</button>
+              <button>清空</button>
+              <div class="lang-select">英语 (English) <span>⌄</span></div>
+              <div class="arrow-pulse">→</div>
+              <div class="lang-select">中文 (简体) <span>⌄</span></div>
+            </div>
+            <div class="app-body">
+              <aside class="file-panel">
+                <div class="panel-label">文件列表</div>
+                <label class="file-item selected"><input type="checkbox" checked>motor_bracket.dwg</label>
+                <label class="file-item"><input type="checkbox">pump_assembly.dxf</label>
+                <label class="file-item"><input type="checkbox">valve.dwg</label>
+                <label class="file-item"><input type="checkbox">housing.dwg</label>
+                <label class="file-item"><input type="checkbox">gearbox.dxf</label>
+                <div class="file-count">共 5 个文件</div>
+              </aside>
+              <section class="text-panel">
+                <div class="panel-label">提取的文字 <span>12</span></div>
+                <div class="code-lines">
+                  <p>MOTOR BRACKET</p>
+                  <p>MATERIAL: SUS304</p>
+                  <p>GENERAL TOLERANCE: ±0.05</p>
+                  <p>SURFACE ROUGHNESS: Ra 1.6</p>
+                  <p>DO NOT SCALE DRAWING</p>
+                  <p>CHECKED BY</p>
+                  <p>DRAWING NO.</p>
+                </div>
+              </section>
+              <section class="text-panel result-panel">
+                <div class="panel-label">翻译结果</div>
+                <div class="code-lines translated">
+                  <p>电机支架</p>
+                  <p>材料：SUS304</p>
+                  <p>一般公差：±0.05</p>
+                  <p>表面粗糙度：Ra 1.6</p>
+                  <p>禁止按图纸比例测量</p>
+                  <p>审核</p>
+                  <p>图纸编号</p>
+                </div>
+              </section>
+            </div>
+            <div class="app-footer">
+              <button class="settings-btn">⚙ 设置</button>
+              <button class="run-btn"><span class="run-glow"></span>开始翻译并写回图纸</button>
+            </div>
+          </div>
+
+          <div class="floating-chip chip-one">DWG <span>✓</span></div>
+          <div class="floating-chip chip-two">AI <span>⚡</span></div>
+        </div>
+      </div>
+      <div class="hero-grid-lines" aria-hidden="true"></div>
+    </section>
+
+    <section class="section-pad features-section" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-kicker">CORE FEATURES</span>
+            <h2>核心功能</h2>
+            <p>专为工程图纸 CAD 用户打造，专注、可靠、高效。</p>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card reveal" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 13h7M9 17h7"/></svg></div>
+            <h3>DWG / DXF 支持</h3>
+            <p>支持主流 DWG / DXF 格式，兼容多版本工程图纸。</p>
+            <span class="card-line"></span>
+          </article>
+          <article class="feature-card reveal reveal-delay-1" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5v1a3 3 0 0 0 3 3m6-18a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-2 5v1a3 3 0 0 1-3 3M12 3v18M9 8h3m3 8h-3"/></svg></div>
+            <h3>AI 智能翻译</h3>
+            <p>基于大语言模型理解工程上下文，减少机械式逐词翻译。</p>
+            <span class="card-line"></span>
+          </article>
+          <article class="feature-card reveal reveal-delay-2" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5m-18 5 9 5 9-5"/></svg></div>
+            <h3>保留图纸结构</h3>
+            <p>尽可能保持文字位置、图层、字体尺寸与原始布局。</p>
+            <span class="card-line"></span>
+          </article>
+          <article class="feature-card reveal" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M8 7h11v13H8zM5 4h11v3M5 4v13h3"/></svg></div>
+            <h3>批量翻译</h3>
+            <p>支持多文件批量处理，适合项目图纸与历史资料整理。</p>
+            <span class="card-line"></span>
+          </article>
+          <article class="feature-card reveal reveal-delay-1" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M4 5a3 3 0 0 1 3-2h5v16H7a3 3 0 0 0-3 2V5Zm16 0a3 3 0 0 0-3-2h-5v16h5a3 3 0 0 1 3 2V5Z"/></svg></div>
+            <h3>工程专业术语</h3>
+            <p>面向机械、电气、自动化、模具等专业词汇持续优化。</p>
+            <span class="card-line"></span>
+          </article>
+          <article class="feature-card reveal reveal-delay-2" data-tilt>
+            <div class="icon-box"><svg viewBox="0 0 24 24"><path d="M3 5h18v12H3zM8 21h8M12 17v4"/></svg></div>
+            <h3>CAD 本地处理</h3>
+            <p>完整图纸默认无需上传，仅发送待翻译文本内容。</p>
+            <span class="card-line"></span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad workflow-section" id="workflow">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-kicker">WORKFLOW</span>
+            <h2>四步完成图纸翻译</h2>
+            <p>简单的操作流程，让图纸翻译变得高效便捷。</p>
+          </div>
+        </div>
+
+        <div class="workflow-track reveal">
+          <div class="flow-progress"></div>
+          <article class="flow-step">
+            <span class="step-num">01</span>
+            <div class="step-icon">⌁</div>
+            <h3>打开图纸</h3>
+            <p>选择 DWG / DXF 文件</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-num">02</span>
+            <div class="step-icon">⌕</div>
+            <h3>提取文字</h3>
+            <p>识别图纸中的待翻译文本</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-num">03</span>
+            <div class="step-icon">AI</div>
+            <h3>智能翻译</h3>
+            <p>按工程上下文完成翻译</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-num">04</span>
+            <div class="step-icon">✓</div>
+            <h3>自动写回</h3>
+            <p>将结果写回并保存图纸</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad demo-section">
+      <div class="container split-grid">
+        <div class="translation-demo reveal">
+          <div class="mini-heading">
+            <span class="section-kicker">TRANSLATION DEMO</span>
+            <h2>翻译效果示例</h2>
+            <p>工程数值、符号与专业格式保持不变。</p>
+          </div>
+          <div class="compare-card">
+            <div class="compare-side">
+              <div class="compare-label">原文 · 英文</div>
+              <code>MOTOR BRACKET</code>
+              <code>MATERIAL: <mark>SUS304</mark></code>
+              <code>GENERAL TOLERANCE: <mark>±0.05</mark></code>
+              <code>SURFACE ROUGHNESS: <mark>Ra 1.6</mark></code>
+              <code>DO NOT SCALE DRAWING</code>
+              <code>CHECKED BY</code>
+              <code>DRAWING NO.</code>
+            </div>
+            <div class="compare-arrow">→</div>
+            <div class="compare-side translated-side">
+              <div class="compare-label">翻译结果 · 中文</div>
+              <code>电机支架</code>
+              <code>材料：<mark>SUS304</mark></code>
+              <code>一般公差：<mark>±0.05</mark></code>
+              <code>表面粗糙度：<mark>Ra 1.6</mark></code>
+              <code>禁止按图纸比例测量</code>
+              <code>审核</code>
+              <code>图纸编号</code>
+            </div>
+          </div>
+          <div class="success-strip">✓ 工程参数不被错误翻译，结果更适合直接写回图纸。</div>
+        </div>
+
+        <div class="screens-showcase reveal reveal-delay-1">
+          <div class="mini-heading">
+            <span class="section-kicker">PRODUCT UI</span>
+            <h2>DWGC2E 软件界面</h2>
+            <p>清晰高效的操作界面，专为工程师设计。</p>
+          </div>
+
+          <div class="screen-tabs" role="tablist">
+            <button class="screen-tab active" data-screen="0">软件主界面</button>
+            <button class="screen-tab" data-screen="1">文字提取</button>
+            <button class="screen-tab" data-screen="2">翻译处理</button>
+          </div>
+
+          <div class="screen-stage">
+            <div class="screen-panel active" data-screen-panel="0">
+              <div class="mini-app">
+                <div class="mini-top">DWGC2E <span>— □ ×</span></div>
+                <div class="mini-grid">
+                  <div class="mini-files"><b>图纸文件</b><i>motor.dwg</i><i>pump.dxf</i><i>panel.dwg</i></div>
+                  <div class="mini-center"><b>待翻译</b><i>MOTOR BRACKET</i><i>GENERAL TOLERANCE</i><button>开始翻译</button></div>
+                </div>
+              </div>
+            </div>
+            <div class="screen-panel" data-screen-panel="1">
+              <div class="cad-canvas">
+                <div class="cad-crosshair"></div>
+                <span style="top:24%;left:16%">MOTOR BRACKET</span>
+                <span style="top:43%;left:30%">MATERIAL: SUS304</span>
+                <span style="top:63%;left:20%">TOLERANCE ±0.05</span>
+                <div class="cad-shape shape-a"></div>
+                <div class="cad-shape shape-b"></div>
+              </div>
+            </div>
+            <div class="screen-panel" data-screen-panel="2">
+              <div class="result-ui">
+                <div>
+                  <small>原文</small>
+                  <p>MOTOR BRACKET</p><p>MATERIAL: SUS304</p><p>DRAWING NO.</p>
+                </div>
+                <div class="result-arrow">→</div>
+                <div>
+                  <small>译文</small>
+                  <p>电机支架</p><p>材料：SUS304</p><p>图纸编号</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad scenes-section" id="scenes">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <span class="section-kicker">USE CASES</span>
+            <h2>应用场景</h2>
+            <p>覆盖从单张图纸到企业工程资料的多种翻译需求。</p>
+          </div>
+        </div>
+
+        <div class="scene-grid">
+          <article class="scene-card reveal">
+            <span class="scene-num">01</span>
+            <h3>外贸制造</h3>
+            <p>将海外客户图纸快速翻译成中文，减少技术沟通误差。</p>
+          </article>
+          <article class="scene-card reveal reveal-delay-1">
+            <span class="scene-num">02</span>
+            <h3>国内图纸出海</h3>
+            <p>把中文工程图纸翻译为英文，帮助制造企业服务海外客户。</p>
+          </article>
+          <article class="scene-card reveal reveal-delay-2">
+            <span class="scene-num">03</span>
+            <h3>工程资料整理</h3>
+            <p>批量处理历史 DWG / DXF 图纸并形成多语言资料。</p>
+          </article>
+          <article class="scene-card reveal reveal-delay-3">
+            <span class="scene-num">04</span>
+            <h3>跨国工程协作</h3>
+            <p>消除团队语言障碍，让设计、审核、生产交流更顺畅。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad pricing-section" id="pricing">
+      <div class="container">
+        <div class="section-head pricing-head reveal">
+          <div>
+            <span class="section-kicker">PRICING</span>
+            <h2>会员价格</h2>
+            <p>先体验，再选择适合你的方案。</p>
+          </div>
+
+          <div class="billing-toggle" role="group" aria-label="计费周期">
+            <button data-billing="monthly">月付</button>
+            <button class="active" data-billing="yearly">年付 <span>更优惠</span></button>
+          </div>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="price-card reveal">
+            <div class="price-top">
+              <span class="price-name">免费体验</span>
+              <div class="price"><span>¥</span><b>0</b></div>
+              <p>体验核心流程，确认适合你的图纸。</p>
+            </div>
+            <ul>
+              <li>DWG / DXF</li>
+              <li>20,000 字符</li>
+              <li>AI 基础翻译</li>
+              <li>1 台设备</li>
+            </ul>
+            <button class="btn btn-ghost full" data-toast="注册与体验功能即将上线">免费体验</button>
+          </article>
+
+          <article class="price-card reveal reveal-delay-1">
+            <div class="price-top">
+              <span class="price-name">标准版</span>
+              <div class="price">
+                <span>¥</span><b data-price data-monthly="39" data-yearly="299">299</b>
+                <small data-cycle>/年</small>
+              </div>
+              <p>适合日常 CAD 翻译与批量工程任务。</p>
+            </div>
+            <ul>
+              <li>DWG / DXF</li>
+              <li>每月 300,000 字符</li>
+              <li>AI 智能翻译</li>
+              <li>批量翻译</li>
+              <li>2 台设备</li>
+              <li>标准技术支持</li>
+            </ul>
+            <button class="btn btn-ghost full" data-toast="DWGC2E 会员购买功能即将上线">开通标准版</button>
+          </article>
+
+          <article class="price-card featured reveal reveal-delay-2">
+            <div class="recommended">推荐</div>
+            <div class="price-top">
+              <span class="price-name">专业版</span>
+              <div class="price">
+                <span>¥</span><b data-price data-monthly="79" data-yearly="599">599</b>
+                <small data-cycle>/年</small>
+              </div>
+              <p>面向高频工程用户与专业翻译工作流。</p>
+            </div>
+            <ul>
+              <li>DWG / DXF</li>
+              <li>每月 1,000,000 字符</li>
+              <li>高级 AI 翻译</li>
+              <li>批量翻译</li>
+              <li>专业工程术语库</li>
+              <li>AI 翻译校对</li>
+              <li>自定义术语</li>
+              <li>3 台设备</li>
+              <li>优先技术支持</li>
+            </ul>
+            <button class="btn btn-primary full magnetic" data-toast="DWGC2E 会员购买功能即将上线">开通专业版</button>
+          </article>
+        </div>
+
+        <div class="member-value reveal">
+          <div class="value-intro">
+            <span class="section-kicker">CONTINUOUS VALUE</span>
+            <h3>会员的价值，是持续变得更好</h3>
+            <p>你的订阅用于支撑长期兼容、模型升级与工程术语维护。</p>
+          </div>
+          <div class="value-list">
+            <div><b>01</b><span><strong>持续 CAD 兼容升级</strong>跟进新版 DWG / DXF 格式。</span></div>
+            <div><b>02</b><span><strong>AI 模型升级</strong>持续提高工程翻译质量。</span></div>
+            <div><b>03</b><span><strong>工程术语优化</strong>不断扩充专业术语覆盖。</span></div>
+            <div><b>04</b><span><strong>软件长期维护</strong>修复问题，提升稳定性与性能。</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad privacy-section">
+      <div class="container privacy-card reveal">
+        <div class="privacy-copy">
+          <span class="section-kicker">LOCAL FIRST</span>
+          <h2>图纸留在你的电脑里</h2>
+          <p>
+            DWGC2E 默认无需上传完整 CAD 图纸，仅将需要翻译的文本发送至翻译服务。
+            图纸解析与结果写回都在本地客户端完成。
+          </p>
+          <div class="privacy-note">✓ 完整 CAD 文件默认不上传服务器</div>
+        </div>
+
+        <div class="privacy-flow">
+          <div><span>01</span><b>DWG / DXF</b><small>本地图纸</small></div>
+          <i>→</i>
+          <div><span>02</span><b>本地解析</b><small>提取文字</small></div>
+          <i>→</i>
+          <div><span>03</span><b>AI 翻译</b><small>仅发送文本</small></div>
+          <i>→</i>
+          <div><span>04</span><b>本地写回</b><small>生成结果图纸</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-pad faq-section" id="faq">
+      <div class="container faq-grid">
+        <div class="faq-intro reveal">
+          <span class="section-kicker">FAQ</span>
+          <h2>常见问题</h2>
+          <p>关于文件处理、兼容性、会员和翻译流程的常见问题。</p>
+          <a href="#download" class="inline-link">还没体验？先免费下载 →</a>
+        </div>
+
+        <div class="faq-list reveal reveal-delay-1">
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>DWG / DXF 文件会上传服务器吗？</span><i>＋</i></button>
+            <div class="faq-a"><p>不会默认上传完整图纸。DWGC2E 主要在客户端本地解析 CAD 文件，仅将需要翻译的文本发送至翻译服务。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>支持哪些 CAD 版本？</span><i>＋</i></button>
+            <div class="faq-a"><p>支持常见 DWG / DXF 格式，具体兼容版本以当前 DWGC2E 软件版本说明为准。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>翻译后会破坏原始图纸吗？</span><i>＋</i></button>
+            <div class="faq-a"><p>DWGC2E 会尽可能保持文字位置、尺寸、图层及相关格式。重要工程文件仍建议保留原始备份。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>是否支持批量翻译？</span><i>＋</i></button>
+            <div class="faq-a"><p>标准版与专业版规划支持多文件批量翻译，适合项目资料和历史图纸集中处理。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>支持哪些语言方向？</span><i>＋</i></button>
+            <div class="faq-a"><p>支持常用语言方向，并会随着产品迭代逐步扩展。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>可以自定义专业术语吗？</span><i>＋</i></button>
+            <div class="faq-a"><p>专业版将支持或规划支持自定义术语库，让企业和行业用词更统一。</p></div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-q" aria-expanded="false"><span>支持什么操作系统？</span><i>＋</i></button>
+            <div class="faq-a"><p>目前面向 Windows 10 / Windows 11。</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="download-section" id="download">
+      <div class="download-beams" aria-hidden="true"></div>
+      <div class="container download-inner reveal">
+        <div>
+          <span class="section-kicker light">GET STARTED</span>
+          <h2>开始翻译你的 CAD 图纸</h2>
+          <p>下载 DWGC2E，几分钟内完成你的第一张 DWG / DXF 图纸翻译。</p>
+        </div>
+        <div class="download-action">
+          <a class="btn btn-white btn-lg magnetic" data-download href="#">
+            <svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 18v2h14v-2"/></svg>
+            免费下载 Windows 版
+          </a>
+          <small>V<span data-version>1.0.0</span> · Windows 10 / 11</small>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand footer-brand" href="#top">
+          <img src="assets/logo.svg" alt="" width="30" height="30">
+          <span>DWGC2E</span>
+        </a>
+        <p>DWG / DXF CAD 图纸智能翻译工具</p>
+        <a href="https://cad.pocketter.dpdns.org">cad.pocketter.dpdns.org</a>
+      </div>
+      <div class="footer-links">
+        <a href="#features">产品</a>
+        <a href="#workflow">功能</a>
+        <a href="#pricing">价格</a>
+        <a href="#download">下载</a>
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">用户协议</a>
+        <a href="mailto:contact@example.com">联系我们</a>
+      </div>
+      <div class="footer-copy">© 2026 DWGC2E<br><span>让工程沟通跨越语言</span></div>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+  <script src="js/main.js"></script>
+</body>
+</html>
