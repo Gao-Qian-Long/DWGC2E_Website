@@ -29,7 +29,6 @@
 </head>
 <body>
   <div class="page-glow" aria-hidden="true"></div>
-  <div class="noise" aria-hidden="true"></div>
   <div class="scroll-progress" aria-hidden="true"></div>
 
   <header class="site-header" id="top">
@@ -67,8 +66,6 @@
   <main>
     <!-- ===================== HERO ===================== -->
     <section class="hero">
-      <canvas class="fx-canvas" aria-hidden="true"></canvas>
-      <div class="hero-scan" aria-hidden="true"></div>
       <div class="container hero-grid">
         <div class="hero-copy reveal">
           <div class="eyebrow">
@@ -78,7 +75,7 @@
           <h1>让 CAD 图纸翻译<br><span class="grad-text">更简单</span></h1>
           <p class="hero-lead">
             DWGC2E 提取 DWG / DXF 图纸中的文字，使用 AI 完成工程领域智能翻译，并写回图纸。
-            独有的迭代算法会在写回前检测文字与图层干涉，自动调整字高。
+            独有的迭代算法会在写回前<span class="em-org">检测文字与图层干涉，自动调整字高</span>。
           </p>
           <div class="hero-badges">
             <span class="hero-badge primary"><i>★</i>独家迭代算法</span>
@@ -100,10 +97,10 @@
             <a href="https://cad.pocketter.dpdns.org"><i class="meta-icon link"></i>cad.pocketter.dpdns.org</a>
           </div>
           <div class="hero-stats">
-            <div><b><span data-count="6">0</span></b><span>工程专业领域</span></div>
-            <div><b><span data-count="100" data-suffix="%">0</span></b><span>本地解析</span></div>
-            <div><b><span data-count="4">0</span></b><span>步完成翻译</span></div>
-            <div><b><span data-count="300" data-suffix="K">0</span></b><span>标准版月字符</span></div>
+            <div><b><span data-count="6">6</span></b><span>工程专业领域</span></div>
+            <div><b><span data-count="100" data-suffix="%">100%</span></b><span>本地解析</span></div>
+            <div><b><span data-count="4">4</span></b><span>步完成翻译</span></div>
+            <div><b><span data-count="300" data-suffix="K">300K</span></b><span>标准版月字符</span></div>
           </div>
         </div>
 
@@ -174,7 +171,7 @@
       <div class="container">
         <div class="section-head reveal">
           <div>
-            <span class="section-kicker">CAPABILITIES</span>
+            <span class="badge-unique"><i>★</i>独家迭代算法</span>
             <h2>核心能力</h2>
             <p>功能、流程与应用场景，一页看懂。</p>
           </div>
@@ -182,14 +179,15 @@
 
         <div class="bento">
           <!-- 独家迭代算法（整行主视觉 + 实时演示） -->
-          <article class="bento-card b-tech reveal" data-tilt>
-            <div class="b-tech-copy">
-              <span class="badge-unique"><i>★</i>独家迭代算法</span>
-              <h3>检测文字与图层干涉，<br>自动调整字高适配</h3>
-              <p>
-                写回图纸前，DWGC2E 会逐轮迭代检测文字与图形、文字与其他文字之间的干涉，
-                自动收敛到合适字号，在尽量不移动原始位置的前提下，让每一处标注依然清晰可读。
-              </p>
+          <article class="bento-card b-tech reveal">
+            <div class="b-tech-top">
+              <div class="b-tech-copy">
+                <h3>检测文字与图层干涉，自动调整字高适配</h3>
+                <p>
+                  写回图纸前，DWGC2E 会<span class="em-org">逐轮迭代检测文字与图形、文字与其他文字之间的干涉</span>，
+                  <span class="em-org">自动收敛到合适字号</span>，在尽量不移动原始位置的前提下，让每一处标注依然清晰可读。
+                </p>
+              </div>
               <ul class="tech-points">
                 <li><b>干涉检测</b>文字与图形、文字与文字重叠自动识别</li>
                 <li><b>迭代适配</b>多轮调整逐步收敛，避免一次缩放失真</li>
@@ -197,29 +195,56 @@
               </ul>
             </div>
 
-            <div class="algo-demo" id="algoDemo">
-              <div class="algo-frame">
-                <div class="algo-entity"></div>
-                <div class="algo-hitbox"></div>
-                <span class="algo-label" id="algoLabel">MOTOR BRACKET</span>
+            <div class="cmp-carousel" id="cmpCarousel">
+              <div class="cmp-head">
+                <span class="cmp-label">效果对比</span>
+                <span class="cmp-zoom">点击图片看大图</span>
               </div>
-              <div class="algo-status">
-                <span class="algo-pill"><i class="algo-dot"></i><b id="algoState">检测到文字 / 图层干涉</b></span>
-                <div class="algo-meter" aria-hidden="true"><i id="algoMeter"></i></div>
-                <small id="algoSize">字高 3.43</small>
+              <div class="cmp-viewport">
+                <div class="cmp-track">
+                  <!-- 轮播图 1 / 3：替换 src 即可换图（支持 svg） -->
+                  <figure class="cmp-slide">
+                    <img src="assets/compare-efficiency.png" width="1672" height="941" decoding="async" alt="效率对比：传统翻译软件只翻译文字、单线程、速度慢、尺寸要求高、批量效率低；DWGC2E 多线程并发、速度快、批量翻译、工程语义优化、结果稳定">
+                  </figure>
+                  <!-- 轮播图 2 / 3 -->
+                  <figure class="cmp-slide">
+                    <img src="assets/compare-flow.png" width="1672" height="941" decoding="async" alt="为什么 DWGC2E 更适合工程图纸翻译：传统结果直译生硬、有干涉、位置错乱、图层混乱；DWGC2E 经文本识别、工程规则判断、智能翻译、自动写回，输出可直接用于工程图纸">
+                  </figure>
+                  <!-- 轮播图 3 / 3 -->
+                  <figure class="cmp-slide">
+                    <img src="assets/compare-result.png" width="1672" height="941" decoding="async" alt="翻译效果对比：传统机械直译存在干涉、位置错乱、图层混乱；DWGC2E 输出准确规范、版式清晰，可直接用于工程图纸">
+                  </figure>
+                </div>
+                <button class="cmp-nav cmp-prev" type="button" aria-label="上一张"></button>
+                <button class="cmp-nav cmp-next" type="button" aria-label="下一张"></button>
+              </div>
+              <div class="cmp-dots">
+                <button class="cmp-dot active" type="button" aria-label="第 1 张"></button>
+                <button class="cmp-dot" type="button" aria-label="第 2 张"></button>
+                <button class="cmp-dot" type="button" aria-label="第 3 张"></button>
               </div>
             </div>
           </article>
 
           <!-- AI 主卡：含打字机演示 -->
           <article class="bento-card b-main reveal" data-tilt>
-            <div class="b-ic grad"><svg viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5v1a3 3 0 0 0 3 3m6-18a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-2 5v1a3 3 0 0 1-3 3M12 3v18"/></svg></div>
-            <h3>AI 智能翻译</h3>
+            <div class="b-head-row"><div class="b-ic grad"><svg viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0-2 5 3 3 0 0 0 2 5v1a3 3 0 0 0 3 3m6-18a3 3 0 0 1 3 3v1a3 3 0 0 1 2 5 3 3 0 0 1-2 5v1a3 3 0 0 1-3 3M12 3v18"/></svg></div>
+            <h3>AI 智能翻译</h3></div>
             <p>基于大语言模型理解工程上下文，减少机械式逐词翻译，术语与格式更贴近图纸。</p>
             <div class="type-box">
-              <div class="type-src" id="typeSrc">MOTOR BRACKET</div>
+              <div class="type-src">
+                <span style="--i:0">MOTOR BRACKET</span>
+                <span style="--i:1">MATERIAL: SUS304</span>
+                <span style="--i:2">SURFACE ROUGHNESS: Ra 1.6</span>
+                <span style="--i:3">DO NOT SCALE DRAWING</span>
+              </div>
               <div class="type-arrow" aria-hidden="true">↓</div>
-              <div class="type-out"><span id="typeText"></span><i class="caret" aria-hidden="true"></i></div>
+              <div class="type-out">
+                <span style="--i:0">电机支架</span>
+                <span style="--i:1">材料：SUS304</span>
+                <span style="--i:2">表面粗糙度：Ra 1.6</span>
+                <span style="--i:3">禁止按图纸比例测量</span>
+              </div>
             </div>
           </article>
 
@@ -304,69 +329,82 @@
           </div>
         </div>
 
-        <div class="pricing-grid">
-          <article class="price-card reveal">
-            <div class="price-top">
-              <span class="price-name">免费体验</span>
-              <div class="price"><span>¥</span><b>0</b></div>
-              <p>体验核心流程，确认适合你的图纸。</p>
-            </div>
-            <ul>
-              <li>DWG / DXF</li>
-              <li>20,000 字符</li>
-              <li>AI 基础翻译</li>
-              <li>1 台设备</li>
-            </ul>
-            <button class="btn btn-ghost full" type="button" data-toast="注册与体验功能即将上线">免费体验</button>
-          </article>
-
-          <article class="price-card reveal reveal-delay-1">
-            <div class="price-top">
-              <span class="price-name">标准版</span>
-              <div class="price">
-                <span>¥</span><b data-price data-monthly="39" data-yearly="299">299</b>
-                <small data-cycle>/年</small>
-              </div>
-              <p>适合日常 CAD 翻译与批量工程任务。</p>
-            </div>
-            <ul>
-              <li>DWG / DXF</li>
-              <li>每月 300,000 字符</li>
-              <li>AI 智能翻译</li>
-              <li>批量翻译</li>
-              <li>文字干涉检测与字高适配</li>
-              <li>2 台设备</li>
-              <li>标准技术支持</li>
-            </ul>
-            <button class="btn btn-ghost full" type="button" data-toast="DWGC2E 会员购买功能即将上线">开通标准版</button>
-          </article>
-
-          <article class="price-card featured reveal reveal-delay-2">
-            <div class="recommended">推荐</div>
-            <div class="price-top">
-              <span class="price-name">专业版</span>
-              <div class="price">
-                <span>¥</span><b data-price data-monthly="79" data-yearly="599">599</b>
-                <small data-cycle>/年</small>
-              </div>
-              <p>面向高频工程用户与专业翻译工作流。</p>
-            </div>
-            <ul>
-              <li>DWG / DXF</li>
-              <li>每月 1,000,000 字符</li>
-              <li>高级 AI 翻译</li>
-              <li>批量翻译</li>
-              <li>独家迭代算法字高适配</li>
-              <li>专业工程术语库</li>
-              <li>AI 翻译校对</li>
-              <li>自定义术语</li>
-              <li>3 台设备</li>
-              <li>优先技术支持</li>
-            </ul>
-            <button class="btn btn-primary full magnetic" type="button" data-toast="DWGC2E 会员购买功能即将上线">开通专业版</button>
-          </article>
+        <div class="price-table-wrap reveal">
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th scope="col"><span class="pt-corner">功能 / 方案</span></th>
+                <th scope="col">
+                  <span class="pt-name">免费体验</span>
+                  <span class="pt-price"><i>¥</i><b>0</b></span>
+                  <span class="pt-desc">体验核心流程</span>
+                </th>
+                <th scope="col">
+                  <span class="pt-name">标准版</span>
+                  <span class="pt-price"><i>¥</i><b data-price data-monthly="39" data-yearly="299">299</b><small data-cycle>/年</small></span>
+                  <span class="pt-desc">日常翻译与批量任务</span>
+                </th>
+                <th scope="col" class="is-featured">
+                  <span class="pt-badge">推荐</span>
+                  <span class="pt-name">专业版</span>
+                  <span class="pt-price"><i>¥</i><b data-price data-monthly="79" data-yearly="599">599</b><small data-cycle>/年</small></span>
+                  <span class="pt-desc">高频专业翻译工作流</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">图纸格式</th>
+                <td>DWG / DXF</td><td>DWG / DXF</td><td class="is-featured">DWG / DXF</td>
+              </tr>
+              <tr>
+                <th scope="row">字符额度</th>
+                <td>20,000 字符</td><td>每月 300,000 字符</td><td class="is-featured">每月 1,000,000 字符</td>
+              </tr>
+              <tr>
+                <th scope="row">翻译能力</th>
+                <td>AI 基础翻译</td><td>AI 智能翻译</td><td class="is-featured">AI 智能翻译</td>
+              </tr>
+              <tr class="is-hl">
+                <th scope="row">文字干涉检测与字高适配</th>
+                <td class="is-off">—</td><td>✓</td><td class="is-featured">✓</td>
+              </tr>
+              <tr>
+                <th scope="row">批量翻译</th>
+                <td class="is-off">—</td><td>✓</td><td class="is-featured">✓</td>
+              </tr>
+              <tr>
+                <th scope="row">专业工程术语库</th>
+                <td class="is-off">—</td><td>✓</td><td class="is-featured">✓</td>
+              </tr>
+              <tr>
+                <th scope="row">AI 翻译校对</th>
+                <td class="is-off">—</td><td>✓</td><td class="is-featured">✓</td>
+              </tr>
+              <tr>
+                <th scope="row">自定义术语</th>
+                <td class="is-off">—</td><td>✓</td><td class="is-featured">✓</td>
+              </tr>
+              <tr>
+                <th scope="row">设备数量</th>
+                <td>1 台</td><td>2 台</td><td class="is-featured">3 台</td>
+              </tr>
+              <tr>
+                <th scope="row">技术支持</th>
+                <td class="is-off">—</td><td>标准</td><td class="is-featured">优先</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                <td><button class="btn btn-ghost full" type="button" data-toast="注册与体验功能即将上线">免费体验</button></td>
+                <td><button class="btn btn-ghost full" type="button" data-toast="DWGC2E 会员购买功能即将上线">开通标准版</button></td>
+                <td class="is-featured"><button class="btn btn-primary full" type="button" data-toast="DWGC2E 会员购买功能即将上线">开通专业版</button></td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        <p class="swipe-hint">左右滑动查看套餐 <i>→</i></p>
+        <p class="swipe-hint">左右滑动对比档位 <i>→</i></p>
 
         <div class="member-strip reveal">
           <div><b>01</b><span><strong>持续兼容升级</strong>跟进新版 DWG / DXF 格式</span></div>
@@ -413,10 +451,6 @@
           <article class="faq-item">
             <button class="faq-q" type="button" aria-expanded="false"><span>可以自定义专业术语吗？</span><i>＋</i></button>
             <div class="faq-a"><p>专业版支持自定义术语库，让企业和行业用词更统一。</p></div>
-          </article>
-          <article class="faq-item">
-            <button class="faq-q" type="button" aria-expanded="false"><span>支持什么操作系统？</span><i>＋</i></button>
-            <div class="faq-a"><p>目前面向 Windows 10 / Windows 11。</p></div>
           </article>
         </div>
       </div>
@@ -467,6 +501,10 @@
   <button class="to-top" type="button" aria-label="回到顶部">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V6m0 0-6 6m6-6 6 6"/></svg>
   </button>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="查看大图">
+    <img src="" alt="">
+  </div>
 
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="js/main.js"></script>

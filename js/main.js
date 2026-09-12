@@ -14,13 +14,13 @@
     el.rel = "noopener noreferrer";
   });
 
-  /* 头部滚动态 */
+  /* 头部滚动态（只切 class） */
   const header = $(".site-header");
   const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* 顶部滚动进度 + 回顶部 */
+  /* 顶部滚动进度 + 回顶部（只切 class / transform） */
   const progressBar = $(".scroll-progress");
   const toTop = $(".to-top");
   let fxQueued = false;
@@ -50,7 +50,7 @@
     tickerTrack.innerHTML = unit.repeat(copies);
   }
 
-  /* 移动端菜单 */
+  /* 移动端菜单（只切 class） */
   const menuBtn = $(".menu-btn");
   const mobileNav = $(".mobile-nav");
   menuBtn?.addEventListener("click", () => {
@@ -66,7 +66,7 @@
     document.body.classList.remove("menu-open");
   }));
 
-  /* 入场揭示 */
+  /* 入场揭示（只切 class，动画由 CSS 负责） */
   const revealObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -77,7 +77,7 @@
   }, { threshold: 0.12, rootMargin: "0px 0px -30px" });
   $$(".reveal").forEach(el => revealObserver.observe(el));
 
-  /* 导航高亮 */
+  /* 导航高亮（只切 class） */
   const sections = $$("main section[id]");
   const navLinks = $$(".desktop-nav a");
   const sectionObserver = new IntersectionObserver(entries => {
@@ -90,14 +90,14 @@
   }, { rootMargin: "-35% 0px -55% 0px" });
   sections.forEach(section => sectionObserver.observe(section));
 
-  /* 数字滚动 */
+  /* 数字滚动（一次性，仅写文本） */
   const counters = $$("[data-count]");
   if (counters.length) {
     const animateCount = el => {
       const target = parseFloat(el.dataset.count) || 0;
       const suffix = el.dataset.suffix || "";
       if (reduceMotion) { el.textContent = target + suffix; return; }
-      const dur = 1400;
+      const dur = 1100;
       const t0 = performance.now();
       const tick = now => {
         const p = Math.min(1, (now - t0) / dur);
@@ -106,6 +106,8 @@
         if (p < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
+      /* 兜底：动画被打断时也落到最终值 */
+      setTimeout(() => { el.textContent = target + suffix; }, dur + 250);
     };
     const countObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -118,198 +120,87 @@
     counters.forEach(el => countObserver.observe(el));
   }
 
-  /* AI 打字机（Bento 主卡） */
-  const typeText = $("#typeText");
-  const typeSrc = $("#typeSrc");
-  if (typeText && typeSrc) {
-    const pairs = [
-      ["MOTOR BRACKET", "电机支架"],
-      ["MATERIAL: SUS304", "材料：SUS304"],
-      ["SURFACE ROUGHNESS: Ra 1.6", "表面粗糙度：Ra 1.6"],
-      ["DO NOT SCALE DRAWING", "禁止按图纸比例测量"]
-    ];
-    let pi = 0, ci = 0, deleting = false;
-    const step = () => {
-      const [src, out] = pairs[pi];
-      typeSrc.textContent = src;
-      if (!deleting) {
-        ci++;
-        typeText.textContent = out.slice(0, ci);
-        if (ci >= out.length) { deleting = true; return setTimeout(step, 1600); }
-        return setTimeout(step, 70 + Math.random() * 60);
-      }
-      ci--;
-      typeText.textContent = out.slice(0, ci);
-      if (ci <= 0) { deleting = false; pi = (pi + 1) % pairs.length; return setTimeout(step, 500); }
-      return setTimeout(step, 34);
+  /* 效果对比轮播 */
+  const carousel = $("#cmpCarousel");
+  if (carousel) {
+    const track = $(".cmp-track", carousel);
+    const slides = $$(".cmp-slide", carousel);
+    const dots = $$(".cmp-dot", carousel);
+    let index = 0, timer = null;
+
+    const go = i => {
+      index = (i + slides.length) % slides.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((d, n) => d.classList.toggle("active", n === index));
+      slides.forEach((s, n) => s.setAttribute("aria-hidden", String(n !== index)));
     };
-    if (reduceMotion) { typeSrc.textContent = pairs[0][0]; typeText.textContent = pairs[0][1]; }
-    else step();
+    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+    const play = () => {
+      stop();
+      if (reduceMotion || slides.length < 2) return;
+      timer = setInterval(() => go(index + 1), 5200);
+    };
+
+    $(".cmp-prev", carousel)?.addEventListener("click", () => { go(index - 1); play(); });
+    $(".cmp-next", carousel)?.addEventListener("click", () => { go(index + 1); play(); });
+    dots.forEach((d, n) => d.addEventListener("click", () => { go(n); play(); }));
+    carousel.addEventListener("pointerenter", stop);
+    carousel.addEventListener("pointerleave", play);
+
+    /* 触摸 / 鼠标横向滑动 */
+    let sx = 0, down = false;
+    carousel.addEventListener("pointerdown", e => {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      sx = e.clientX; down = true; stop();
+    });
+    carousel.addEventListener("pointerup", e => {
+      if (!down) return;
+      down = false;
+      const dx = e.clientX - sx;
+      if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+      play();
+    });
+    carousel.addEventListener("pointercancel", () => { down = false; play(); });
+
+    go(0);
+    play();
+    carousel._stop = stop;
   }
 
-  /* 独家迭代算法演示：检测干涉 -> 迭代收敛字高 -> 适配完成 */
-  const algo = $("#algoDemo");
-  if (algo) {
-    const frame = $(".algo-frame", algo);
-    const label = $("#algoLabel");
-    const stateEl = $("#algoState");
-    const sizeEl = $("#algoSize");
-    const meter = $("#algoMeter");
-    const cases = [
-      ["MOTOR BRACKET", 24, 13],
-      ["GENERAL TOLERANCE ±0.05", 21, 11],
-      ["SURFACE ROUGHNESS Ra 1.6", 21, 11]
-    ];
-    const paint = (px, h) => {
-      label.style.fontSize = px.toFixed(1) + "px";
-      sizeEl.textContent = "字高 " + h.toFixed(2);
+  /* 图片灯箱：点击轮播图查看大图 */
+  const lightbox = $("#lightbox");
+  if (lightbox) {
+    const lbImg = lightbox.querySelector("img");
+    const closeLb = () => {
+      lightbox.classList.remove("show");
+      document.body.classList.remove("menu-open");
     };
-    if (reduceMotion) {
-      algo.classList.add("ok");
-      stateEl.textContent = "干涉已消除 · 保持可读";
-      paint(cases[0][2], cases[0][2] / 7);
-    } else {
-      let i = 0;
-      const run = () => {
-        const [text, from, to] = cases[i];
-        const scale = Math.min(1, (frame.clientWidth || 360) / 360) || 1;
-        const f = from * scale, t = to * scale;
-        label.textContent = text;
-        algo.classList.remove("ok");
-        algo.classList.add("detect");
-        stateEl.textContent = "检测到文字 / 图层干涉";
-        meter.style.width = "18%";
-        paint(f, f / 7);
-        const steps = 6;
-        let s = 0;
-        const iterate = () => {
-          s++;
-          const v = f + (t - f) * (s / steps);
-          paint(v, v / 7);
-          meter.style.width = (18 + (s / steps) * 82).toFixed(0) + "%";
-          if (s < steps) { setTimeout(iterate, 250); return; }
-          algo.classList.remove("detect");
-          algo.classList.add("ok");
-          stateEl.textContent = "干涉已消除 · 保持可读";
-          setTimeout(() => { i = (i + 1) % cases.length; run(); }, 1900);
-        };
-        setTimeout(iterate, 850);
-      };
-      run();
-    }
-  }
-
-  /* 粒子网络背景 */
-  const canvas = $(".fx-canvas");
-  if (canvas && !reduceMotion) {
-    const ctx = canvas.getContext("2d");
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
-    let w = 0, h = 0, pts = [];
-    const mouse = { x: -9999, y: -9999 };
-    const resize = () => {
-      w = canvas.clientWidth; h = canvas.clientHeight;
-      canvas.width = w * DPR; canvas.height = h * DPR;
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    };
-    const build = () => {
-      const n = Math.max(36, Math.min(90, Math.floor((w * h) / 16000)));
-      pts = Array.from({ length: n }, () => ({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - .5) * .45, vy: (Math.random() - .5) * .45,
-        r: Math.random() * 1.6 + .6
-      }));
-    };
-    resize(); build();
-    window.addEventListener("resize", () => { resize(); build(); }, { passive: true });
-    window.addEventListener("pointermove", e => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top;
-    }, { passive: true });
-    window.addEventListener("pointerleave", () => { mouse.x = -9999; mouse.y = -9999; });
-    const LINK = 130, MOUSE = 170;
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      for (const p of pts) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20;
-        const dxm = p.x - mouse.x, dym = p.y - mouse.y;
-        const dm = Math.hypot(dxm, dym);
-        if (dm < MOUSE && dm > 0.01) { p.x += (dxm / dm) * .8; p.y += (dym / dm) * .8; }
-      }
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const a = pts[i], b = pts[j];
-          const d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d < LINK) {
-            ctx.strokeStyle = `rgba(96,165,250,${(1 - d / LINK) * .35})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-      }
-      for (const p of pts) {
-        const glow = Math.hypot(p.x - mouse.x, p.y - mouse.y) < MOUSE;
-        ctx.fillStyle = glow ? "rgba(34,211,238,.95)" : "rgba(120,170,255,.75)";
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r + (glow ? .8 : 0), 0, Math.PI * 2); ctx.fill();
-      }
-      requestAnimationFrame(draw);
-    };
-    draw();
-  }
-
-  /* 指针特效（桌面 + 非降级） */
-  if (!reduceMotion && window.matchMedia("(pointer:fine)").matches) {
-    window.addEventListener("pointermove", e => {
-      document.documentElement.style.setProperty("--mx", `${e.clientX}px`);
-      document.documentElement.style.setProperty("--my", `${e.clientY}px`);
-    }, { passive: true });
-
-    $$("[data-tilt]").forEach(card => {
-      card.addEventListener("pointermove", e => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width;
-        const y = (e.clientY - r.top) / r.height;
-        card.style.setProperty("--cx", `${x * 100}%`);
-        card.style.setProperty("--cy", `${y * 100}%`);
-        const rx = (.5 - y) * (card.classList.contains("hero-visual") ? 4 : 7);
-        const ry = (x - .5) * (card.classList.contains("hero-visual") ? 5 : 8);
-        const target = card.classList.contains("hero-visual") ? $(".hero-app", card) : card;
-        if (target) target.style.transform = card.classList.contains("hero-visual")
-          ? `rotateX(${rx}deg) rotateY(${ry - 4}deg)`
-          : `perspective(900px) translateY(-4px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-      });
-      card.addEventListener("pointerleave", () => {
-        const target = card.classList.contains("hero-visual") ? $(".hero-app", card) : card;
-        if (target) target.style.transform = "";
+    $$(".cmp-slide img").forEach(img => {
+      img.addEventListener("click", () => {
+        lbImg.src = img.currentSrc || img.src;
+        lbImg.alt = img.alt;
+        lightbox.classList.add("show");
+        document.body.classList.add("menu-open");
+        carousel?._stop?.();
       });
     });
-
-    $$(".magnetic").forEach(btn => {
-      btn.addEventListener("pointermove", e => {
-        const r = btn.getBoundingClientRect();
-        const x = (e.clientX - (r.left + r.width / 2)) * .12;
-        const y = (e.clientY - (r.top + r.height / 2)) * .12;
-        btn.style.transform = `translate(${x}px,${y}px) translateY(-2px)`;
-      });
-      btn.addEventListener("pointerleave", () => btn.style.transform = "");
+    lightbox.addEventListener("click", closeLb);
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape" && lightbox.classList.contains("show")) closeLb();
     });
   }
 
-  /* 价格月付 / 年付 */
+  /* 价格月付 / 年付（只切 class + 写文本） */
   $$("[data-billing]").forEach(btn => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.billing;
       $$("[data-billing]").forEach(x => x.classList.toggle("active", x === btn));
-      $$("[data-price]").forEach(el => {
-        el.animate([{ opacity: .25, transform: "translateY(5px)" }, { opacity: 1, transform: "none" }], { duration: 260 });
-        el.textContent = el.dataset[mode];
-      });
+      $$("[data-price]").forEach(el => { el.textContent = el.dataset[mode]; });
       $$("[data-cycle]").forEach(el => el.textContent = mode === "monthly" ? "/月" : "/年");
     });
   });
 
-  /* FAQ 手风琴 */
+  /* FAQ 手风琴（只切 class，展开动画由 CSS 负责） */
   $$(".faq-q").forEach(btn => {
     btn.addEventListener("click", () => {
       const item = btn.closest(".faq-item");
@@ -318,7 +209,7 @@
     });
   });
 
-  /* Toast */
+  /* Toast（只切 class） */
   const toast = $(".toast");
   let toastTimer;
   const showToast = msg => {

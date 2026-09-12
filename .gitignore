@@ -1,0 +1,9 @@
+# 图片转换中间产物（体积很大，不入库）
+assets/*.zip
+assets/png2svg*
+
+# 系统 / 编辑器文件
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
