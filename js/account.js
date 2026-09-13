@@ -77,12 +77,13 @@
   };
   const loadDashboard = async token => {
     const headers = { Authorization: `Bearer ${token}` };
-    const [profile, subscription, usage, devices] = await Promise.all([
+    const [profile, subscription, usage] = await Promise.all([
       request('/v1/profile', { headers }),
       request('/v1/subscription', { headers }),
-      request('/v1/usage', { headers }),
-      request('/v1/devices/bind', { method: 'POST', headers, body: '{}' })
+      request('/v1/usage', { headers })
     ]);
+    // 设备绑定失败不应阻塞账户中心显示。
+    const devices = await request('/v1/devices/bind', { method: 'POST', headers, body: '{}' }).catch(() => ({ used_devices: 0, max_devices: 3 }));
     $('#profileName').textContent = profile.display_name || profile.account || profile.email || 'DWGC2E 用户';
     $('#profileEmail').textContent = profile.account && profile.email && profile.account !== profile.email
       ? `账号：${profile.account} · ${profile.email}` : (profile.account || profile.email || '');
@@ -162,5 +163,6 @@
     showAuth();
   }
 })();
+
 
 
