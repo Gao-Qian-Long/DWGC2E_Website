@@ -13,11 +13,8 @@
     }
     const button = form.querySelector('button[type="submit"]'); button.disabled = true; button.textContent = '提交中…';
     try {
-      const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
-      if (!api) throw new Error('feedback_not_configured');
-      const response = await fetch(`${api}/v1/feedback`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.message || '反馈接口暂未开放');
+      if (!window.DWGC2E_API) throw new Error('feedback_not_configured');
+      await window.DWGC2E_API.feedback.submit(data);
       form.reset(); message.textContent = '反馈已提交，感谢你的帮助。'; message.className = 'form-message';
     } catch (error) {
       message.textContent = error.message === 'feedback_not_configured' ? '反馈接口尚未开放，请暂时保留截图并等待客服邮箱公布。' : (error.message || '提交失败，请稍后重试。');

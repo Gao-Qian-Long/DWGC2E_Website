@@ -13,7 +13,7 @@
       if (token && !headers.Authorization) headers.Authorization = `Bearer ${token}`;
       const response = await fetch(`${base}${path}`, { ...options, headers, signal: controller.signal });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw Object.assign(new Error(data.message || data.error || `请求失败（${response.status}）`), { status: response.status, code: data.error_code });
+      if (!response.ok) { const error = Object.assign(new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`), { status: response.status, code: data.error_code || data.error }); if (response.status === 401) { try { sessionStorage.removeItem(sessionKey); } catch {} error.authExpired = true; } throw error; }
       return data;
     } finally { clearTimeout(timer); }
   };
@@ -35,6 +35,7 @@
     // 后端接口开放后，只需在此处补齐实现，页面无需重新设计：
     billing: { plans: () => request('/v1/billing/plans'), checkout: body => request('/v1/billing/checkout', { method: 'POST', body: JSON.stringify(body) }) },
     deviceManagement: { list: () => request('/v1/devices'), revoke: id => request(`/v1/devices/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
-    profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }) }
+    profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }), changePassword: body => request('/v1/auth/password', { method: 'PATCH', body: JSON.stringify(body) }) },
+    feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) }
   });
 })();
