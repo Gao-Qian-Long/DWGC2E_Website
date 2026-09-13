@@ -1,4 +1,6 @@
 (() => {'use strict';
+const session=(()=>{try{return JSON.parse(sessionStorage.getItem('dwgc2e.session')||'null')}catch{return null}})();
+if(!session?.token||session.expiresAt&&new Date(session.expiresAt)<=new Date()){ location.replace('account.html?return='+encodeURIComponent(location.pathname.split('/').pop())); return; }
 const list=document.querySelector('#historyList'),msg=document.querySelector('#historyMessage'),filter=document.querySelector('#historyFilter');
 const say=(t,e=false)=>{msg.textContent=t;msg.className='form-message'+(e?' error':'')}; const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const render=(rows)=>{const q=filter.value.toLowerCase();const data=rows.filter(x=>[x.file_name,x.status,x.created_at].join(' ').toLowerCase().includes(q));list.innerHTML=data.length?data.map(x=>`<tr><td>${esc(x.file_name||'未命名任务')}</td><td>${esc(x.status||'处理中')}</td><td>${esc(x.source_language||'自动')}</td><td>${esc(x.target_language||'—')}</td><td>${esc(x.created_at||'—')}</td></tr>`).join(''):'<tr><td colspan="5" class="table-empty">暂无翻译记录。</td></tr>'};

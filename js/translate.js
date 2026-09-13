@@ -1,4 +1,6 @@
 (() => {'use strict';
+const session=(()=>{try{return JSON.parse(sessionStorage.getItem('dwgc2e.session')||'null')}catch{return null}})();
+if(!session?.token||session.expiresAt&&new Date(session.expiresAt)<=new Date()){ location.replace('account.html?return='+encodeURIComponent(location.pathname.split('/').pop())); return; }
 const form=document.querySelector('#translateForm'), files=document.querySelector('#files'), list=document.querySelector('#fileList'), msg=document.querySelector('#translateMessage'); let selected=[];
 const say=(t,e=false)=>{msg.textContent=t;msg.className='form-message'+(e?' error':'')}; const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const render=()=>{list.innerHTML=selected.length?selected.map((f,i)=>`<li><span>${esc(f.name)}</span><small>${(f.size/1024).toFixed(1)} KB</small><button type="button" class="btn btn-ghost btn-sm" data-remove="${i}">移除</button></li>`).join(''):'<li class="file-empty">尚未选择 DWG / DXF 文件</li>'};
