@@ -18,6 +18,13 @@
     catch (error) { say(error.status === 404 ? '套餐支付接口暂未开放，当前不会产生订单。' : (error.message || '暂时无法创建订单。'), true); }
     finally { button.disabled = false; }
   }));
+  const planCards = document.querySelectorAll('[data-plan-card]');
+  if (planCards.length && window.DWGC2E_API) window.DWGC2E_API.billing.plans().then(data => {
+    const plans = Array.isArray(data) ? data : (data.plans || []);
+    plans.forEach(plan => { const card = document.querySelector('[data-plan-id="' + plan.id + '"]'); if (!card) return; const price = card.querySelector('strong'); if (price && plan.price != null) price.textContent = plan.price === 0 ? '¥0' : '¥' + plan.price; const desc = card.querySelector('p'); if (desc && plan.description) desc.textContent = plan.description; });
+  }).catch(() => {});
+  const orderList = document.querySelector('#orderList');
+  if (orderList && window.DWGC2E_API) window.DWGC2E_API.request('/v1/billing/orders').then(data => { const orders = Array.isArray(data) ? data : (data.orders || []); orderList.className = orders.length ? 'order-list' : 'portal-empty'; orderList.innerHTML = orders.length ? orders.map(order => '<div class="order-row"><span>' + (order.plan_name || order.plan_id || '套餐订单') + '</span><span>' + (order.status || '处理中') + '</span><time>' + (order.created_at || '') + '</time></div>').join('') : '暂无订单记录。'; }).catch(error => { orderList.className = 'portal-empty'; orderList.textContent = error.status === 404 ? '订单接口暂未开放。' : '订单暂时无法读取。'; });
   const list = document.querySelector('#deviceList');
   if (list && window.DWGC2E_API) window.DWGC2E_API.deviceManagement.list().then(data => {
     const devices = Array.isArray(data) ? data : (data.devices || []);
