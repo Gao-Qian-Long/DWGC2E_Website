@@ -27,7 +27,7 @@
     const [profile, subscription, usage, devices] = await Promise.all([
       request('/v1/profile', { headers }), request('/v1/subscription', { headers }), request('/v1/usage', { headers }), request('/v1/devices/bind', { method: 'POST', headers, body: '{}' })
     ]);
-    #profileName.textContent = profile.display_name || profile.account || profile.email || 'DWGC2E 用户'; #profileEmail.textContent = profile.account ? 账号： ·  : (profile.email || '');
+$('#profileName').textContent = profile.display_name || profile.account || profile.email || 'DWGC2E 用户'; $('#profileEmail').textContent = profile.account ? `账号：${profile.account} · ${profile.email || ''}` : (profile.email || '');
     $('#planName').textContent = subscription.plan_name || '免费版'; $('#usageUsed').textContent = Number(usage.used || 0).toLocaleString(); $('#usageQuota').textContent = Number(usage.monthly_quota || 0).toLocaleString(); $('#deviceCount').textContent = `${devices.used_devices || 0} / ${devices.max_devices || 3}`;
     $('#usageBar').style.width = `${usage.monthly_quota ? Math.min(100, usage.used / usage.monthly_quota * 100) : 0}%`;
     $('#authPanel').hidden = true; $('#accountPanel').hidden = false; $('#accountStatus').textContent = '账户信息已同步。';
