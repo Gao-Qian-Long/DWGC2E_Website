@@ -720,3 +720,7 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .account-nav.is-signed-in{padding-left:6px;padding-right:11px;background:#f4f8ff;color:#285dc9;border:1px solid #dbe7fb}
 .account-nav.is-signed-in:hover{background:#edf4ff}
 @media(min-width:761px){.nav-actions{gap:14px}.account-nav + .btn{min-width:112px}}
+
+/* Prevent the login form from flashing while an existing session is checked. */
+.account-body.auth-loading #authPanel { visibility:hidden; }
+.account-body.auth-loading #accountPanel { visibility:hidden; }

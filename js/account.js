@@ -59,7 +59,7 @@
   });
   $('#logoutButton').addEventListener('click', () => { sessionStorage.removeItem(storageKey); $('#accountPanel').hidden = true; $('#authPanel').hidden = false; $('#accountStatus').textContent = '已退出登录。'; setMode('login'); });
   setMode('login');
-  try { const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); if (saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date())) loadDashboard(saved.token).catch(() => sessionStorage.removeItem(storageKey)); else sessionStorage.removeItem(storageKey); } catch { sessionStorage.removeItem(storageKey); }
+  try { const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); if (saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date())) { loadDashboard(saved.token).catch(() => { sessionStorage.removeItem(storageKey); document.body.classList.remove('auth-loading'); }); } else { sessionStorage.removeItem(storageKey); document.body.classList.remove('auth-loading'); } } catch { sessionStorage.removeItem(storageKey); document.body.classList.remove('auth-loading'); }
 })();
 
 
