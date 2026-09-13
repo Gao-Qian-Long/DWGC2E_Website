@@ -63,8 +63,8 @@
   const request = async (path, options = {}) => {
     const response = await fetch(`${api}${path}`, {
       ...options,
-      headers: { 'content-type': 'application/json', ...(options.headers || {}) }
-    });
+      headers: { 'content-type': 'application/json', ...(options.headers || {}) }, signal: controller.signal
+    }); } finally { clearTimeout(timeout); }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`);
     return data;
@@ -134,7 +134,7 @@
       const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: `web-${crypto.randomUUID()}`, device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
       await loadDashboard(result.token);
-    } catch (error) { setMessage(error.message || '请求失败，请稍后重试。', true); }
+    } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
     finally { button.disabled = false; }
   });
 
@@ -157,3 +157,4 @@
     showAuth();
   }
 })();
+
