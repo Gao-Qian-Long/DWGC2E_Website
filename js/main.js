@@ -39,9 +39,9 @@
         avatar.setAttribute('aria-label', '已登录');
         label.textContent = '已登录 · 账户中心';
       } else {
-        avatar.textContent = '👤';
+        avatar.textContent = '';
         avatar.setAttribute('aria-label', '未登录');
-        label.textContent = '登录 / 注册';
+        label.textContent = '登录';
       }
     } catch { /* sessionStorage 不可用时保持默认未登录状态 */ }
   }

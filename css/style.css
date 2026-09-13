@@ -711,3 +711,12 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .account-nav.is-signed-in .account-avatar{background:linear-gradient(135deg,#2f6df6,#27b8c9);color:#fff;border-color:transparent;font-size:14px;font-weight:900}
 .account-nav.is-signed-in .account-nav-label{color:#245bc9}
 @media(max-width:760px){.account-nav{display:none}}
+
+/* Refined account CTA: avatar is reserved for authenticated users. */
+.account-nav{padding:6px 4px 6px 8px;gap:9px;color:#30415d;font-size:14px;font-weight:750;border-radius:14px}
+.account-nav-label{white-space:nowrap}
+.account-avatar{display:none;width:32px;height:32px;border-radius:50%;place-items:center;background:linear-gradient(135deg,#326cf2,#24b7c6);color:#fff;border:0;box-shadow:0 5px 14px rgba(48,108,242,.22);font-size:14px;font-weight:900}
+.account-nav.is-signed-in .account-avatar{display:inline-grid}
+.account-nav.is-signed-in{padding-left:6px;padding-right:11px;background:#f4f8ff;color:#285dc9;border:1px solid #dbe7fb}
+.account-nav.is-signed-in:hover{background:#edf4ff}
+@media(min-width:761px){.nav-actions{gap:14px}.account-nav + .btn{min-width:112px}}
