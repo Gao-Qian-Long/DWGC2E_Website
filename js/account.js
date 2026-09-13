@@ -154,6 +154,17 @@
 
   $('#logoutButton')?.addEventListener('click', () => { sessionStorage.removeItem(storageKey); showAuth('已退出登录。'); });
 
+  $('#refreshButton')?.addEventListener('click', async () => {
+    let saved;
+    try { saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); } catch { saved = null; }
+    if (!saved?.token) return showAuth('登录状态已失效，请重新登录。');
+    const button = $('#refreshButton');
+    button.disabled = true;
+    button.textContent = '同步中…';
+    try { await loadDashboard(saved.token); }
+    catch { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); }
+    finally { button.disabled = false; button.textContent = '刷新数据'; }
+  });
   // 首屏只依据本地会话决定显示：有效会话显示加载层，绝不先显示登录表单。
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
@@ -171,6 +182,7 @@
     showAuth();
   }
 })();
+
 
 
 
