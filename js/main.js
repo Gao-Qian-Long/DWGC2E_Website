@@ -239,13 +239,6 @@
     });
   });
 
-  /* 官网配置：统一指向 Cloudflare Pages，后续仅需替换下载文件即可。 */
-  window.DWGC2E = Object.freeze({
-    siteOrigin: "https://cad.pocketter.dpdns.org",
-    apiBaseUrl: "https://cad.pocketter.dpdns.org/v1",
-    version: APP_VERSION
-  });
-
   /* 产品演示按钮：避免页面上出现无响应按钮。 */
   const runButton = $(".run-btn");
   if (runButton) {
