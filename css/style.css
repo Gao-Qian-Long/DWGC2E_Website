@@ -724,3 +724,7 @@ html.js .reveal.in-view{opacity:1;transform:none}
 /* Prevent the login form from flashing while an existing session is checked. */
 .account-body.auth-loading #authPanel { visibility:hidden; }
 .account-body.auth-loading #accountPanel { visibility:hidden; }
+
+/* Hide the login form before first paint when a valid browser session exists. */
+html.has-session #authPanel { visibility:hidden; }
+html.has-session #accountPanel { visibility:hidden; }
