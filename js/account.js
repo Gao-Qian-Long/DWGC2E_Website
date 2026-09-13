@@ -61,15 +61,20 @@
   };
 
   const request = async (path, options = {}) => {
-    const response = await fetch(`${api}${path}`, {
-      ...options,
-      headers: { 'content-type': 'application/json', ...(options.headers || {}) }, signal: controller.signal
-    }); } finally { clearTimeout(timeout); }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    let response;
+    try {
+      response = await fetch(`${api}${path}`, {
+        ...options,
+        headers: { 'content-type': 'application/json', ...(options.headers || {}) },
+        signal: controller.signal
+      });
+    } finally { clearTimeout(timeout); }
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`);
     return data;
   };
-
   const loadDashboard = async token => {
     const headers = { Authorization: `Bearer ${token}` };
     const [profile, subscription, usage, devices] = await Promise.all([
@@ -157,4 +162,5 @@
     showAuth();
   }
 })();
+
 
