@@ -106,7 +106,9 @@
     // 设备绑定失败不应阻塞账户中心显示。
     const devices = await request('/v1/devices/bind', { method: 'POST', headers, body: '{}' }).catch(() => ({ used_devices: 0, max_devices: 3 }));
     const displayName = profile.display_name || profile.account || profile.email || 'DWGC2E 用户';
-    $('#profileName').textContent = displayName;
+    $("#profileName").textContent = displayName;
+    $("#profileShortName") && ($("#profileShortName").textContent = displayName.split(/\s+/)[0]);
+    const avatar = $("#profileAvatar"); if (avatar) avatar.textContent = displayName.trim().slice(0, 1).toUpperCase();
     try { const current = JSON.parse(sessionStorage.getItem(storageKey) || '{}'); current.profileName = displayName; sessionStorage.setItem(storageKey, JSON.stringify(current)); } catch {}
     $('#profileEmail').textContent = profile.account && profile.email && profile.account !== profile.email
       ? `账号：${profile.account} · ${profile.email}` : (profile.account || profile.email || '');
