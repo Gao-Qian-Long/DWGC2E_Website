@@ -793,3 +793,24 @@ html.js .reveal.in-view{opacity:1;transform:none}
   .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .usage-bar{margin:4px 0 16px}
   .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .dashboard-cta{margin-top:14px}
 }
+/* Final compact dashboard composition: use width first and avoid unnecessary vertical stacking. */
+@media(min-width:761px){
+  .auth-layout:has(#accountPanel:not([hidden])){width:min(1320px,calc(100% - 56px));padding:12px 0 12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .auth-intro{padding:0 4px 10px;gap:12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .auth-intro h1{font-size:1.5rem}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card{padding:18px!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .account-head{padding-bottom:12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-topbar{padding-bottom:12px!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-layout{grid-template-columns:156px minmax(0,1fr);gap:22px;padding-top:16px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-sidebar{padding-right:14px}
+  .auth-layout:has(#accountPanel:not([hidden])) .sidebar-link{padding:8px 9px;font-size:.82rem}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-welcome{margin-bottom:12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-welcome h3{font-size:1.15rem}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-welcome p:last-child{margin-top:3px;font-size:.78rem}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-main .account-metrics div{min-height:62px!important;padding:11px!important;gap:5px!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-main .account-metrics strong{font-size:1.18rem!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .usage-section{padding:9px 0 12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-cta{margin-top:12px;gap:8px}
+  .auth-layout:has(#accountPanel:not([hidden])) .download-cta,.auth-layout:has(#accountPanel:not([hidden])) .mini-cta{min-height:54px;padding:10px 12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-foot{margin-top:10px}
+}
