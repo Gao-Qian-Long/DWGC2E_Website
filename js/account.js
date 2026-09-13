@@ -41,7 +41,7 @@
   });
   form.addEventListener('submit', async event => {
     event.preventDefault(); const data = Object.fromEntries(new FormData(form));
-    if (mode === 'forgot') { if (!data.email || !data.code || data.new_password.length < 8) return setMessage('请填写邮箱、验证码和至少 8 位新密码。', true); }
+    if (mode === 'forgot') { if (!(data.reset_email || data.email) || !data.code || data.new_password.length < 8) return setMessage('请填写邮箱、验证码和至少 8 位新密码。', true); }
     else if (data.password.length < 8) return setMessage('密码至少需要 8 位。', true);
     const button = $('#authSubmit'); button.disabled = true; setMessage(mode === 'login' ? '正在登录…' : mode === 'register' ? '正在创建账号…' : '正在重置密码…');
     try {
@@ -55,4 +55,5 @@
   setMode('login');
   try { const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); if (saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date())) loadDashboard(saved.token).catch(() => sessionStorage.removeItem(storageKey)); else sessionStorage.removeItem(storageKey); } catch { sessionStorage.removeItem(storageKey); }
 })();
+
 
