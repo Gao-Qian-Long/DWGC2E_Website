@@ -24,7 +24,7 @@
   if (!form || !api || !authPanel || !accountPanel) return;
 
   let mode = 'login';
-  let codeTimer = null;
+  const codeTimers = new Map();
 
   const clearEntryState = () => {
     root.classList.remove('has-session');
@@ -62,6 +62,8 @@
       button.setAttribute('aria-selected', button.dataset.authMode === mode ? 'true' : 'false');
     });
     document.querySelectorAll('.login-only').forEach(el => { el.hidden = mode !== 'login'; });
+    document.querySelectorAll('.password-shared').forEach(el => { el.hidden = mode === 'forgot'; });
+    form.elements.password.autocomplete = mode === 'register' ? 'new-password' : 'current-password';
     document.querySelectorAll('.register-only').forEach(el => { el.hidden = mode !== 'register'; });
     document.querySelectorAll('.forgot-only').forEach(el => { el.hidden = mode !== 'forgot'; });
     const submit = $('#authSubmit');
@@ -81,7 +83,7 @@
       });
     } finally { clearTimeout(timeout); }
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`);
+    if (!response.ok) { const error = new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`); error.status = response.status; throw error; }
     return data;
   };
   const checkApiStatus = async () => {
@@ -90,21 +92,20 @@
     try {
       const version = await request('/v1/version');
       status.className = 'api-status online';
-      status.innerHTML = `<i></i> API 已连接 · 服务版本 ${version.latest_version || '正常'}`;
+      status.textContent = `服务连接正常${version.latest_version ? ' · v' + version.latest_version : ''}`;
     } catch {
       status.className = 'api-status offline';
-      status.innerHTML = '<i></i> API 暂时无法连接，账户数据可能无法同步';
+      status.textContent = '服务暂时不可用，可稍后重试';
     }
   };
   const loadDashboard = async token => {
     const headers = { Authorization: `Bearer ${token}` };
-    const [profile, subscription, usage] = await Promise.all([
+    const [profile, subscription, usage, devices] = await Promise.all([
       request('/v1/profile', { headers }),
       request('/v1/subscription', { headers }),
-      request('/v1/usage', { headers })
+      request('/v1/usage', { headers }),
+      request('/v1/devices', { headers }).catch(() => null)
     ]);
-    // 设备绑定失败不应阻塞账户中心显示。
-    const devices = await request('/v1/devices/bind', { method: 'POST', headers, body: '{}' }).catch(() => ({ used_devices: 0, max_devices: 3 }));
     const displayName = profile.display_name || profile.account || profile.email || 'DWGC2E 用户';
     $("#profileName").textContent = displayName;
     $("#profileShortName") && ($("#profileShortName").textContent = displayName.split(/\s+/)[0]);
@@ -112,18 +113,28 @@
     try { const current = JSON.parse(sessionStorage.getItem(storageKey) || '{}'); current.profileName = displayName; sessionStorage.setItem(storageKey, JSON.stringify(current)); } catch {}
     $('#profileEmail').textContent = profile.account && profile.email && profile.account !== profile.email
       ? `账号：${profile.account} · ${profile.email}` : (profile.account || profile.email || '');
-    $('#planName').textContent = subscription.plan_name || '免费版';
-    $('#usageUsed').textContent = Number(usage.used || 0).toLocaleString();
-    $('#usageQuota').textContent = Number(usage.monthly_quota || 0).toLocaleString();
-    $('#deviceCount').textContent = `${devices.used_devices || 0} / ${devices.max_devices || 3}`;
-    $('#usageBar').style.width = `${usage.monthly_quota ? Math.min(100, Number(usage.used || 0) / Number(usage.monthly_quota) * 100) : 0}%`;
-    $('#accountStatus').textContent = '账户信息已同步。';
+    $('#planName').textContent = subscription.plan_name || '未提供';
+    const used = Number(usage.used), quota = Number(usage.monthly_quota);
+    const validUsage = Number.isFinite(used) && used >= 0 && Number.isFinite(quota) && quota >= 0;
+    const percent = validUsage && quota > 0 ? used / quota * 100 : 0;
+    $('#usageUsed').textContent = validUsage ? used.toLocaleString() : '—';
+    $('#usageQuota').textContent = validUsage ? quota.toLocaleString() : '—';
+    const deviceItems = Array.isArray(devices) ? devices : (devices?.devices || devices?.items);
+    const count = devices?.used_devices ?? (Array.isArray(deviceItems) ? deviceItems.length : null);
+    const max = devices?.max_devices ?? subscription.max_devices;
+    $('#deviceCount').textContent = count == null ? '暂不可用' : String(count) + (max != null ? ' / ' + max : '');
+    $('#usagePercent').textContent = validUsage && quota > 0 ? percent.toLocaleString(undefined, { maximumFractionDigits: 1 }) + '%' : '—';
+    $('#usageBar').style.width = Math.min(100, percent) + '%';
+    $('#usageMeter').setAttribute('aria-valuenow', String(Math.min(100, percent)));
+    $('#quotaNote').textContent = validUsage ? (quota > 0 ? '本月剩余 ' + Math.max(0, quota - used).toLocaleString() + ' 字符，可在客户端使用。' : '当前暂无可用额度，请查看套餐权益。') : '额度暂不可用，请刷新重试。';
+    $('#dashboardMessage').textContent = '已同步 · ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    $('#dashboardMessage').className = 'form-message';
     showDashboard();
   };
 
   const sendVerificationCode = async (purpose, email, button) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) { setMessage('请先填写有效邮箱。', true); return; }
-    if (codeTimer) clearInterval(codeTimer);
+    if (codeTimers.has(button)) return;
     button.disabled = true;
     try {
       await request(purpose === 'register' ? '/v1/auth/register/request-code' : '/v1/auth/password/request-code', {
@@ -132,11 +143,12 @@
       setMessage('验证码已发送，请检查邮箱（10 分钟内有效）。');
       let seconds = 60;
       button.textContent = `${seconds}s 后重试`;
-      codeTimer = setInterval(() => {
+      const timer = setInterval(() => {
         seconds -= 1;
         button.textContent = seconds ? `${seconds}s 后重试` : '发送验证码';
-        if (!seconds) { clearInterval(codeTimer); codeTimer = null; button.disabled = false; }
+        if (!seconds) { clearInterval(timer); codeTimers.delete(button); button.disabled = false; }
       }, 1000);
+      codeTimers.set(button, timer);
     } catch (error) { setMessage(error.message || '验证码发送失败。', true); button.disabled = false; }
   };
 
@@ -160,11 +172,13 @@
       }
       if (mode === 'register') {
         if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true);
-        await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, email: data.email, password: data.password, display_name: data.display_name || data.account || data.email, verification_code: data.register_code }) });
+        await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ account: data.email.trim(), email: data.email.trim(), password: data.password, display_name: data.display_name.trim() || data.email.trim(), verification_code: data.register_code }) });
       }
-      const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
+      const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: mode === 'register' ? data.email.trim() : data.account.trim(), password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
+      if (!result.token) throw new Error('登录响应缺少会话信息，请重试。');
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
       await loadDashboard(result.token);
+      void checkApiStatus();
       if (returnTarget && returnTarget !== 'account.html') window.location.replace(returnTarget);
     } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
     finally { button.disabled = false; }
@@ -180,9 +194,15 @@
     button.disabled = true;
     button.textContent = '同步中…';
     try { await loadDashboard(saved.token); }
-    catch { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); }
-    finally { button.disabled = false; button.textContent = '刷新数据'; }
+    catch (error) { handleDashboardError(error); }
+    finally { button.disabled = false; button.textContent = '↻ 刷新数据'; void checkApiStatus(); }
   });
+  function handleDashboardError(error) {
+    if (error.status === 401) { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); return; }
+    showDashboard();
+    $('#dashboardMessage').textContent = '同步失败，登录会话已保留。请点击刷新数据重试。';
+    $('#dashboardMessage').className = 'form-message error';
+  }
   // 首屏只依据本地会话决定显示：有效会话显示加载层，绝不先显示登录表单。
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
@@ -190,7 +210,8 @@
     if (valid) {
       root.classList.add('has-session');
       body.classList.add('has-session', 'auth-loading');
-      loadDashboard(saved.token).catch(() => { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); });
+      loadDashboard(saved.token).catch(handleDashboardError);
+      void checkApiStatus();
     } else {
       sessionStorage.removeItem(storageKey);
       showAuth();
@@ -200,5 +221,4 @@
     showAuth();
   }
 })();
-
 
