@@ -642,3 +642,25 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .auth-card .login-only[hidden],.auth-card .register-only[hidden],.auth-card .forgot-only[hidden]{display:none!important}
 /* Auth tabs: evenly distribute the three actions */
 .auth-card .account-tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:0!important;width:100%;align-items:stretch!important}.auth-card .account-tab{width:100%;text-align:center;padding:.72rem 0!important}.auth-card .account-tab.active{position:relative}.auth-card .account-tab.active:after{content:"";position:absolute;left:18%;right:18%;bottom:-1px;height:2px;border-radius:2px;background:#6b8fff}.auth-card .account-tab.active{border-bottom-color:transparent!important}@media(max-width:760px){.auth-card .account-tabs{grid-template-columns:repeat(3,1fr)!important}.auth-card .account-tab{font-size:.86rem!important}}
+
+/* Authentication form contrast: keep entered values readable on the light card. */
+.auth-card input,
+.auth-card input:focus {
+  color: #14223a !important;
+  -webkit-text-fill-color: #14223a !important;
+  caret-color: #14223a !important;
+}
+.auth-card input::placeholder {
+  color: #7f8da3 !important;
+  opacity: 1;
+}
+.auth-card input:disabled {
+  color: #7f8da3 !important;
+  -webkit-text-fill-color: #7f8da3 !important;
+}
+.auth-card input:-webkit-autofill,
+.auth-card input:-webkit-autofill:hover,
+.auth-card input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #14223a !important;
+  box-shadow: 0 0 0 1000px #f8fafd inset !important;
+}
