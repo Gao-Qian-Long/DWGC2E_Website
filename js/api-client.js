@@ -36,6 +36,7 @@
     billing: { plans: () => request('/v1/billing/plans'), checkout: body => request('/v1/billing/checkout', { method: 'POST', body: JSON.stringify(body) }) },
     deviceManagement: { list: () => request('/v1/devices'), revoke: id => request(`/v1/devices/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
     profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }), changePassword: body => request('/v1/auth/password', { method: 'PATCH', body: JSON.stringify(body) }) },
-    feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) }
+    feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) },
+    terminology: { list: () => request('/v1/terminology'), create: body => request('/v1/terminology', { method: 'POST', body: JSON.stringify(body) }), remove: id => request(`/v1/terminology/${encodeURIComponent(id)}`, { method: 'DELETE' }) }
   });
 })();
