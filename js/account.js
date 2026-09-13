@@ -46,7 +46,7 @@
     const button = $('#authSubmit'); button.disabled = true; setMessage(mode === 'login' ? '正在登录…' : mode === 'register' ? '正在创建账号…' : '正在重置密码…');
     try {
       if (mode === 'forgot') { await request('/v1/auth/password/reset', { method: 'POST', body: JSON.stringify({ email: (data.reset_email || data.email), code: data.code, new_password: data.new_password }) }); setMode('login'); return setMessage('密码已重置，请使用新密码登录。'); }
-      if (mode === 'register') await request('/v1/auth/register', { method: 'POST', body: JSON.stringify(data) });
+      if (mode === 'register') { if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true); await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ ...data, email_verification_code: data.register_code }) }); }
       const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account, password: data.password, device_id: `web-${crypto.randomUUID()}`, device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at })); await loadDashboard(result.token);
     } catch (error) { setMessage(error.message || '请求失败，请稍后重试。', true); } finally { button.disabled = false; }
@@ -55,5 +55,6 @@
   setMode('login');
   try { const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); if (saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date())) loadDashboard(saved.token).catch(() => sessionStorage.removeItem(storageKey)); else sessionStorage.removeItem(storageKey); } catch { sessionStorage.removeItem(storageKey); }
 })();
+
 
 
