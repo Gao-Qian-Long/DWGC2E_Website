@@ -742,3 +742,6 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .account-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 @media(max-width:520px){.account-head-actions{width:100%}.account-head-actions .btn{flex:1}}
 
+
+.account-secondary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.account-secondary-actions .btn{width:auto!important}.account-integration-note{margin:16px 0 0;color:#8997ad;font-size:13px;line-height:1.6}@media(max-width:520px){.account-secondary-actions .btn{flex:1;min-width:135px}}
+
