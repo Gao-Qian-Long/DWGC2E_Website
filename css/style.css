@@ -664,3 +664,27 @@ html.js .reveal.in-view{opacity:1;transform:none}
   -webkit-text-fill-color: #14223a !important;
   box-shadow: 0 0 0 1000px #f8fafd inset !important;
 }
+
+/* Signed-in account dashboard: use the same light visual language as the auth card. */
+.auth-layout #accountPanel.dashboard-card {
+  box-sizing: border-box;
+  background: rgba(255,255,255,.94) !important;
+  color: #14223a !important;
+  border: 1px solid #e1e8f2 !important;
+  border-radius: 22px !important;
+  box-shadow: 0 22px 60px rgba(35,67,120,.14) !important;
+  padding: 30px !important;
+  align-self: center;
+}
+.dashboard-card .eyebrow { color:#3c76ef; font-weight:800; letter-spacing:.08em; }
+.dashboard-card .account-head h2 { color:#14223a; font-size:clamp(1.8rem,3vw,2.45rem); margin:.5rem 0 .35rem; }
+.dashboard-card .account-head p { color:#71809a; font-size:.92rem; }
+.dashboard-card .account-metrics { gap:12px; margin:26px 0 18px; }
+.dashboard-card .account-metrics div { background:#f5f8fd; border:1px solid #e5ebf4; padding:16px; }
+.dashboard-card .account-metrics span { color:#7b8aa2; }
+.dashboard-card .account-metrics strong { color:#1b3155; }
+.dashboard-card .usage-bar { background:#e7edf6; }
+@media(max-width:760px){
+  .auth-layout #accountPanel.dashboard-card { padding:22px !important; }
+  .dashboard-card .account-metrics { grid-template-columns:1fr; }
+}
