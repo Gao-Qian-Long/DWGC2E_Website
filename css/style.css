@@ -780,3 +780,16 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .portal-back{min-height:32px;padding:5px 10px;font-size:.82rem;border-radius:8px}
 .portal-back span{font-size:1rem}
 @media(max-width:700px){.portal-page{padding-top:68px;padding-bottom:24px}.portal-card{padding:22px 18px}.portal-topbar{margin:-2px 0 14px;padding-bottom:8px}}
+/* Compact signed-in account view: fit the primary dashboard in one desktop viewport. */
+@media(min-width:761px){
+  .auth-layout:has(#accountPanel:not([hidden])){min-height:0;padding:18px 0 20px}
+  .auth-layout:has(#accountPanel:not([hidden])) .auth-intro{padding-bottom:14px}
+  .auth-layout:has(#accountPanel:not([hidden])) .auth-intro h1{font-size:1.7rem}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card{padding:22px!important;border-radius:18px!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .account-head{padding-bottom:16px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .account-head h2{font-size:1.55rem!important}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .account-metrics{margin:16px 0 12px;gap:12px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .account-metrics div{min-height:76px;padding:13px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .usage-bar{margin:4px 0 16px}
+  .auth-layout:has(#accountPanel:not([hidden])) .dashboard-card .dashboard-cta{margin-top:14px}
+}
