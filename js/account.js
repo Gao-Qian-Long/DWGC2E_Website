@@ -158,7 +158,7 @@
       }
       if (mode === 'register') {
         if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true);
-        await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ ...data, verification_code: data.register_code }) });
+        await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, email: data.email, password: data.password, display_name: data.display_name || data.account || data.email, verification_code: data.register_code }) });
       }
       const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
@@ -198,12 +198,4 @@
     showAuth();
   }
 })();
-
-
-
-
-
-
-
-
 
