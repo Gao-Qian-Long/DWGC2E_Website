@@ -748,3 +748,6 @@ html.js .reveal.in-view{opacity:1;transform:none}
 
 .api-status{display:flex;align-items:center;gap:7px;margin:12px 0 0;color:#7d8ca3;font-size:12px}.api-status i{width:7px;height:7px;border-radius:50%;background:#f0b44d}.api-status.online i{background:#32b57c}.api-status.offline i{background:#e66d77}.api-status.offline{color:#b65c67}
 
+
+.contact-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,520px);gap:32px;align-items:start}.feedback-form{display:grid;gap:14px;padding:24px;background:#fff;border:1px solid #e3eaf3;border-radius:18px;box-shadow:0 14px 38px rgba(33,57,99,.08)}.feedback-form label{display:grid;gap:7px;color:#4e5d75;font-weight:600}.feedback-form input,.feedback-form select,.feedback-form textarea{box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #d7e0ee;border-radius:10px;background:#f7f9fc;color:#14223a;font:inherit}.feedback-form textarea{resize:vertical}.feedback-form input:focus,.feedback-form select:focus,.feedback-form textarea:focus{outline:0;border-color:#5a87ff;box-shadow:0 0 0 4px rgba(90,135,255,.14)}.contact-page li{margin:10px 0;color:#667793}.is-configured{color:#245bc9}@media(max-width:760px){.contact-grid{grid-template-columns:1fr}.feedback-form{padding:18px}}
+
