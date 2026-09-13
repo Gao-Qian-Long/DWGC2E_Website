@@ -728,3 +728,11 @@ html.js .reveal.in-view{opacity:1;transform:none}
 /* Hide the login form before first paint when a valid browser session exists. */
 html.has-session #authPanel { visibility:hidden; }
 html.has-session #accountPanel { visibility:hidden; }
+
+/* Metrics cards: keep usage numerator, separator and quota on one line. */
+.dashboard-card .account-metrics strong { display:block; line-height:1.25; white-space:nowrap; }
+.dashboard-card .account-metrics strong > span { display:inline !important; color:inherit; font-size:inherit; }
+.dashboard-card .account-metrics strong > span + span:before { content:' / '; color:#8b9ab0; padding:0 .12em; }
+.dashboard-card .account-metrics div { justify-content:flex-start !important; gap:18px; }
+.dashboard-card .account-metrics strong { margin-top:auto; }
+@media(max-width:700px){.dashboard-card .account-metrics div{gap:10px}.dashboard-card .account-metrics strong{margin-top:10px}}
