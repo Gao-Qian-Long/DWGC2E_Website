@@ -10,8 +10,6 @@
     if (card && !card.querySelector('.portal-login-link')) { const link = document.createElement('a'); link.className = 'btn btn-primary portal-login-link'; link.href = 'account.html'; link.textContent = '前往登录'; card.append(link); }
     return;
   }
-  const message = document.querySelector('#portalMessage');
-  const say = (text, error = false) => { if (message) { message.textContent = text; message.className = `form-message${error ? ' error' : ''}`; } };
   document.querySelectorAll('[data-integration-action]').forEach(button => button.addEventListener('click', () => say(button.dataset.integrationAction)));
   const list = document.querySelector('#deviceList');
   if (list && window.DWGC2E_API) window.DWGC2E_API.account.devices().then(data => {
