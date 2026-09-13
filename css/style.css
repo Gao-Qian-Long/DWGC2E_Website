@@ -774,3 +774,9 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .portal-back:hover,.portal-home-link:hover{background:#f4f8ff;border-color:#9bb9ee;transform:translateY(-1px)}
 .portal-back span{font-size:1.15rem;line-height:1}
 @media(max-width:600px){.portal-topbar{margin:-4px 0 22px;padding-bottom:14px}.portal-back,.portal-home-link{font-size:.82rem;padding:7px 10px}}
+/* Compact portal header: one return action, minimal vertical footprint. */
+.portal-page{padding-top:76px;padding-bottom:36px}
+.portal-topbar{justify-content:flex-start;margin:-2px 0 16px;padding-bottom:10px;border-bottom:1px solid #edf1f7}
+.portal-back{min-height:32px;padding:5px 10px;font-size:.82rem;border-radius:8px}
+.portal-back span{font-size:1rem}
+@media(max-width:700px){.portal-page{padding-top:68px;padding-bottom:24px}.portal-card{padding:22px 18px}.portal-topbar{margin:-2px 0 14px;padding-bottom:8px}}
