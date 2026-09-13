@@ -34,7 +34,7 @@
   };
   document.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.authMode)));
   $('#sendCode').addEventListener('click', async () => {
-    const email = form.elements.email.value.trim();
+    const email = (form.elements.reset_email || form.elements.email).value.trim();
     if (!/^\S+@\S+\.\S+$/.test(email)) return setMessage('请先填写有效邮箱。', true);
     const button = $('#sendCode'); button.disabled = true;
     try { await request('/v1/auth/password/request-code', { method: 'POST', body: JSON.stringify({ email }) }); setMessage('验证码已发送，请检查邮箱（10 分钟内有效）。'); let seconds = 60; button.textContent = `${seconds}s 后重试`; codeTimer = setInterval(() => { seconds -= 1; button.textContent = seconds ? `${seconds}s 后重试` : '发送验证码'; if (!seconds) { clearInterval(codeTimer); button.disabled = false; } }, 1000); } catch (error) { setMessage(error.message || '验证码发送失败。', true); button.disabled = false; }
@@ -45,7 +45,7 @@
     else if (data.password.length < 8) return setMessage('密码至少需要 8 位。', true);
     const button = $('#authSubmit'); button.disabled = true; setMessage(mode === 'login' ? '正在登录…' : mode === 'register' ? '正在创建账号…' : '正在重置密码…');
     try {
-      if (mode === 'forgot') { await request('/v1/auth/password/reset', { method: 'POST', body: JSON.stringify({ email: data.email, code: data.code, new_password: data.new_password }) }); setMode('login'); return setMessage('密码已重置，请使用新密码登录。'); }
+      if (mode === 'forgot') { await request('/v1/auth/password/reset', { method: 'POST', body: JSON.stringify({ email: (data.reset_email || data.email), code: data.code, new_password: data.new_password }) }); setMode('login'); return setMessage('密码已重置，请使用新密码登录。'); }
       if (mode === 'register') await request('/v1/auth/register', { method: 'POST', body: JSON.stringify(data) });
       const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account, password: data.password, device_id: `web-${crypto.randomUUID()}`, device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at })); await loadDashboard(result.token);
@@ -55,3 +55,4 @@
   setMode('login');
   try { const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null'); if (saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date())) loadDashboard(saved.token).catch(() => sessionStorage.removeItem(storageKey)); else sessionStorage.removeItem(storageKey); } catch { sessionStorage.removeItem(storageKey); }
 })();
+
