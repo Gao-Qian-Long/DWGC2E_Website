@@ -1,6 +1,6 @@
 # DWGC2E 官网
 
-纯静态网站，可直接部署到 Cloudflare Pages。
+纯静态网站，可直接部署到 Cloudflare Pages 免费方案。
 
 ## 本地预览
 
@@ -14,52 +14,20 @@ python -m http.server 8080
 
 ## Cloudflare Pages
 
-建议配置：
-
 - Framework preset: `None`
 - Build command: 留空
 - Build output directory: `.`
 - Production branch: `main`
 
-部署完成后在 Pages 项目的 **Custom domains** 中绑定：
+## 发布下载
 
-`cad.pocketter.dpdns.org`
+下载地址集中配置在 `js/site-config.js` 的 `downloadUrl`。当前已接入蓝奏云下载页；以后更换安装包时，只需替换这个地址并提交到 `main`，Cloudflare Pages 会自动重新部署。
 
-## 上线前必须修改
+版本号配置在同一文件的 `version`，页面上的版本信息会自动同步。
 
-### 1. 蓝奏云下载链接
+## 当前产品边界
 
-打开：
-
-`js/main.js`
-
-修改：
-
-```js
-const DOWNLOAD_URL = "https://cad.pocketter.dpdns.org/downloads/DWGC2E-1.0.0.exe";
-```
-
-### 2. 软件版本号
-
-同一文件中修改：
-
-```js
-const APP_VERSION = "1.0.0";
-```
-
-网站所有版本号会自动同步。
-
-### 3. 联系方式
-
-`index.html` Footer 当前使用：
-
-`contact@example.com`
-
-请替换为你的实际联系方式。
-
-### 4. 隐私政策 / 用户协议
-
-目前是适合原型阶段的基础文本。正式收费前请结合实际经营主体、支付渠道、退款政策和数据处理流程完善。
+官网是 DWGC2E Windows 桌面翻译软件的产品介绍和官方下载入口，不提供在线 DWG/DXF 上传、解析或翻译。在线账号、会员、额度和 APP API 后端将在后续阶段单独接入；当前页面不会伪造登录或支付结果。
 
 ## 文件结构
 
@@ -69,29 +37,21 @@ const APP_VERSION = "1.0.0";
 ├── privacy.html
 ├── terms.html
 ├── favicon.svg
-├── css/
-│   └── style.css
-├── js/
-│   └── main.js
+├── css/style.css
+├── js/site-config.js
+├── js/main.js
 └── assets/
-    ├── logo.svg
-    └── og-cover.svg
 ```
 
-## 交互效果
+## 已实现交互
 
-- Sticky / blur 顶部导航
-- 鼠标跟随背景光
-- Hero 产品界面 3D 轻微跟随
-- 卡片 hover spotlight
-- Scroll reveal
-- 工作流程线条动画
+- Sticky / blur 顶部导航、移动端菜单
+- Scroll reveal、滚动进度、回到顶部
 - 价格月付 / 年付切换
-- 产品界面 Tabs
+- 产品界面 Tabs、演示进度反馈
 - FAQ Accordion
-- Magnetic CTA
-- Mobile Menu
+- 效果对比轮播、触摸滑动、图片灯箱、Escape 关闭
+- 下载按钮统一接入配置中的外部链接
 - `prefers-reduced-motion` 支持
 
-不使用任何第三方 CDN、前端框架或 npm 构建。
-
+不使用第三方 CDN、前端框架或 npm 构建。

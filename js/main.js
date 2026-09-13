@@ -1,46 +1,52 @@
 (() => {
-  const APP_VERSION = "1.0.0";
-  const SITE_ORIGIN = "https://cad.pocketter.dpdns.org";
-  const DOWNLOAD_URL = `${SITE_ORIGIN}/downloads/DWGC2E-${APP_VERSION}.exe`;
+  const site = window.DWGC2E_SITE || {};
+  const APP_VERSION = site.version || "1.0.0";
+  const DOWNLOAD_URL = site.downloadUrl || "";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
-  /* 版本号 / 下载地址 */
-  $$("[data-version]").forEach(el => el.textContent = APP_VERSION);
-  $$ ("[data-download]").forEach(el => {
-    el.href = DOWNLOAD_URL;
-    el.target = "_blank";
-    el.rel = "noopener noreferrer";
+  /* 版本号 / 下载地址：未配置时给出明确反馈，不跳转到空地址。 */
+  $$('[data-version]').forEach(el => { el.textContent = APP_VERSION; });
+  $$('[data-download]').forEach(el => {
+    if (DOWNLOAD_URL) {
+      el.href = DOWNLOAD_URL;
+      el.target = '_blank';
+      el.rel = 'noopener noreferrer';
+      el.removeAttribute('aria-disabled');
+    } else {
+      el.href = '#download';
+      el.setAttribute('aria-disabled', 'true');
+      el.addEventListener('click', event => {
+        event.preventDefault();
+        showToast('下载地址尚未发布，请稍后再试');
+      });
+    }
   });
 
   /* 头部滚动态（只切 class） */
-  const header = $(".site-header");
-  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
+  const header = $('.site-header');
+  const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 10);
   onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
 
   /* 顶部滚动进度 + 回顶部（只切 class / transform） */
-  const progressBar = $(".scroll-progress");
-  const toTop = $(".to-top");
+  const progressBar = $('.scroll-progress');
+  const toTop = $('.to-top');
   let fxQueued = false;
   const updateScrollFX = () => {
     fxQueued = false;
     const max = document.documentElement.scrollHeight - window.innerHeight;
     const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
     if (progressBar) progressBar.style.transform = `scaleX(${ratio})`;
-    toTop?.classList.toggle("show", window.scrollY > 600);
+    toTop?.classList.toggle('show', window.scrollY > 600);
   };
-  const queueScrollFX = () => {
-    if (fxQueued) return;
-    fxQueued = true;
-    requestAnimationFrame(updateScrollFX);
-  };
-  window.addEventListener("scroll", queueScrollFX, { passive: true });
-  window.addEventListener("resize", queueScrollFX, { passive: true });
+  const queueScrollFX = () => { if (!fxQueued) { fxQueued = true; requestAnimationFrame(updateScrollFX); } };
+  window.addEventListener('scroll', queueScrollFX, { passive: true });
+  window.addEventListener('resize', queueScrollFX, { passive: true });
   updateScrollFX();
-  toTop?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }));
+  toTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }));
 
   /* 跑马灯：补齐偶数份并保证宽度 >= 2 倍视口 */
   const tickerTrack = $(".ticker-track");
@@ -254,5 +260,4 @@
   }
 
 })();
-
 
