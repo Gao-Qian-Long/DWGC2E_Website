@@ -35,9 +35,11 @@
       const label = $('[data-account-label]', accountNav);
       accountNav.classList.toggle('is-signed-in', loggedIn);
       if (loggedIn) {
-        avatar.textContent = '✓';
-        avatar.setAttribute('aria-label', '已登录');
-        label.textContent = '已登录 · 账户中心';
+        let cachedName = ''; try { cachedName = JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null')?.profileName || ''; } catch {}
+        const initials = (cachedName || '用户').trim().slice(0, 1).toUpperCase();
+        avatar.textContent = initials;
+        avatar.setAttribute('aria-label', `${cachedName || '用户'}，已登录`);
+        label.textContent = `${cachedName || '账户中心'} · 已登录`;
       } else {
         avatar.textContent = '';
         avatar.setAttribute('aria-label', '未登录');
