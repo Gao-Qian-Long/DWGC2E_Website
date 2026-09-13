@@ -1,0 +1,7 @@
+(() => {'use strict';
+const list=document.querySelector('#historyList'),msg=document.querySelector('#historyMessage'),filter=document.querySelector('#historyFilter');
+const say=(t,e=false)=>{msg.textContent=t;msg.className='form-message'+(e?' error':'')}; const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const render=(rows)=>{const q=filter.value.toLowerCase();const data=rows.filter(x=>[x.file_name,x.status,x.created_at].join(' ').toLowerCase().includes(q));list.innerHTML=data.length?data.map(x=>`<tr><td>${esc(x.file_name||'未命名任务')}</td><td>${esc(x.status||'处理中')}</td><td>${esc(x.source_language||'自动')}</td><td>${esc(x.target_language||'—')}</td><td>${esc(x.created_at||'—')}</td></tr>`).join(''):'<tr><td colspan="5" class="table-empty">暂无翻译记录。</td></tr>'};
+let rows=[]; filter.addEventListener('input',()=>render(rows));
+if(window.DWGC2E_API) window.DWGC2E_API.history.list().then(data=>{rows=Array.isArray(data)?data:(data.history||[]);render(rows)}).catch(error=>{render([]);say(error.status===404?'翻译记录接口暂未开放，待 Worker 接口完成后显示。':'翻译记录暂时无法读取。',true)});
+})();
