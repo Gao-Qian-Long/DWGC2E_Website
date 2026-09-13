@@ -83,6 +83,18 @@
     if (!response.ok) throw new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`);
     return data;
   };
+  const checkApiStatus = async () => {
+    const status = $('#apiStatus');
+    if (!status) return;
+    try {
+      const version = await request('/v1/version');
+      status.className = 'api-status online';
+      status.innerHTML = `<i></i> API 已连接 · 服务版本 ${version.latest_version || '正常'}`;
+    } catch {
+      status.className = 'api-status offline';
+      status.innerHTML = '<i></i> API 暂时无法连接，账户数据可能无法同步';
+    }
+  };
   const loadDashboard = async token => {
     const headers = { Authorization: `Bearer ${token}` };
     const [profile, subscription, usage] = await Promise.all([
@@ -182,6 +194,7 @@
     showAuth();
   }
 })();
+
 
 
 

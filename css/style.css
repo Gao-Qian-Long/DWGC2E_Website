@@ -745,3 +745,6 @@ html.js .reveal.in-view{opacity:1;transform:none}
 
 .account-secondary-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.account-secondary-actions .btn{width:auto!important}.account-integration-note{margin:16px 0 0;color:#8997ad;font-size:13px;line-height:1.6}@media(max-width:520px){.account-secondary-actions .btn{flex:1;min-width:135px}}
 
+
+.api-status{display:flex;align-items:center;gap:7px;margin:12px 0 0;color:#7d8ca3;font-size:12px}.api-status i{width:7px;height:7px;border-radius:50%;background:#f0b44d}.api-status.online i{background:#32b57c}.api-status.offline i{background:#e66d77}.api-status.offline{color:#b65c67}
+
