@@ -4,6 +4,14 @@
   const site = window.DWGC2E_SITE || {};
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
+  const deviceKey = 'dwgc2e.device-id';
+  const getDeviceId = () => {
+    try {
+      let id = localStorage.getItem(deviceKey);
+      if (!id) { id = `web-${crypto.randomUUID()}`; localStorage.setItem(deviceKey, id); }
+      return id;
+    } catch { return 'web-browser'; }
+  };
   const $ = selector => document.querySelector(selector);
   const form = $('#accountForm');
   const root = document.documentElement;
@@ -137,7 +145,7 @@
         if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true);
         await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ ...data, verification_code: data.register_code }) });
       }
-      const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: `web-${crypto.randomUUID()}`, device_name: data.device_name || '网页端' }) });
+      const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
       await loadDashboard(result.token);
     } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
@@ -163,6 +171,7 @@
     showAuth();
   }
 })();
+
 
 
 
