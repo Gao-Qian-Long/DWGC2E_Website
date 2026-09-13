@@ -14,7 +14,7 @@
   }
   document.querySelectorAll('[data-integration-action]').forEach(button => button.addEventListener('click', async () => {
     say('正在连接服务…'); button.disabled = true;
-    try { await window.DWGC2E_API.billing.checkout({ plan_id: button.dataset.planId || button.dataset.integrationAction }); say('支付接口已返回，请按页面提示继续。'); }
+    try { const result = await window.DWGC2E_API.billing.checkout({ plan_id: button.dataset.planId || button.dataset.integrationAction }); const checkoutUrl = result.checkout_url || result.url || result.data?.checkout_url; if (checkoutUrl && /^https:\//i.test(checkoutUrl)) { window.location.assign(checkoutUrl); return; } say('订单已创建，等待支付页面信息。'); }
     catch (error) { say(error.status === 404 ? '套餐支付接口暂未开放，当前不会产生订单。' : (error.message || '暂时无法创建订单。'), true); }
     finally { button.disabled = false; }
   }));

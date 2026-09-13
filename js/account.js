@@ -5,6 +5,7 @@
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
   const deviceKey = 'dwgc2e.device-id';
+  const returnTarget = (() => { try { const value = new URLSearchParams(location.search).get('return'); return value && /^[a-z0-9._-]+\.html$/i.test(value) ? value : ''; } catch { return ''; } })();
   const getDeviceId = () => {
     try {
       let id = localStorage.getItem(deviceKey);
@@ -162,6 +163,7 @@
       const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: data.account || data.email, password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
       await loadDashboard(result.token);
+      if (returnTarget && returnTarget !== 'account.html') window.location.replace(returnTarget);
     } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
     finally { button.disabled = false; }
   });

@@ -14,7 +14,7 @@
       const response = await fetch(`${base}${path}`, { ...options, headers, signal: controller.signal });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) { const error = Object.assign(new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`), { status: response.status, code: data.error_code || data.error }); if (response.status === 401) { try { sessionStorage.removeItem(sessionKey); } catch {} error.authExpired = true; } throw error; }
-      return data;
+      return data?.data && Object.keys(data).length === 1 ? data.data : data;
     } finally { clearTimeout(timer); }
   };
   window.DWGC2E_API = Object.freeze({
