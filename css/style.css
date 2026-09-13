@@ -764,3 +764,4 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .glossary-toolbar .btn{white-space:nowrap}
 .history-table-wrap .btn{margin-right:6px}.history-table-wrap .btn:last-child{margin-right:0}
 .status-list{display:grid;gap:10px;margin:24px 0 18px}.status-row{display:flex;justify-content:space-between;align-items:center;padding:15px 16px;border:1px solid #e3eaf3;border-radius:12px;background:#f8fafe;color:#53647d}.status-row span{display:flex;align-items:center;gap:9px}.status-row strong{font-size:.9rem;color:#2b9a70}.status-row strong:has(+*){white-space:nowrap}.status-dot{width:9px;height:9px;border-radius:50%;background:#d76873}.status-dot.ok{background:#41b88a;box-shadow:0 0 0 4px rgba(65,184,138,.13)}
+.error-page{text-align:center}.error-actions{display:flex;justify-content:center;gap:10px;margin-top:24px}@media(max-width:500px){.error-actions{flex-direction:column}}
