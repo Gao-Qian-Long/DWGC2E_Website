@@ -38,7 +38,7 @@
       resetPassword: body => request('/v1/auth/password/reset', { method: 'POST', body: JSON.stringify(body) })
     },
     account: {
-      profile: () => request('/v1/profile'), subscription: () => request('/v1/subscription'), usage: () => request('/v1/usage'), devices: () => request('/v1/devices/bind', { method: 'POST', body: '{}' })
+      profile: () => request('/v1/profile'), subscription: () => request('/v1/subscription'), usage: () => request('/v1/usage'), devices: () => request('/v1/devices')
     },
     billing: { plans: () => request('/v1/billing/plans'), checkout: body => request('/v1/billing/checkout', { method: 'POST', body: JSON.stringify(body) }), orders: () => request('/v1/billing/orders') },
     deviceManagement: { list: () => request('/v1/devices'), revoke: id => request(`/v1/devices/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
@@ -49,3 +49,4 @@
     translation: { create: body => request('/v1/translate', { method: 'POST', body }) }
   });
 })();
+
