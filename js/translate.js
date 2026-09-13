@@ -1,0 +1,8 @@
+(() => {'use strict';
+const form=document.querySelector('#translateForm'), files=document.querySelector('#files'), list=document.querySelector('#fileList'), msg=document.querySelector('#translateMessage'); let selected=[];
+const say=(t,e=false)=>{msg.textContent=t;msg.className='form-message'+(e?' error':'')}; const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const render=()=>{list.innerHTML=selected.length?selected.map((f,i)=>`<li><span>${esc(f.name)}</span><small>${(f.size/1024).toFixed(1)} KB</small><button type="button" class="btn btn-ghost btn-sm" data-remove="${i}">移除</button></li>`).join(''):'<li class="file-empty">尚未选择 DWG / DXF 文件</li>'};
+files.addEventListener('change',()=>{selected=[...files.files].filter(f=>/\.(dwg|dxf)$/i.test(f.name)); if(selected.length!==files.files.length)say('仅支持 DWG 或 DXF 文件，其他文件已忽略。',true);render()});
+list.addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b)return;selected.splice(Number(b.dataset.remove),1);render()});
+form.addEventListener('submit',async e=>{e.preventDefault();if(!selected.length)return say('请先选择至少一个 DWG 或 DXF 文件。',true);const button=form.querySelector('button[type=submit]');button.disabled=true;say('正在准备翻译任务…');try{const data={files:selected.map(f=>({name:f.name,size:f.size})),source_language:form.source_language.value,target_language:form.target_language.value,glossary_id:form.glossary_id.value||null};const result=await window.DWGC2E_API.translation.create(data);say(result.task_id?'任务已创建，可在翻译记录中查看。':'翻译接口已返回。')}catch(error){say(error.status===404?'翻译任务接口暂未开放；当前已完成页面和请求结构。':(error.message||'任务创建失败。'),true)}finally{button.disabled=false}});render();
+})();
