@@ -732,3 +732,9 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .dashboard-card .account-metrics div { justify-content:flex-start !important; gap:18px; }
 .dashboard-card .account-metrics strong { margin-top:auto; }
 @media(max-width:700px){.dashboard-card .account-metrics div{gap:10px}.dashboard-card .account-metrics strong{margin-top:10px}}
+
+/* Account entry loading state: never flash the login form for an existing session. */
+.account-loading{display:none;position:fixed;inset:72px 0 0;z-index:5;place-items:center;background:#f5f8fd;color:#6c7d97;font-size:15px}
+.account-body.has-session .account-loading{display:grid}
+.account-body.has-session #authPanel{display:none!important}
+.dashboard-card .account-metrics strong > span + span:before{content:none}
