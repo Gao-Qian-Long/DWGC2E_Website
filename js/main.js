@@ -25,6 +25,26 @@
     }
   });
 
+  /* 登录状态：在首页顶部明确显示头像、显示名称和登录状态。 */
+  const accountNav = $('[data-account-nav]');
+  if (accountNav) {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null');
+      const loggedIn = !!(saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date()));
+      const avatar = $('[data-account-avatar]', accountNav);
+      const label = $('[data-account-label]', accountNav);
+      accountNav.classList.toggle('is-signed-in', loggedIn);
+      if (loggedIn) {
+        avatar.textContent = '✓';
+        avatar.setAttribute('aria-label', '已登录');
+        label.textContent = '已登录 · 账户中心';
+      } else {
+        avatar.textContent = '👤';
+        avatar.setAttribute('aria-label', '未登录');
+        label.textContent = '登录 / 注册';
+      }
+    } catch { /* sessionStorage 不可用时保持默认未登录状态 */ }
+  }
   /* 头部滚动态（只切 class） */
   const header = $('.site-header');
   const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 10);
