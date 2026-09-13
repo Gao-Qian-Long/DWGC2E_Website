@@ -1,4 +1,15 @@
 (() => {
+  const session = (() => { try { return JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null'); } catch { return null; } })();
+  const tokenValid = !!(session?.token && (!session.expiresAt || new Date(session.expiresAt) > new Date()));
+  const message = document.querySelector('#portalMessage');
+  const say = (text, error = false) => { if (message) { message.textContent = text; message.className = `form-message${error ? ' error' : ''}`; } };
+  if (!tokenValid) {
+    say('请先登录后再访问此页面。', true);
+    document.querySelectorAll('button[type="submit"], [data-integration-action]').forEach(button => { button.disabled = true; });
+    const card = document.querySelector('.portal-card');
+    if (card && !card.querySelector('.portal-login-link')) { const link = document.createElement('a'); link.className = 'btn btn-primary portal-login-link'; link.href = 'account.html'; link.textContent = '前往登录'; card.append(link); }
+    return;
+  }
   const message = document.querySelector('#portalMessage');
   const say = (text, error = false) => { if (message) { message.textContent = text; message.className = `form-message${error ? ' error' : ''}`; } };
   document.querySelectorAll('[data-integration-action]').forEach(button => button.addEventListener('click', () => say(button.dataset.integrationAction)));
@@ -12,3 +23,5 @@
     form.addEventListener('submit', async event => { event.preventDefault(); try { await window.DWGC2E_API.profileManagement.update(Object.fromEntries(new FormData(form))); say('资料修改接口尚未开放，已保留表单结构。'); } catch (error) { say(error.message || '资料修改接口尚未开放。', true); } });
   }
 })();
+
+
