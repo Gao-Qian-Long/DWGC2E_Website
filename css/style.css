@@ -735,6 +735,6 @@ html.js .reveal.in-view{opacity:1;transform:none}
 
 /* Account entry loading state: never flash the login form for an existing session. */
 .account-loading{display:none;position:fixed;inset:72px 0 0;z-index:5;place-items:center;background:#f5f8fd;color:#6c7d97;font-size:15px}
-.account-body.has-session .account-loading{display:grid}
-.account-body.has-session #authPanel{display:none!important}
+.account-body.has-session .account-loading{display:grid} html.has-session .account-loading{display:grid}
+.account-body.has-session #authPanel{display:none!important} html.has-session #authPanel{display:none!important}
 .dashboard-card .account-metrics strong > span + span:before{content:none}
