@@ -738,3 +738,7 @@ html.js .reveal.in-view{opacity:1;transform:none}
 .account-body.has-session .account-loading{display:grid} html.has-session .account-loading{display:grid}
 .account-body.has-session #authPanel{display:none!important} html.has-session #authPanel{display:none!important}
 .dashboard-card .account-metrics strong > span + span:before{content:none}
+
+.account-head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media(max-width:520px){.account-head-actions{width:100%}.account-head-actions .btn{flex:1}}
+
