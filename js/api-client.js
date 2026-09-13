@@ -8,7 +8,7 @@
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), options.timeout || 12000);
     try {
-      const headers = { ...(options.body ? { 'content-type': 'application/json' } : {}), ...(options.headers || {}) };
+      const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData; const headers = { ...(options.body && !isFormData ? { 'content-type': 'application/json' } : {}), ...(options.headers || {}) };
       const token = readToken();
       if (token && !headers.Authorization) headers.Authorization = `Bearer ${token}`;
       const response = await fetch(`${base}${path}`, { ...options, headers, signal: controller.signal });
@@ -39,6 +39,6 @@
     feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) },
     terminology: { list: () => request('/v1/terminology'), create: body => request('/v1/terminology', { method: 'POST', body: JSON.stringify(body) }), remove: id => request(`/v1/terminology/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
     history: { list: () => request('/v1/translation/history') },
-    translation: { create: body => request('/v1/translate', { method: 'POST', body: JSON.stringify(body) }) }
+    translation: { create: body => request('/v1/translate', { method: 'POST', body }) }
   });
 })();

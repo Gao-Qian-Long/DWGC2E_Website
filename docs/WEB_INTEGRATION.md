@@ -89,3 +89,23 @@ POST /v1/feedback
 ```
 
 特别注意：接口未实现时请返回 `404` 或 `501`，不要返回 HTTP 200 的假成功；前端会把这类状态显示为“接口暂未开放”。密码、验证码和支付接口必须在 Worker 侧做频率限制、输入校验和审计日志。
+
+### 翻译任务上传
+
+前端会以 `multipart/form-data` 调用现有接口：
+
+```text
+POST /v1/translate
+files: 一个或多个 DWG/DXF 文件
+source_language: auto|en|ja|ko
+ target_language: zh-CN|zh-TW|en
+glossary_id: 可选
+```
+
+成功建议返回：
+
+```json
+{ "task_id": "task_001", "status": "queued" }
+```
+
+Worker 需要限制文件数量、单文件大小、扩展名和总请求大小，并使用任务 ID 异步处理，不能在请求中直接假设文件已翻译完成。
