@@ -38,7 +38,7 @@
     profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }), changePassword: body => request('/v1/auth/password', { method: 'PATCH', body: JSON.stringify(body) }) },
     feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) },
     terminology: { list: () => request('/v1/terminology'), create: body => request('/v1/terminology', { method: 'POST', body: JSON.stringify(body) }), remove: id => request(`/v1/terminology/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
-    history: { list: () => request('/v1/translation/history') },
+    history: { list: () => request('/v1/translation/history'), detail: id => request(`/v1/translation/tasks/${encodeURIComponent(id)}`) },
     translation: { create: body => request('/v1/translate', { method: 'POST', body }) }
   });
 })();

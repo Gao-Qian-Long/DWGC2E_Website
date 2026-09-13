@@ -109,3 +109,10 @@ glossary_id: 可选
 ```
 
 Worker 需要限制文件数量、单文件大小、扩展名和总请求大小，并使用任务 ID 异步处理，不能在请求中直接假设文件已翻译完成。
+
+### 翻译任务详情
+
+```text
+GET /v1/translation/tasks/:task_id
+返回：{ "id": "task_001", "status": "queued|processing|completed|failed", "progress": 60, "download_url": "https://..." }
+```
