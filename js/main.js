@@ -1,6 +1,7 @@
 (() => {
   const APP_VERSION = "1.0.0";
-  const DOWNLOAD_URL = "https://example.lanzou.com/xxxxx";
+  const SITE_ORIGIN = "https://cad.pocketter.dpdns.org";
+  const DOWNLOAD_URL = `${SITE_ORIGIN}/downloads/DWGC2E-${APP_VERSION}.exe`;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -8,7 +9,7 @@
 
   /* 版本号 / 下载地址 */
   $$("[data-version]").forEach(el => el.textContent = APP_VERSION);
-  $$("[data-download]").forEach(el => {
+  $$ ("[data-download]").forEach(el => {
     el.href = DOWNLOAD_URL;
     el.target = "_blank";
     el.rel = "noopener noreferrer";
@@ -231,4 +232,27 @@
       target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     });
   });
+
+  /* 官网配置：统一指向 Cloudflare Pages，后续仅需替换下载文件即可。 */
+  window.DWGC2E = Object.freeze({
+    siteOrigin: "https://cad.pocketter.dpdns.org",
+    apiBaseUrl: "https://cad.pocketter.dpdns.org/v1",
+    version: APP_VERSION
+  });
+
+  /* 产品演示按钮：避免页面上出现无响应按钮。 */
+  const runButton = $(".run-btn");
+  if (runButton) {
+    runButton.addEventListener("click", () => {
+      const progress = $(".run-progress i");
+      if (runButton.disabled) return;
+      runButton.disabled = true;
+      runButton.textContent = "翻译处理中…";
+      if (progress) { progress.style.width = "0%"; requestAnimationFrame(() => { progress.style.transition = "width 1.4s ease"; progress.style.width = "100%"; }); }
+      setTimeout(() => { runButton.disabled = false; runButton.textContent = "开始翻译并写回"; showToast("演示完成：桌面端将把译文写回图纸"); }, 1500);
+    });
+  }
+
 })();
+
+

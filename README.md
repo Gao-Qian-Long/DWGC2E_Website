@@ -36,7 +36,7 @@ python -m http.server 8080
 修改：
 
 ```js
-const DOWNLOAD_URL = "https://example.lanzou.com/xxxxx";
+const DOWNLOAD_URL = "https://cad.pocketter.dpdns.org/downloads/DWGC2E-1.0.0.exe";
 ```
 
 ### 2. 软件版本号
@@ -94,3 +94,4 @@ const APP_VERSION = "1.0.0";
 - `prefers-reduced-motion` 支持
 
 不使用任何第三方 CDN、前端框架或 npm 构建。
+
