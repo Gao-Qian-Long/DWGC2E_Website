@@ -40,7 +40,7 @@
     account: {
       profile: () => request('/v1/profile'), subscription: () => request('/v1/subscription'), usage: () => request('/v1/usage'), devices: () => request('/v1/devices')
     },
-    billing: { plans: () => request('/v1/billing/plans'), checkout: body => request('/v1/billing/checkout', { method: 'POST', body: JSON.stringify(body) }), orders: () => request('/v1/billing/orders') },
+    billing: { plans: () => request('/v1/billing/plans'), checkout: (body, key) => request('/v1/billing/checkout', { method: 'POST', timeout: 20000, headers: { 'Idempotency-Key': key }, body: JSON.stringify(body) }), orders: before => request('/v1/billing/orders' + (before ? '?before=' + encodeURIComponent(before) : '')), status: no => request('/v1/billing/orders/' + encodeURIComponent(no)) },
     deviceManagement: { list: () => request('/v1/devices'), revoke: id => request('/v1/devices/revoke', { method: 'POST', body: JSON.stringify({ device_id: id }) }) },
     profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }), changePassword: body => request('/v1/auth/password', { method: 'PATCH', body: JSON.stringify(body) }) },
     feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) },
@@ -49,5 +49,3 @@
     translation: { create: body => request('/v1/translate', { method: 'POST', body }) }
   });
 })();
-
-
