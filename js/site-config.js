@@ -4,7 +4,7 @@ window.DWGC2E_SITE = Object.freeze({
   downloadUrl: "https://maplehouse.lanzoum.com/ilNZe3nhk7ne",
   downloadLabel: "蓝奏云下载",
   siteOrigin: "https://cad.pocketter.dpdns.org",
-  apiBaseUrl: "https://dwgc2e-api.maplehousezz.workers.dev",
+  apiBaseUrl: "/api",
   contactEmail: ""
 });
 

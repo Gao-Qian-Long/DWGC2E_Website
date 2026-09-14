@@ -26,6 +26,10 @@
         throw error;
       }
       return unwrap(data);
+    } catch (error) {
+      if (error.name === 'AbortError') throw Object.assign(new Error('连接账户服务超时，请稍后重试；下单请求请勿重复提交。'), { code: 'request_timeout' });
+      if (error instanceof TypeError && !error.status) throw Object.assign(new Error('无法连接账户服务，请检查网络后刷新页面。'), { code: 'network_error' });
+      throw error;
     } finally { clearTimeout(timer); }
   };
   window.DWGC2E_API = Object.freeze({
