@@ -10,7 +10,8 @@
  if(pending&&!validPending(pending)){pending=null;try{sessionStorage.removeItem(savedKey);}catch{}}
  const save=()=>{try{if(pending)sessionStorage.setItem(savedKey,JSON.stringify(pending));else sessionStorage.removeItem(savedKey);}catch{}};
  const stop=()=>{clearTimeout(timer);timer=null;};
- const statusText=o=>o.status==='paid'?'支付成功，Pro 已开通':o.createState==='unknown'?('创建结果待确认，请勿重复付款，请联系管理员核查'+(o.errorCode?'（'+o.errorCode+'）':'')):o.createState==='creating'?'正在确认平台订单':o.status!=='pending'?o.status:'等待支付确认';
+ const errorText={provider_prepare:'支付配置准备失败，请联系管理员',provider_network:'无法连接支付平台，请稍后重试',provider_redirect:'支付平台发生重定向，订单未取得二维码',provider_read:'读取支付平台响应失败',provider_parse:'支付平台返回格式错误',provider_business:'支付平台拒绝创建订单',provider_validation:'支付平台返回数据校验失败',provider_persist:'订单二维码保存失败，请联系管理员',provider_audit:'订单审计记录失败，请联系管理员',provider_timeout:'连接支付平台超时，请勿重复下单',provider_http:'支付平台返回 HTTP 错误',provider_response:'支付平台返回内容异常',provider_rejected:'支付平台拒绝创建订单',provider_signature_rejected:'平台拒绝签名，请核对商户配置',provider_channel_unavailable:'平台收款通道不可用',provider_amount_rejected:'平台拒绝订单金额',provider_merchant_rejected:'平台拒绝商户信息',provider_mismatch:'平台返回订单信息不匹配',provider_trade_missing:'平台未返回支付订单号',provider_amount_mismatch:'平台返回金额不一致',provider_qr_missing:'平台未返回二维码',invalid_qr_image:'平台二维码图片地址无效'};
+ const statusText=o=>o.status==='paid'?'支付成功，Pro 已开通':o.createState==='unknown'?((o.errorCode&&errorText[o.errorCode])||'创建结果待确认，请勿重复付款，请联系管理员核查')+(o.errorCode?'（'+o.errorCode+'）':''):o.createState==='creating'?'正在确认平台订单':o.status!=='pending'?o.status:'等待支付确认';
  async function member(){const [s,u]=await Promise.all([api.account.subscription(),api.account.usage()]);$('#membership').textContent=`当前套餐：${s.plan_name} · ${s.expires_at?'到期 '+new Date(s.expires_at).toLocaleString():'无付费有效期'} · 已用 ${Number(u.used).toLocaleString()} / ${Number(u.monthly_quota).toLocaleString()} 字符`;}
  function renderQr(o){
   const box=$('#qrBox');box.replaceChildren();
