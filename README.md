@@ -15,11 +15,11 @@ python -m http.server 8080
 ## Cloudflare Pages
 
 - Framework preset: `None`
-- Build command: 留空
-- Build output directory: `.`
+- Build command: `node tools/stage-site.cjs`
+- Build output directory: `public`
 - Production branch: `main`
 
-2026-09-15 已按用户指示通过现有 Pages 项目直接发布，未提交或推送 Git。发布记录见 `docs/DEPLOYMENT_20260915.md`。后续通过 Git 自动部署前，应先同步当前改版源码，避免旧仓库版本覆盖线上。
+2026-09-15 治理批次已发布新会话适配，并改成白名单 public 输出构建。当前记录见 `docs/GOVERNANCE_20260915.md`；`docs/DEPLOYMENT_20260915.md` 保留为早期视觉改版历史。源码以 main 为生产分支，禁止恢复旧 root-output 发布设置。
 
 ## 下载与版本配置
 

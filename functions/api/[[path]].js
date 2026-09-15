@@ -4,7 +4,9 @@ export async function onRequest({ request }) {
  const incoming = new URL(request.url);
  const path = incoming.pathname.slice('/api'.length);
  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
- if (!path.startsWith('/v1/') || path.startsWith('/v1/admin/') || path.startsWith('/v1/billing/notify/')) {
+ const feedbackAdmin = (path === '/v1/admin/feedback' && request.method === 'GET') || (/^\/v1\/admin\/feedback\/[a-f0-9-]{36}$/.test(path) && request.method === 'POST');
+ // The Worker validates ADMIN_API_KEY independently; a browser account token never grants admin access.
+ if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin) || path.startsWith('/v1/billing/notify/')) {
   return new Response(JSON.stringify({error_code:'not_found',message:'接口不存在'}),{status:404,headers});
  }
  const target = new URL(upstreamOrigin); target.pathname = path; target.search = incoming.search;
