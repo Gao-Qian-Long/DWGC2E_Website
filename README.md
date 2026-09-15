@@ -1,16 +1,16 @@
 # DWGC2E 官网
 
-纯静态网站，可直接部署到 Cloudflare Pages 免费方案。
+原生 HTML / CSS / JavaScript 网站，采用「工程翻译工坊」视觉体系，可沿用现有 Cloudflare Pages 部署流程，无前端框架或构建迁移。
 
 ## 本地预览
 
-直接打开 `index.html`，或在项目目录执行：
+在项目目录执行：
 
 ```bash
 python -m http.server 8080
 ```
 
-然后访问 `http://localhost:8080/`。
+访问 `http://localhost:8080/`。此静态服务器不提供 `/api`；账户、套餐等联网功能会显示不可用提示，不能据此验证真实支付。
 
 ## Cloudflare Pages
 
@@ -19,39 +19,22 @@ python -m http.server 8080
 - Build output directory: `.`
 - Production branch: `main`
 
-## 发布下载
+2026-09-15 已按用户指示通过现有 Pages 项目直接发布，未提交或推送 Git。发布记录见 `docs/DEPLOYMENT_20260915.md`。后续通过 Git 自动部署前，应先同步当前改版源码，避免旧仓库版本覆盖线上。
 
-下载地址集中配置在 `js/site-config.js` 的 `downloadUrl`。当前已接入蓝奏云下载页；以后更换安装包时，只需替换这个地址并提交到 `main`，Cloudflare Pages 会自动重新部署。
+## 下载与版本配置
 
-版本号配置在同一文件的 `version`，页面上的版本信息会自动同步。
+`js/site-config.js` 中的 `downloadUrl` 和 `version` 统一控制下载入口与版本显示。更换安装包时更新配置后按现有流程发布。
 
-## 当前产品边界
+## 产品边界
 
-官网是 DWGC2E Windows 桌面翻译软件的产品介绍和官方下载入口，不提供在线 DWG/DXF 上传、解析或翻译。在线账号、会员、额度和 APP API 后端将在后续阶段单独接入；当前页面不会伪造登录或支付结果。
+官网用于介绍 Windows 客户端、管理账户、会员、额度和订单。图纸解析与写回在客户端完成；官网不提供在线 DWG/DXF 上传处理。术语及在线翻译预览页继续明确当前能力边界，不伪造结果。首页会员入口连接现有购买页，价格以购买页实时信息为准。
 
-## 文件结构
+## 视觉与交互
 
-```text
-/
-├── index.html
-├── privacy.html
-├── terms.html
-├── favicon.svg
-├── css/style.css
-├── js/site-config.js
-├── js/main.js
-└── assets/
-```
+- 奶白纸底、墨色正文、琥珀橙强调；本地托管思源宋体展示子集与 Inter。
+- 不对称首屏、工程 SVG 插图、错落编号章节、墨黑对比区、票据会员入口、报纸式 FAQ。
+- 实色粘性导航、移动菜单、可暂停文字带、手动效果轮播、键盘灯箱、返回顶部。
+- 账户／支付／工具／协议页面统一工作台样式，二维码保持纯白底。
+- 可见焦点、菜单和弹层关闭后焦点返回、减少动态效果支持。
 
-## 已实现交互
-
-- Sticky / blur 顶部导航、移动端菜单
-- Scroll reveal、滚动进度、回到顶部
-- 价格月付 / 年付切换
-- 产品界面 Tabs、演示进度反馈
-- FAQ Accordion
-- 效果对比轮播、触摸滑动、图片灯箱、Escape 关闭
-- 下载按钮统一接入配置中的外部链接
-- `prefers-reduced-motion` 支持
-
-不使用第三方 CDN、前端框架或 npm 构建。
+共享样式位于 `css/theme.css`；详细变更、字体维护方式、本地验证范围及限制见 `docs/WORKSHOP_REDESIGN.md`。接口接入说明继续保留在 `docs/WEB_INTEGRATION.md`。

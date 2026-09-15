@@ -1,13 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6faff"/><stop offset="1" stop-color="#dbeaff"/></linearGradient></defs>
-<rect width="1200" height="630" rx="36" fill="url(#b)"/>
-<circle cx="980" cy="120" r="210" fill="#0b63f6" opacity=".10"/>
-<g transform="translate(90 110)">
-<path d="M80 0 150 40v80L80 160 10 120V40L80 0Z" fill="#0b63f6"/>
-<path d="M80 34 120 57v46L80 126l-40-23V57L80 34Z" fill="#fff"/>
-</g>
-<text x="280" y="220" font-family="Arial,Microsoft YaHei,sans-serif" font-size="76" font-weight="800" fill="#0f1f3a">DWGC2E</text>
-<text x="90" y="345" font-family="Arial,Microsoft YaHei,sans-serif" font-size="52" font-weight="700" fill="#0f1f3a">DWG / DXF CAD 图纸 AI 翻译工具</text>
-<text x="90" y="425" font-family="Arial,Microsoft YaHei,sans-serif" font-size="30" fill="#526782">让 CAD 图纸翻译更简单</text>
-<text x="90" y="525" font-family="Arial,Microsoft YaHei,sans-serif" font-size="24" fill="#0b63f6">cad.pocketter.dpdns.org</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#F5F1E8"/><path d="M60 100H1140M60 560H1140" stroke="#262521"/><text x="60" y="70" font-family="monospace" font-size="24" fill="#262521">DWGC2E / ENGINEERING TRANSLATION STUDIO</text><text x="60" y="285" font-family="serif" font-size="82" fill="#262521">图纸有边界，</text><text x="60" y="390" font-family="serif" font-size="82" fill="#A55420">沟通不必有。</text><text x="60" y="520" font-family="monospace" font-size="24" fill="#262521">DWG / DXF · 本地解析 · AI 翻译 · 本地写回</text><path d="m960 160 22 88 80-46-46 80 88 22-88 22 46 80-80-46-22 88-22-88-80 46 46-80-88-22 88-22-46-80 80 46Z" fill="#D97728"/></svg>

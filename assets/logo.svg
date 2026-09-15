@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-<defs><linearGradient id="g" x1="10" y1="8" x2="54" y2="58"><stop stop-color="#2F86FF"/><stop offset="1" stop-color="#0756D8"/></linearGradient></defs>
-<path d="M32 4 55 17v30L32 60 9 47V17L32 4Z" fill="url(#g)"/>
+
+<path d="M32 4 55 17v30L32 60 9 47V17L32 4Z" fill="#D97728"/>
 <path d="M32 14 45 21.5v15L32 44l-13-7.5v-15L32 14Z" fill="white" fill-opacity=".96"/>
-<path d="M32 24 40 28.5v9L32 42l-8-4.5v-9L32 24Z" fill="#1875FF"/>
+<path d="M32 24 40 28.5v9L32 42l-8-4.5v-9L32 24Z" fill="#262521"/>
 </svg>

@@ -77,6 +77,8 @@
     const unitWidth = Math.max(tickerTrack.scrollWidth, 320);
     const copies = Math.max(2, Math.ceil((window.innerWidth * 2) / unitWidth / 2) * 2);
     tickerTrack.innerHTML = unit.repeat(copies);
+    const toggle = document.querySelector(".ticker-toggle");
+    toggle?.addEventListener("click", () => { const paused = tickerTrack.parentElement.classList.toggle("is-paused"); toggle.setAttribute("aria-pressed", String(paused)); toggle.textContent = paused ? "播放文字带 ▷" : "暂停文字带 Ⅱ"; });
   }
 
   /* 移动端菜单（只切 class） */
@@ -155,20 +157,16 @@
     const track = $(".cmp-track", carousel);
     const slides = $$(".cmp-slide", carousel);
     const dots = $$(".cmp-dot", carousel);
-    let index = 0, timer = null;
+    let index = 0;
 
     const go = i => {
       index = (i + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
       dots.forEach((d, n) => d.classList.toggle("active", n === index));
-      slides.forEach((s, n) => s.setAttribute("aria-hidden", String(n !== index)));
+      slides.forEach((s, n) => { s.setAttribute("aria-hidden", String(n !== index)); s.inert = n !== index; });
     };
-    const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
-    const play = () => {
-      stop();
-      if (reduceMotion || slides.length < 2) return;
-      timer = setInterval(() => go(index + 1), 5200);
-    };
+    const stop = () => {};
+    const play = () => {}; // Deliberately manual: no automatic slide changes.
 
     $(".cmp-prev", carousel)?.addEventListener("click", () => { go(index - 1); play(); });
     $(".cmp-next", carousel)?.addEventListener("click", () => { go(index + 1); play(); });
@@ -200,40 +198,50 @@
   const lightbox = $("#lightbox");
   if (lightbox) {
     const lbImg = lightbox.querySelector("img");
+    let returnFocus;
+    let inertBackground = [];
     const closeLb = () => {
       lightbox.classList.remove("show");
+      lightbox.setAttribute("aria-hidden", "true");
+      inertBackground.forEach(el => { el.inert = false; });
+      inertBackground = [];
+      returnFocus?.focus();
       document.body.classList.remove("menu-open");
     };
     $$(".cmp-slide img").forEach(img => {
+      img.tabIndex = 0;
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", "查看大图：" + img.alt);
+      img.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); img.click(); } });
       img.addEventListener("click", () => {
+        returnFocus = img;
+        inertBackground = [...document.body.children].filter(el => el !== lightbox && !el.inert && !["SCRIPT", "STYLE"].includes(el.tagName));
+        inertBackground.forEach(el => { el.inert = true; });
         lbImg.src = img.currentSrc || img.src;
         lbImg.alt = img.alt;
         lightbox.classList.add("show");
+        lightbox.setAttribute("aria-hidden", "false");
+        lightbox.querySelector("button").focus();
         document.body.classList.add("menu-open");
         carousel?._stop?.();
       });
     });
-    lightbox.addEventListener("click", closeLb);
+    lightbox.setAttribute("aria-hidden", "true");
+    lightbox.addEventListener("click", e => { if (e.target !== lbImg) closeLb(); });
+    lightbox.addEventListener("keydown", e => { if (e.key === "Tab") { e.preventDefault(); lightbox.querySelector("button").focus(); } });
     document.addEventListener("keydown", e => {
       if (e.key === "Escape" && lightbox.classList.contains("show")) closeLb();
     });
   }
 
-  /* 价格月付 / 年付（只切 class + 写文本） */
-  $$("[data-billing]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const mode = btn.dataset.billing;
-      $$("[data-billing]").forEach(x => x.classList.toggle("active", x === btn));
-      $$("[data-price]").forEach(el => { el.textContent = el.dataset[mode]; });
-      $$("[data-cycle]").forEach(el => el.textContent = mode === "monthly" ? "/月" : "/年");
-    });
-  });
-
   /* FAQ 手风琴（只切 class，展开动画由 CSS 负责） */
-  $$(".faq-q").forEach(btn => {
+  $$(".faq-q").forEach((btn, index) => {
+    const answer = btn.closest(".faq-item").querySelector(".faq-a");
+    answer.id = "faq-answer-" + index; answer.hidden = true; btn.setAttribute("aria-controls", answer.id);
     btn.addEventListener("click", () => {
       const item = btn.closest(".faq-item");
       const open = item.classList.toggle("open");
+      item.querySelector(".faq-a").hidden = !open;
       btn.setAttribute("aria-expanded", String(open));
     });
   });
@@ -261,18 +269,6 @@
     });
   });
 
-  /* 产品演示按钮：避免页面上出现无响应按钮。 */
-  const runButton = $(".run-btn");
-  if (runButton) {
-    runButton.addEventListener("click", () => {
-      const progress = $(".run-progress i");
-      if (runButton.disabled) return;
-      runButton.disabled = true;
-      runButton.textContent = "翻译处理中…";
-      if (progress) { progress.style.width = "0%"; requestAnimationFrame(() => { progress.style.transition = "width 1.4s ease"; progress.style.width = "100%"; }); }
-      setTimeout(() => { runButton.disabled = false; runButton.textContent = "开始翻译并写回"; showToast("演示完成：桌面端将把译文写回图纸"); }, 1500);
-    });
-  }
 
 })();
 

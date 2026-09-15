@@ -1,0 +1,539 @@
+:root {
+  --ws-ink:var(--ink);
+  --ws-muted:var(--muted);
+  --ws-line:var(--sand-light);
+  --ws-blue:var(--brand-deep)
+}
+.account-shell {
+  max-width:1400px;
+  margin:24px auto
+}
+.account-dashboard {
+  gap:24px
+}
+.summary-card {
+  padding:16px 20px!important
+}
+.summary-grid {
+  gap:12px
+}
+.summary-card strong {
+  font-size:26px
+}
+.quota-card,.client-card {
+  padding:20px!important
+}
+.identity-text {
+  min-width:0
+}
+.identity-text h2 {
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+.account-nav a {
+  padding:12px
+}
+.ws-release {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:13px 16px;
+  margin:0 0 18px;
+  border:1px solid var(--sand-light);
+  border-radius:2px;
+  background:var(--sand-light);
+  font-size:13px;
+  line-height:1.6
+}
+.ws-release b {
+  color:var(--brand-deep);
+  white-space:nowrap
+}
+.ws-release a {
+  margin-left:auto;
+  white-space:nowrap;
+  color:var(--ink)
+}
+.ws-top-update {
+  font-size:13px;
+  color:var(--brand-deep)!important;
+  margin-left:auto;
+  margin-right:24px
+}
+.ws-status {
+  max-width:1400px;
+  margin:24px auto 16px;
+  padding:18px 22px;
+  border:1px solid var(--ws-line);
+  border-radius:2px;
+  background:var(--paper);
+  font:13px/1.7 var(--body);
+  color:var(--ws-ink)
+}
+.ws-status-head {
+  display:flex;
+  gap:16px;
+  align-items:center;
+  margin-bottom:10px
+}
+.ws-status-head span {
+  margin-left:auto;
+  color:var(--ws-muted);
+  font-size:12px
+}
+.ws-status-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px
+}
+.ws-state {
+  border:1px solid var(--ws-line);
+  padding:10px 12px;
+  border-radius:2px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px
+}
+.ws-state b {
+  font-weight:500
+}
+.ws-state b[data-state=ok] {
+  color:var(--ink)
+}
+.ws-state b[data-state=bad] {
+  color:var(--muted)
+}
+.ws-status small {
+  display:block;
+  color:var(--ws-muted);
+  margin-top:10px
+}
+.ws-status button {
+  border:0;
+  background:transparent;
+  color:var(--ws-blue);
+  cursor:pointer
+}
+.ws-support-button {
+  position:fixed;
+  bottom:24px;
+  right:24px;
+  z-index:1000;
+  border:0;
+  border-radius:2px;
+  padding:14px 22px;
+  background:var(--ink);
+  color:var(--paper);
+  box-shadow:4px 4px 0 var(--sand);
+  font:600 14px system-ui;
+  cursor:pointer
+}
+.ws-support {
+  position:fixed;
+  right:24px;
+  bottom:84px;
+  z-index:1001;
+  width:370px;
+  max-width:calc(100vw - 32px);
+  max-height:calc(100dvh - 110px);
+  overflow:auto;
+  border:1px solid var(--ws-line);
+  background:var(--paper);
+  border-radius:2px;
+  padding:22px;
+  box-shadow:3px 3px 0 var(--sand);
+  font:14px/1.6 var(--body);
+  color:var(--ws-ink)
+}
+.ws-support[hidden] {
+  display:none
+}
+.ws-support h2 {
+  font-size:18px;
+  margin:0
+}
+.ws-support p {
+  font-size:12px;
+  color:var(--ws-muted);
+  margin:8px 0 16px
+}
+.ws-close {
+  float:right;
+  border:0;
+  background:none;
+  font-size:24px;
+  cursor:pointer
+}
+.ws-feedback-form {
+  display:grid;
+  gap:12px
+}
+.ws-feedback-form label {
+  display:grid;
+  gap:5px;
+  font-size:13px
+}
+.ws-feedback-form input,.ws-feedback-form select,.ws-feedback-form textarea {
+  box-sizing:border-box;
+  width:100%;
+  border:1px solid var(--sand-light);
+  border-radius:2px;
+  padding:9px;
+  font:inherit;
+  background:var(--paper);
+  color:var(--ws-ink)
+}
+.ws-feedback-form button {
+  background:var(--brand-deep);
+  color:var(--paper);
+  border:0;
+  border-radius:2px;
+  padding:11px;
+  cursor:pointer
+}
+.ws-feedback-form button:disabled {
+  opacity:.6
+}
+.ws-feedback-message {
+  overflow-wrap:anywhere
+}
+.ws-admin {
+  max-width:1000px;
+  margin:40px auto;
+  padding:0 24px;
+  font:14px/1.6 system-ui
+}
+.ws-ticket {
+  border:1px solid var(--ws-line);
+  padding:18px;
+  border-radius:2px;
+  margin:12px 0;
+  background:var(--paper)
+}
+.ws-ticket pre {
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  font:inherit
+}
+.ws-ticket header {
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap
+}
+.ws-ticket button {
+  margin-left:auto
+}
+.ws-update-item {
+  padding:20px 0;
+  border-bottom:1px solid var(--ws-line)
+}
+.ws-update-item small {
+  color:var(--ws-muted)
+}
+.billing-body {
+  background:var(--sand-light)
+}
+.billing-body .account-header {
+  display:flex;
+  padding:18px 30px;
+  background:var(--paper);
+  border-bottom:1px solid var(--ws-line);
+  align-items:center
+}
+.billing-shell {
+  display:grid;
+  grid-template-columns:190px minmax(0,1fr);
+  gap:26px;
+  max-width:1400px;
+  padding:24px;
+  margin:auto
+}
+.billing-sidebar {
+  border-right:1px solid var(--ws-line);
+  padding-right:18px
+}
+.billing-sidebar strong {
+  font-size:12px;
+  color:var(--ws-muted)
+}
+.billing-sidebar a {
+  display:block;
+  padding:12px;
+  margin-top:6px;
+  border-radius:2px;
+  font-size:14px;
+  color:var(--ws-ink)
+}
+.billing-sidebar a[aria-current] {
+  background:var(--sand-light);
+  color:var(--brand-deep)
+}
+.billing-main {
+  min-width:0
+}
+.billing-main h1 {
+  font-size:26px;
+  margin:0 0 4px
+}
+.billing-lead {
+  font-size:13px;
+  color:var(--ws-muted);
+  margin-bottom:16px
+}
+.billing-membership {
+  padding:12px 16px;
+  background:var(--sand-light);
+  color:var(--ink);
+  border-radius:2px;
+  font-size:13px;
+  margin:14px 0
+}
+.billing-workbench {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 340px;
+  gap:18px;
+  align-items:start
+}
+.billing-selection,.billing-payment,.orders-section {
+  background:var(--paper);
+  border:1px solid var(--ws-line);
+  border-radius:2px;
+  padding:20px
+}
+.billing-selection h2,.orders-section h2 {
+  font-size:16px;
+  margin:0 0 14px
+}
+.billing-channel {
+  margin:0 0 16px;
+  padding:12px 14px;
+  gap:20px;
+  border-radius:2px;
+  font-size:13px
+}
+#plans {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+#plans article {
+  padding:16px;
+  border:1px solid var(--ws-line);
+  border-radius:2px
+}
+#plans h2 {
+  font-size:15px
+}
+#plans p {
+  font-size:12px;
+  line-height:1.6;
+  color:var(--ws-muted)
+}
+#plans strong {
+  display:block;
+  font-size:30px;
+  margin:12px 0;
+  color:var(--ink)
+}
+#plans button {
+  width:100%
+}
+.billing-checkout {
+  display:block;
+  border:0;
+  padding:0;
+  margin:0
+}
+.billing-qr {
+  margin:12px auto;
+  padding:16px;
+  background:#fff;
+  position:relative;
+  z-index:21
+}
+.billing-amount {
+  font-size:30px;
+  color:var(--ink)
+}
+.billing-payment {
+  text-align:center
+}
+.billing-payment h2 {
+  font-size:17px
+}
+.billing-payment h3 {
+  font-size:13px;
+  margin:16px 0 6px
+}
+.billing-payment p {
+  font-size:12px;
+  line-height:1.7;
+  color:var(--ws-muted)
+}
+.billing-payment #paymentStatus {
+  color:var(--ws-ink)
+}
+.billing-order-no {
+  font-size:11px!important
+}
+.billing-payment:has(#checkout:not([hidden])) .billing-placeholder {
+  display:none
+}
+.billing-placeholder {
+  padding:50px 12px;
+  color:var(--ws-muted);
+  font-size:13px;
+  line-height:1.9
+}
+.billing-placeholder span {
+  display:block;
+  font-size:34px;
+  margin-bottom:12px;
+  color:var(--line)
+}
+.orders-section {
+  margin-top:18px
+}
+.billing-order {
+  padding:12px 0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  gap:10px;
+  font-size:13px
+}
+.billing-order small {
+  font-size:11px;
+  color:var(--ws-muted)
+}
+.billing-order .btn {
+  padding:6px 10px;
+  font-size:12px
+}
+.billing-body .btn-primary {
+  background:var(--brand);
+  color:var(--ink);
+  border-color:var(--ink)
+}
+.billing-body .form-message:empty {
+  display:none
+}
+.billing-body .form-message {
+  font-size:13px;
+  margin:12px 0
+}
+.billing-body .ws-status {
+  margin-left:24px;
+  margin-right:24px
+}
+.ws-release li {
+  margin:4px 0
+}
+@media(max-width:1000px) {
+  .billing-shell {
+    grid-template-columns:150px minmax(0,1fr);
+    gap:18px
+  }
+  .billing-workbench {
+    grid-template-columns:1fr
+  }
+  .billing-payment {
+    text-align:left
+  }
+  .billing-checkout:not([hidden]) {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px
+  }
+  .billing-qr {
+    margin:12px 0
+  }
+  .ws-status {
+    margin:20px
+  }
+  .ws-status-grid {
+    grid-template-columns:1fr
+  }
+  .ws-release {
+    flex-wrap:wrap
+  }
+}
+@media(max-width:640px) {
+  .billing-shell {
+    display:block;
+    padding:16px
+  }
+  .billing-sidebar {
+    display:flex;
+    overflow:auto;
+    border:0;
+    margin-bottom:18px;
+    gap:8px;
+    padding:0
+  }
+  .billing-sidebar strong {
+    display:none
+  }
+  .billing-sidebar a {
+    white-space:nowrap;
+    padding:8px;
+    font-size:12px
+  }
+  .billing-checkout:not([hidden]) {
+    display:block
+  }
+  .billing-payment {
+    text-align:center
+  }
+  .billing-qr {
+    margin:12px auto
+  }
+  #plans {
+    grid-template-columns:1fr
+  }
+  .billing-order {
+    grid-template-columns:1fr auto
+  }
+  .billing-order>div {
+    grid-column:1/-1
+  }
+  .ws-support-button {
+    right:16px;
+    bottom:16px
+  }
+  .ws-support {
+    right:16px;
+    bottom:74px
+  }
+  .ws-status-head {
+    flex-wrap:wrap
+  }
+  .ws-status-head span {
+    margin-left:0
+  }
+  .ws-top-update {
+    margin:0 12px;
+    font-size:12px
+  }
+  .ws-release a {
+    margin-left:0
+  }
+}
+.ws-support :focus-visible,.ws-support-button:focus-visible,.ws-status button:focus-visible {
+  outline:3px solid var(--brand-deep);
+  outline-offset:3px
+}
+.back-to-top {
+  bottom:90px!important
+}
+.ws-feedback-form small {
+  font-size:11px;
+  color:var(--muted)
+}
+.billing-body .billing-channel {
+  margin-top:18px
+}
+.billing-body #orderList {
+  padding:0;
+  background:transparent
+}
