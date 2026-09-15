@@ -537,3 +537,12 @@
   padding:0;
   background:transparent
 }
+/* Health is semantic, not a brand accent. Unknown must never look healthy. */
+.ws-state b[data-state=ok],.status-row strong[data-state=ok] { color:#287444; }
+.ws-state b[data-state=bad],.status-row strong[data-state=bad] { color:#b2392f; }
+.ws-state b[data-state=unknown],.status-row strong[data-state=unknown] { color:#856522; }
+.billing-main>.ws-status { width:100%; max-width:none; margin:32px 0 48px; box-sizing:border-box; }
+.ws-status-head { flex-wrap:wrap; }
+.ws-state { min-width:0; }
+.ws-status button:disabled { opacity:.6; cursor:wait; }
+@media(max-width:600px) { .ws-status-head span { margin-left:0; } .billing-main>.ws-status { padding:18px 16px; } }
