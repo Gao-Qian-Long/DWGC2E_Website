@@ -53,12 +53,12 @@
     account: {
       profile: () => request('/v1/profile'), subscription: () => request('/v1/subscription'), usage: () => request('/v1/usage'), devices: () => request('/v1/devices')
     },
-    billing: { hide: no => request('/v1/billing/orders/' + encodeURIComponent(no) + '/hide', { method: 'POST' }), plans: () => request('/v1/billing/plans'), checkout: (body, key) => { if(typeof key !== 'string' || !/^[a-zA-Z0-9_-]{16,80}$/.test(key)) return Promise.reject(Object.assign(new Error('下单标识无效，请刷新页面后重试。'), { code: 'invalid_idempotency_key' })); return request('/v1/billing/checkout', { method: 'POST', timeout: 20000, headers: { 'Idempotency-Key': key }, body: JSON.stringify(body) }); }, orders: before => request('/v1/billing/orders' + (before ? '?before=' + encodeURIComponent(before) : '')), status: no => request('/v1/billing/orders/' + encodeURIComponent(no)) },
+    billing: { hide: no => request('/v1/billing/orders/' + encodeURIComponent(no) + '/hide', { method: 'POST' }), plans: () => request('/v1/billing/plans', { anonymous:true }), checkout: (body, key) => { if(typeof key !== 'string' || !/^[a-zA-Z0-9_-]{16,80}$/.test(key)) return Promise.reject(Object.assign(new Error('下单标识无效，请刷新页面后重试。'), { code: 'invalid_idempotency_key' })); return request('/v1/billing/checkout', { method: 'POST', timeout: 20000, headers: { 'Idempotency-Key': key }, body: JSON.stringify(body) }); }, orders: before => request('/v1/billing/orders' + (before ? '?before=' + encodeURIComponent(before) : '')), status: no => request('/v1/billing/orders/' + encodeURIComponent(no)) },
     deviceManagement: { list: () => request('/v1/devices'), revoke: id => request('/v1/devices/revoke', { method: 'POST', body: JSON.stringify({ device_id: id }) }) },
     profileManagement: { update: body => request('/v1/profile', { method: 'PATCH', body: JSON.stringify(body) }), changePassword: body => request('/v1/auth/password', { method: 'PATCH', body: JSON.stringify(body) }) },
     feedback: { submit: body => request('/v1/feedback', { method: 'POST', body: JSON.stringify(body) }) },
     terminology: { list: () => request('/v1/terminology'), create: body => request('/v1/terminology', { method: 'POST', body: JSON.stringify(body) }), remove: id => request(`/v1/terminology/${encodeURIComponent(id)}`, { method: 'DELETE' }) },
-    history: { list: () => request('/v1/translation/history'), detail: id => request(`/v1/translation/tasks/${encodeURIComponent(id)}`) },
+    history: { list: before => request('/v1/translation/history' + (before ? '?before='+encodeURIComponent(before) : '')), detail: id => request(`/v1/translation/tasks/${encodeURIComponent(id)}`) },
     translation: { create: body => request('/v1/translate', { method: 'POST', body }) }
   });
 })();

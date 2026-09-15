@@ -1,7 +1,10 @@
-
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'
 /billing.html
   Cache-Control: no-store
-/js/api-client.js
-  Cache-Control: no-cache, must-revalidate
-/js/billing.js
+/js/*
   Cache-Control: no-cache, must-revalidate

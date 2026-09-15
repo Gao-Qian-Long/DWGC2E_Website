@@ -1,7 +1,9 @@
-(() => {
+(async () => {
   'use strict';
-  const key = 'dwgc2e.glossary';
-  const seed = [{ id: 'local-1', source: 'Floor Plan', target: '平面图', note: '建筑图纸常用术语' }, { id: 'local-2', source: 'Elevation', target: '立面图', note: '' }];
+  let profile;try { profile=await window.DWGC2E_API.account.profile(); } catch { location.replace('account.html?return=terminology.html');return; }
+  if(!profile.user_id){location.replace('account.html?return=terminology.html');return;}
+  const key = 'dwgc2e.glossary.'+profile.user_id;
+  const seed = [];
   const $ = selector => document.querySelector(selector);
   const list = $('#glossaryList'), search = $('#glossarySearch'), form = $('#glossaryForm'), msg = $('#glossaryMessage'), selectAll = $('#selectAll');
   if (!list || !search || !form || !msg || !selectAll) return;

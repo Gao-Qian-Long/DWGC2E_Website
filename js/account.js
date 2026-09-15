@@ -165,7 +165,7 @@
       if (!result.token) throw new Error('登录响应缺少会话信息，请重试。');
       sessionGeneration++;
       try { localStorage.removeItem('dwgc2e.device-id'); } catch {}
-      sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
+      sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at, userId: result.user_id }));
       await loadDashboard(result.token);
       void checkApiStatus();
       if (returnTarget && returnTarget !== 'account.html') window.location.replace(returnTarget);
