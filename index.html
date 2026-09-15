@@ -17,6 +17,7 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="css/theme.css">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/drawing-board.css?v=20260915">
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -67,7 +68,7 @@
 <div class="translation-slip"><span class="slip-kicker">译文批注 / TRANSLATION NOTE</span><div><span>MATERIAL: SUS304</span><b aria-hidden="true">↳</b><strong>材料：SUS304</strong></div><p>文字干涉检测 <span>·</span> 字高自动适配</p></div><div class="round-stamp" aria-hidden="true">本地解析<br><b>DWG</b><br>本地写回</div></div></div><div class="hero-bottom"><span>精确的图纸，值得同样认真的表达。</span><span>SCROLL TO EXPLORE ↓</span></div></div></section>
 <section class="ticker" aria-label="工坊能力关键词"><div class="ticker-track" aria-hidden="true"><span class="ticker-item">图纸 · 术语 · 翻译 · 写回 <i>✳</i> DWG / DXF <i>✳</i> </span></div><button type="button" class="ticker-toggle" aria-pressed="false">暂停文字带 Ⅱ</button><span class="sr-only">DWG 与 DXF 图纸解析、术语翻译及本地写回。</span></section>
 <section class="section-pad" id="features"><div class="container"><div class="section-head"><div><span class="section-kicker">01 / THE CRAFT</span><h2>少些重复工序，<br>多些工程本意。</h2></div><p>不是把文字搬到另一种语言。<br>是让图纸，继续说清楚它想说的。</p></div><div class="craft-grid"><article class="craft-card craft-0"><span class="card-number">01</span><span class="section-kicker">DWG / DXF 本地解析</span><h3>读懂每一处标注。</h3><p>从文字、尺寸、引线到块属性与表格，提取需要翻译的工程信息。</p><span class="card-glyph" aria-hidden="true">⌁</span></article><article class="craft-card craft-1"><span class="card-number">02</span><span class="section-kicker">ENGINEERING LANGUAGE</span><h3>术语，不是逐字翻译。</h3><p>结合工程上下文与专业术语，让材料、工艺和尺寸表达更准确。</p><span class="card-glyph" aria-hidden="true">Aa</span></article><article class="craft-card craft-2"><span class="card-number">03</span><span class="section-kicker">BATCH PROCESSING</span><h3>一张，或一整套。</h3><p>集中处理多张图纸，减少反复导入、复制与整理。</p><span class="card-glyph" aria-hidden="true">▤</span></article><article class="craft-card craft-3"><span class="card-number">04</span><span class="section-kicker">WRITE BACK</span><h3>译文回到该在的位置。</h3><p>在本地写回图纸，尽量保留位置、图层及格式，并适配文字高度。</p><span class="card-glyph" aria-hidden="true">↳</span></article></div><div class="privacy-strip"><b>留在本地，是工作方式。</b><p>完整图纸默认无需上传。仅发送待翻译文本，解析与写回均在 Windows 客户端完成。</p></div></div></section>
-<section class="proof-section section-pad" id="workflow"><div class="container"><div class="section-head"><div><span class="section-kicker">02 / ON THE DRAWING BOARD</span><h2>翻译之后，<br>依然是一张好图纸。</h2></div><span class="proof-spark"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 0 60 31 85 15 69 40 100 50 69 60 85 85 60 69 50 100 40 69 15 85 31 60 0 50 31 40 15 15 40 31Z" fill="currentColor"/></svg></span></div><article class="bento-card b-tech reveal">
+<section class="proof-section section-pad" id="workflow"><div class="container"><div class="section-head"><div><span class="section-kicker">02 / ON THE DRAWING BOARD</span><h2>翻译之后，<br>依然是一张好图纸。</h2></div><p class="proof-intro">让准确的表达，留在熟悉的图纸里。<br>从批量处理到自动写回，兼顾效率与版式。</p></div><article class="bento-card b-tech reveal">
             <div class="b-tech-top">
               <div class="b-tech-copy">
                 <h3>检测文字与图层干涉，自动调整字高适配</h3>
@@ -83,33 +84,36 @@
               </ul>
             </div>
 
-            <div class="cmp-carousel" id="cmpCarousel">
+            <div class="cmp-carousel" id="cmpCarousel" role="region" aria-roledescription="轮播" aria-label="工程图纸翻译展示">
               <div class="cmp-head">
-                <span class="cmp-label">效果对比</span>
-                <span class="cmp-zoom">点击图片看大图</span>
+                <span class="cmp-label">DRAWING STUDIES <span>/ 工程图纸翻译展示</span></span>
+                <span class="cmp-zoom">点击图纸，展开细节 ↗</span>
               </div>
               <div class="cmp-viewport">
                 <div class="cmp-track">
-                  <!-- 轮播图 1 / 3：替换 src 即可换图（支持 svg） -->
+                  <!-- 用户提供的工程宣传图，完整比例展示 -->
                   <figure class="cmp-slide">
-                    <img src="assets/compare-efficiency.png" width="1672" height="941" decoding="async" alt="效率对比：传统翻译软件只翻译文字、单线程、速度慢、尺寸要求高、批量效率低；DWGC2E 多线程并发、速度快、批量翻译、工程语义优化、结果稳定">
+                    <img src="assets/drawing-efficiency-20260915.webp" width="1672" height="941" loading="lazy" decoding="async" alt="效率对比：传统翻译软件只翻译文字、单线程、速度慢、批量效率低；DWGC2E 多线程并发、速度快、批量翻译、工程语义优化、结果稳定">
                   </figure>
                   <!-- 轮播图 2 / 3 -->
                   <figure class="cmp-slide">
-                    <img src="assets/compare-flow.png" width="1672" height="941" decoding="async" alt="为什么 DWGC2E 更适合工程图纸翻译：传统结果直译生硬、有干涉、位置错乱、图层混乱；DWGC2E 经文本识别、工程规则判断、智能翻译、自动写回，输出可直接用于工程图纸">
+                    <img src="assets/drawing-flow-20260915.webp" width="1672" height="941" loading="lazy" decoding="async" alt="为什么 DWGC2E 更适合工程图纸翻译：传统结果直译生硬、有干涉、位置错乱、图层混乱；DWGC2E 经文本识别、工程规则判断、智能翻译、自动写回，输出可直接用于工程图纸">
                   </figure>
                   <!-- 轮播图 3 / 3 -->
                   <figure class="cmp-slide">
-                    <img src="assets/compare-result.png" width="1672" height="941" decoding="async" alt="翻译效果对比：传统机械直译存在干涉、位置错乱、图层混乱；DWGC2E 输出准确规范、版式清晰，可直接用于工程图纸">
+                    <img src="assets/drawing-result-20260915.webp" width="1672" height="941" loading="lazy" decoding="async" alt="翻译效果对比：传统机械直译存在干涉、位置错乱、图层混乱；DWGC2E 输出准确规范、版式清晰，可直接用于工程图纸">
                   </figure>
                 </div>
-                <button class="cmp-nav cmp-prev" type="button" aria-label="上一张"><span aria-hidden="true">←</span></button>
-                <button class="cmp-nav cmp-next" type="button" aria-label="下一张"><span aria-hidden="true">→</span></button>
               </div>
+              <div class="cmp-caption"><div><span class="cmp-number" aria-hidden="true">01 / 03</span><p class="cmp-description" aria-live="polite" aria-atomic="true">批量效率 / 面向整套工程图纸的处理能力</p></div><span class="cmp-note">宣传示意 · 非实测报告</span></div>
+              <div class="cmp-controls">
+                <button class="cmp-nav cmp-prev" type="button" aria-label="上一张"><span aria-hidden="true">←</span></button>
               <div class="cmp-dots">
-                <button class="cmp-dot active" type="button" aria-label="第 1 张"></button>
-                <button class="cmp-dot" type="button" aria-label="第 2 张"></button>
-                <button class="cmp-dot" type="button" aria-label="第 3 张"></button>
+                <button class="cmp-dot active" type="button" aria-label="第 1 张">01 <span>批量效率</span></button>
+                <button class="cmp-dot" type="button" aria-label="第 2 张">02 <span>处理流程</span></button>
+                <button class="cmp-dot" type="button" aria-label="第 3 张">03 <span>翻译效果</span></button>
+              </div>
+                <button class="cmp-nav cmp-next" type="button" aria-label="下一张"><span aria-hidden="true">→</span></button>
               </div>
             </div>
           </article><article class="bento-card b-work reveal reveal-delay-3">
@@ -213,7 +217,7 @@
 
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="js/site-config.js?v=20260914-sameorigin"></script>
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=20260915-drawing"></script>
 <script src="js/releases.js?v=20260915-ui"></script><script src="js/workspace.js?v=20260915-ui"></script><script src="js/accessibility.js"></script></body>
 </html>
 

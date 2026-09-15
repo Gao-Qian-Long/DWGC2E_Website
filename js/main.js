@@ -162,7 +162,11 @@
     const go = i => {
       index = (i + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
-      dots.forEach((d, n) => d.classList.toggle("active", n === index));
+      dots.forEach((d, n) => { d.classList.toggle("active", n === index); d.setAttribute("aria-current", String(n === index)); });
+      const descriptions = ["批量效率 / 面向整套工程图纸的处理能力", "处理流程 / 从文本识别到工程规则判断与自动写回", "翻译效果 / 兼顾术语表达、标注位置与原有版式"];
+      const caption = $(".cmp-description", carousel), number = $(".cmp-number", carousel);
+      if (caption) caption.textContent = descriptions[index];
+      if (number) number.textContent = String(index + 1).padStart(2, "0") + " / 03";
       slides.forEach((s, n) => { s.setAttribute("aria-hidden", String(n !== index)); s.inert = n !== index; });
     };
     const stop = () => {};
@@ -171,6 +175,13 @@
     $(".cmp-prev", carousel)?.addEventListener("click", () => { go(index - 1); play(); });
     $(".cmp-next", carousel)?.addEventListener("click", () => { go(index + 1); play(); });
     dots.forEach((d, n) => d.addEventListener("click", () => { go(n); play(); }));
+    carousel.addEventListener("keydown", e => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+      e.preventDefault();
+      go(e.key === "Home" ? 0 : e.key === "End" ? slides.length - 1 : index + (e.key === "ArrowLeft" ? -1 : 1));
+      // Do not leave keyboard focus on a slide that just became inert.
+      if (e.target.closest(".cmp-slide")) $("img", slides[index])?.focus();
+    });
     carousel.addEventListener("pointerenter", stop);
     carousel.addEventListener("pointerleave", play);
 

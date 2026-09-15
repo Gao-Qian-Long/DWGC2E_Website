@@ -1,0 +1,66 @@
+/* Drawing-board chapter only: paper exhibits on a quiet, dark editorial spread. */
+#workflow { background:#20201d; color:#f1ece2; --board-line:rgba(220,205,185,.20); }
+#workflow .section-head { align-items:end; gap:48px; margin-bottom:56px; }
+#workflow .section-kicker { color:#d07a2b; letter-spacing:.14em; }
+#workflow .proof-intro { max-width:360px; color:#aaa398; font-size:15px; line-height:1.9; padding-bottom:6px; }
+#workflow .b-tech-top { grid-template-columns:1.05fr 1fr; gap:80px; padding-top:32px; border-top:1px solid var(--board-line); margin-bottom:48px; }
+#workflow .b-tech h3 { max-width:460px; font-size:24px; line-height:1.5; }
+#workflow .b-tech-copy p { max-width:530px; font-size:14px; color:#aaa398; margin-top:18px; }
+#workflow .em-org { color:#e3b189; }
+#workflow .tech-points li { display:grid; grid-template-columns:88px 1fr; gap:14px; padding:16px 0; font-size:13px; border-color:var(--board-line); color:#aaa398; }
+#workflow .tech-points li:first-child { padding-top:4px; }
+#workflow .tech-points b { margin:0; color:#f1ece2; font-weight:500; }
+#workflow .cmp-carousel { padding:0; border:0; }
+#workflow .cmp-head { align-items:center; gap:16px; padding:16px 0; margin:0; border-top:1px solid var(--board-line); font-size:11px; letter-spacing:.08em; }
+#workflow .cmp-label { color:#d07a2b; }
+#workflow .cmp-label span { color:#aaa398; margin-left:10px; }
+#workflow .cmp-zoom { color:#aaa398; letter-spacing:0; }
+#workflow .cmp-viewport { background:#f1ece2; border:1px solid rgba(220,205,185,.4); border-radius:0; touch-action:pan-y; }
+#workflow .cmp-slide img { width:100%; height:auto; aspect-ratio:1672/941; object-fit:contain; border-radius:0; }
+#workflow .cmp-caption { display:flex; justify-content:space-between; align-items:start; gap:24px; padding:22px 0; border-bottom:1px solid var(--board-line); }
+#workflow .cmp-caption>div { display:flex; align-items:baseline; gap:24px; }
+#workflow .cmp-number { color:#d07a2b; font:12px var(--mono); white-space:nowrap; }
+#workflow .cmp-description { margin:0; font-size:14px; color:#f1ece2; }
+#workflow .cmp-note { color:#aaa398; font-size:11px; white-space:nowrap; }
+#workflow .cmp-controls { display:flex; align-items:center; justify-content:space-between; gap:24px; padding-top:20px; }
+#workflow .cmp-nav { position:static; flex:0 0 48px; width:48px; height:48px; border:1px solid var(--board-line); border-radius:0; background:transparent; color:#f1ece2; font-size:22px; cursor:pointer; }
+#workflow .cmp-nav:hover { background:#b75b1e; border-color:#b75b1e; }
+#workflow .cmp-dots { padding:0; gap:28px; }
+#workflow .cmp-dot { width:auto; height:48px; padding:0 4px; border:0; border-bottom:2px solid transparent; background:transparent; color:#aaa398; font:12px var(--mono); cursor:pointer; }
+#workflow .cmp-dot span { margin-left:10px; font-family:var(--body); }
+#workflow .cmp-dot.active { color:#f1ece2; border-bottom-color:#d07a2b; }
+#workflow :focus-visible { outline:2px solid #d07a2b; outline-offset:4px; }
+#workflow .cmp-slide img:focus-visible { outline-offset:-4px; }
+#workflow .b-work { margin-top:72px; padding-top:32px; border-color:var(--board-line); }
+#workflow .b-head { display:flex; align-items:baseline; gap:28px; }
+#workflow .b-head h3 { margin:0; font-size:28px; }
+#workflow .steps { gap:32px; margin-top:32px; }
+#workflow .steps li { border-color:var(--board-line); padding-top:24px; gap:20px; }
+#workflow .steps b { font:30px var(--serif); color:#d07a2b; }
+#workflow .steps span { font-size:16px; }
+#workflow .steps small { font-size:12px; color:#aaa398; margin-top:10px; }
+@media(max-width:760px) {
+ #workflow .section-head { display:block; margin-bottom:32px; }
+ #workflow .proof-intro { margin-top:24px; font-size:14px; }
+ #workflow .b-tech-top { grid-template-columns:1fr; gap:24px; margin-bottom:32px; padding-top:24px; }
+ #workflow .b-tech h3 { font-size:21px; }
+ #workflow .cmp-head { align-items:start; font-size:10px; }
+ #workflow .cmp-label span { display:block; margin:6px 0 0; }
+ #workflow .cmp-zoom { font-size:10px; }
+ #workflow .cmp-caption { flex-direction:column; gap:10px; padding:18px 0; }
+ #workflow .cmp-caption>div { align-items:start; gap:14px; }
+ #workflow .cmp-description { font-size:13px; }
+ #workflow .cmp-note { padding-left:0; }
+ #workflow .cmp-controls { gap:12px; }
+ #workflow .cmp-dots { gap:14px; }
+ #workflow .cmp-dot span { display:none; }
+ #workflow .cmp-dot { min-width:36px; }
+ #workflow .b-work { margin-top:48px; }
+ #workflow .b-head { display:block; }
+ #workflow .b-head h3 { margin-top:12px; font-size:26px; }
+ #workflow .steps { grid-template-columns:1fr 1fr; gap:28px 20px; }
+ #workflow .steps li { gap:12px; }
+ #workflow .steps b { font-size:25px; }
+ #workflow .steps span { font-size:14px; }
+}
+@media(prefers-reduced-motion:reduce) { #workflow .cmp-track { transition:none; } }
