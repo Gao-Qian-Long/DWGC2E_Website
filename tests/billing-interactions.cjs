@@ -1,0 +1,27 @@
+// Local-only browser interaction acceptance. No real account/order/payment requests.
+const assert=require('node:assert/strict'),fs=require('node:fs'),http=require('node:http'),path=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const root=path.resolve(__dirname,'..');
+const server=http.createServer((req,res)=>{const p=path.resolve(root,'.'+new URL(req.url,'http://localhost').pathname);if(!p.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}fs.readFile(p,(e,b)=>{res.writeHead(e?404:200,{'content-type':p.endsWith('.js')?'text/javascript':p.endsWith('.css')?'text/css':p.endsWith('.svg')?'image/svg+xml':p.endsWith('.png')?'image/png':p.endsWith('.webp')?'image/webp':'text/html'});res.end(e?'not found':b);});});
+(async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;const browser=await chromium.launch({channel:'msedge',headless:true});
+try{for(const width of [390,1440]){const context=await browser.newContext({viewport:{width,height:1000}});await context.addInitScript(()=>sessionStorage.setItem('dwgc2e.session',JSON.stringify({token:'LOCAL-ONLY',userId:'local-user'})));
+let created=0,paid=false,snapshotFails=false,expires=false,expiryMs=600000;const intents=new Map(),errors=[];
+const order=()=>({orderNo:'DW'+'a'.repeat(32),planId:'p',planName:'隔离验收套餐（不可付款）',status:paid?'paid':'pending',createState:'ready',displayState:paid?'paid':'awaiting_payment',channel:'alipay',payableCents:19,createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+(expires?-1000:expiryMs)).toISOString(),qrCode:'LOCAL ACCEPTANCE ONLY - NOT A PAYMENT',allowedActions:{pay:!paid&&!expires,confirm:!paid}});
+await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.origin!==origin)return route.abort();if(!u.pathname.startsWith('/api/'))return route.continue();let body={},status=200;const p=u.pathname;
+if(p.endsWith('/profile'))body={user_id:'local-user',email:'local@example.test'};
+else if(p.endsWith('/plans'))body={paymentsEnabled:true,plans:[{id:'p',name:'隔离验收套餐（不可付款）',duration_days:7,price_cents:19}],message:'仅本地验收'};
+else if(p.endsWith('/entitlements')){if(snapshotFails){status=503;body={message:'模拟会员同步失败'};}else body={userId:'local-user',subscription:{plan_name:paid?'pro':'free'},usage:{used:321,monthly_quota:paid?1000000:100000}};}
+else if(p.endsWith('/checkout')){const key=route.request().headers()['idempotency-key'];if(!intents.has(key)){intents.set(key,order());created++;}body=order();}
+else if(p.endsWith('/orders'))body={orders:created?[order()]:[],nextCursor:null};else if(p.includes('/orders/'))body=order();else body={};
+await route.fulfill({status,contentType:'application/json',body:JSON.stringify(body)});});
+const a=await context.newPage();a.on('pageerror',e=>errors.push(e.message));await a.goto(origin+'/billing.html');await a.getByRole('button',{name:'立即购买',exact:true}).waitFor();await a.getByRole('button',{name:'立即购买',exact:true}).click();await a.locator('#qrBox canvas').waitFor();assert.equal(created,1);
+await a.reload();await a.locator('#qrBox canvas').waitFor();assert.equal(created,1,'reload recovers original order');
+const b=await context.newPage();b.on('pageerror',e=>errors.push(e.message));await b.goto(origin+'/billing.html');await b.locator('#qrBox canvas').waitFor();await Promise.all([a.getByRole('button',{name:'立即购买',exact:true}).click(),b.getByRole('button',{name:'立即购买',exact:true}).click()]);assert.equal(created,1,'cross-tab lock keeps one intent');
+expiryMs=700;await a.locator('#refreshOrder').click();await a.locator('#qrBox canvas').waitFor();await a.waitForFunction(()=>!document.querySelector('#qrBox canvas'));assert.ok((await a.locator('#countdown').textContent()).includes('展示期限已结束'),'QR expires locally without another successful poll');
+expires=true;await a.locator('#refreshOrder').click();await a.waitForFunction(()=>document.querySelector('#countdown').textContent.includes('展示期限已结束'));assert.equal(await a.locator('#qrBox canvas').count(),0);
+paid=true;snapshotFails=true;await b.locator('#refreshOrder').click();await b.waitForFunction(()=>document.querySelector('#portalMessage').textContent.includes('会员信息同步失败'));assert.ok((await b.locator('#paymentStatus').textContent()).includes('支付成功'));
+snapshotFails=false;await b.locator('#refreshOrder').click();await b.waitForFunction(()=>document.querySelector('#membership').textContent.includes('pro'));assert.equal(await b.evaluate(()=>localStorage.getItem('dwgc2e.payment.pending.local-user')),null);
+assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.deepEqual(errors,[]);
+const out=process.env.PAYMENT_SCREENSHOTS;if(out){fs.mkdirSync(out,{recursive:true});await b.screenshot({path:path.join(out,'billing-paid-'+width+'.png'),fullPage:true});}
+await b.evaluate(()=>sessionStorage.setItem('dwgc2e.session',JSON.stringify({token:'OTHER-LOCAL-ACCOUNT',userId:'other'})));await b.locator('#refreshOrder').click();await b.waitForFunction(()=>document.querySelector('#checkout').hidden);assert.equal(created,1,'changed account must not purchase with the old intent');
+await context.close();console.log('PASS payment browser '+width+': QR, reload, cross-tab idempotency, expiry, paid/snapshot failure, recovery');}
+}finally{await browser.close();server.close();}})().catch(e=>{console.error(e);server.close();process.exitCode=1;});
