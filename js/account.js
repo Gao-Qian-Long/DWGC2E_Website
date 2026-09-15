@@ -27,6 +27,7 @@
   };
 
   const showAuth = message => {
+    sessionGeneration++;
     clearEntryState();
     accountPanel.hidden = true;
     authPanel.hidden = false;
@@ -54,6 +55,7 @@
     document.querySelectorAll('[data-auth-mode]').forEach(button => {
       button.classList.toggle('active', button.dataset.authMode === mode);
       button.setAttribute('aria-selected', button.dataset.authMode === mode ? 'true' : 'false');
+      button.tabIndex = button.dataset.authMode === mode ? 0 : -1;
     });
     document.querySelectorAll('.login-only').forEach(el => { el.hidden = mode !== 'login'; });
     document.querySelectorAll('.password-shared').forEach(el => { el.hidden = mode === 'forgot'; });
@@ -80,41 +82,99 @@
       status.textContent = '服务暂时不可用，可稍后重试';
     }
   };
+  const readSession = () => { try { return JSON.parse(sessionStorage.getItem(storageKey) || 'null'); } catch { return null; } };
+  let dashboardToken = '', dashboardRequest = 0;
+  let loaded = {};
+  const sections = {
+    profile: {anchor:'#profileEmail', label:'账户资料'},
+    subscription: {anchor:'#planName', label:'会员信息'},
+    usage: {anchor:'#quotaNote', label:'额度'},
+    devices: {anchor:'#deviceCount', label:'设备'}
+  };
+  for (const [name, section] of Object.entries(sections)) {
+    const status = document.createElement('small');
+    status.id = name + 'SyncStatus';
+    status.setAttribute('role', 'status');
+    status.className = 'form-message';
+    $(section.anchor).after(status);
+    section.status = status;
+  }
+  const placeholder = (name, text) => {
+    if (name === 'profile') { $('#profileName').textContent = text; $('#profileEmail').textContent = ''; $('#profileAvatar').textContent = '—'; }
+    if (name === 'subscription') $('#planName').textContent = text;
+    if (name === 'devices') $('#deviceCount').textContent = text;
+    if (name === 'usage') {
+      $('#usageUsed').textContent = '—'; $('#usageQuota').textContent = '—'; $('#usagePercent').textContent = '—';
+      $('#quotaNote').textContent = text; $('#usageBar').style.width = '0%'; $('#usageMeter').removeAttribute('aria-valuenow');
+    }
+  };
+  const applySection = (name, data, token) => {
+    if (!data || typeof data !== 'object') throw Error('返回数据无效');
+    if (name === 'profile') {
+      const displayName = data.display_name || data.account || data.email;
+      if (!displayName) throw Error('账户资料不完整');
+      $('#profileName').textContent = displayName;
+      if ($('#profileShortName')) $('#profileShortName').textContent = displayName.split(/\s+/)[0];
+      $('#profileAvatar').textContent = displayName.trim().slice(0, 1).toUpperCase();
+      $('#profileEmail').textContent = data.account && data.email && data.account !== data.email ? `账号：${data.account} · ${data.email}` : (data.account || data.email || '');
+      try { const current = readSession(); if (current?.token === token) { current.profileName = displayName; sessionStorage.setItem(storageKey, JSON.stringify(current)); } } catch {}
+    } else if (name === 'subscription') {
+      if (!data.plan_name) throw Error('会员信息不完整');
+      $('#planName').textContent = data.plan_name;
+    } else if (name === 'usage') {
+      const used = Number(data.used), quota = Number(data.monthly_quota);
+      if (data.used == null || data.monthly_quota == null || !Number.isFinite(used) || used < 0 || !Number.isFinite(quota) || quota < 0) throw Error('额度信息不完整');
+      const percent = quota > 0 ? used / quota * 100 : 0;
+      $('#usageUsed').textContent = used.toLocaleString(); $('#usageQuota').textContent = quota.toLocaleString();
+      $('#usagePercent').textContent = quota > 0 ? percent.toLocaleString(undefined, {maximumFractionDigits:1}) + '%' : '—';
+      $('#usageBar').style.width = Math.min(100, percent) + '%';
+      $('#usageMeter').setAttribute('aria-valuenow', String(Math.min(100, percent)));
+      $('#quotaNote').textContent = quota > 0 ? '本月剩余 ' + Math.max(0, quota - used).toLocaleString() + ' 字符，可在客户端使用。' : '当前暂无可用额度，请查看套餐权益。';
+    } else {
+      const items = Array.isArray(data) ? data : (data.devices || data.items);
+      const count = data.used_devices ?? (Array.isArray(items) ? items.length : null);
+      if (count == null) throw Error('设备信息不完整');
+      $('#deviceCount').textContent = String(count) + (data.max_devices != null ? ' / ' + data.max_devices : '');
+    }
+  };
   const loadDashboard = async token => {
-    const generation = sessionGeneration;
-    const headers = { Authorization: `Bearer ${token}` };
-    const [profile, subscription, usage, devices] = await Promise.all([
-      request('/v1/profile', { headers }),
-      request('/v1/subscription', { headers }),
-      request('/v1/usage', { headers }),
-      request('/v1/devices', { headers }).catch(() => null)
-    ]);
-    if (generation !== sessionGeneration) return;
-
-    const displayName = profile.display_name || profile.account || profile.email || 'DWGC2E 用户';
-    $("#profileName").textContent = displayName;
-    $("#profileShortName") && ($("#profileShortName").textContent = displayName.split(/\s+/)[0]);
-    const avatar = $("#profileAvatar"); if (avatar) avatar.textContent = displayName.trim().slice(0, 1).toUpperCase();
-    try { const current = JSON.parse(sessionStorage.getItem(storageKey) || '{}'); current.profileName = displayName; sessionStorage.setItem(storageKey, JSON.stringify(current)); } catch {}
-    $('#profileEmail').textContent = profile.account && profile.email && profile.account !== profile.email
-      ? `账号：${profile.account} · ${profile.email}` : (profile.account || profile.email || '');
-    $('#planName').textContent = subscription.plan_name || '未提供';
-    const used = Number(usage.used), quota = Number(usage.monthly_quota);
-    const validUsage = Number.isFinite(used) && used >= 0 && Number.isFinite(quota) && quota >= 0;
-    const percent = validUsage && quota > 0 ? used / quota * 100 : 0;
-    $('#usageUsed').textContent = validUsage ? used.toLocaleString() : '—';
-    $('#usageQuota').textContent = validUsage ? quota.toLocaleString() : '—';
-    const deviceItems = Array.isArray(devices) ? devices : (devices?.devices || devices?.items);
-    const count = devices?.used_devices ?? (Array.isArray(deviceItems) ? deviceItems.length : null);
-    const max = devices?.max_devices ?? subscription.max_devices;
-    $('#deviceCount').textContent = count == null ? '暂不可用' : String(count) + (max != null ? ' / ' + max : '');
-    $('#usagePercent').textContent = validUsage && quota > 0 ? percent.toLocaleString(undefined, { maximumFractionDigits: 1 }) + '%' : '—';
-    $('#usageBar').style.width = Math.min(100, percent) + '%';
-    $('#usageMeter').setAttribute('aria-valuenow', String(Math.min(100, percent)));
-    $('#quotaNote').textContent = validUsage ? (quota > 0 ? '本月剩余 ' + Math.max(0, quota - used).toLocaleString() + ' 字符，可在客户端使用。' : '当前暂无可用额度，请查看套餐权益。') : '额度暂不可用，请刷新重试。';
-    $('#dashboardMessage').textContent = '已同步 · ' + new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-    $('#dashboardMessage').className = 'form-message';
+    const generation = sessionGeneration, requestId = ++dashboardRequest;
+    const active = () => generation === sessionGeneration && requestId === dashboardRequest;
+    const current = () => active() && readSession()?.token === token;
+    if (!current()) return false;
+    if (dashboardToken !== token) { dashboardToken = token; loaded = {}; }
     showDashboard();
+    $('#dashboardMessage').textContent = '正在同步账户信息…';
+    $('#dashboardMessage').className = 'form-message';
+    const failures = [];
+    await Promise.all(Object.entries(sections).map(async ([name, section]) => {
+      if (!loaded[name]) placeholder(name, '加载中…');
+      section.status.textContent = '正在加载' + section.label + '…';
+      section.status.className = 'form-message';
+      try {
+        const data = await request('/v1/' + name, {headers:{Authorization:`Bearer ${token}`}});
+        if (!current()) return;
+        applySection(name, data, token);
+        loaded[name] = true;
+        section.status.textContent = section.label + '已同步';
+      } catch (error) {
+        if (!active()) return;
+        // The adapter removes only the expired matching token. A late response
+        // must never log out a newer account or reopen an old dashboard.
+        if ((error.authExpired && (!readSession()?.token || readSession()?.token === token)) || (error.code === 'session_changed' && !readSession()?.token)) {
+          sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); return;
+        }
+        if (!current()) return;
+        failures.push(section.label);
+        if (!loaded[name]) placeholder(name, '暂不可用');
+        section.status.textContent = section.label + (loaded[name] ? '更新失败，保留上次数据，请刷新重试。' : '暂不可用，请刷新重试。');
+        section.status.className = 'form-message error';
+      }
+    }));
+    if (!current()) return false;
+    $('#dashboardMessage').textContent = failures.length ? failures.join('、') + '同步失败，登录会话已保留。请点击刷新数据重试。' : '已同步 · ' + new Date().toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
+    $('#dashboardMessage').className = 'form-message' + (failures.length ? ' error' : '');
+    return true;
   };
 
   const sendVerificationCode = async (purpose, email, button) => {
@@ -155,7 +215,7 @@
     try {
       if (mode === 'forgot') {
         await request('/v1/auth/password/reset', { method: 'POST', body: JSON.stringify({ email: data.reset_email, code: data.code, new_password: data.new_password }) });
-        setMode('login'); setMessage('密码已重置，请使用新密码登录。'); return;
+        setMode('login'); setMessage('密码已重置，请使用新密码登录。'); form.elements.account.focus(); return;
       }
       if (mode === 'register') {
         if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true);
@@ -164,11 +224,14 @@
       const result = await request('/v1/auth/web/login', { method: 'POST', body: JSON.stringify({ account: mode === 'register' ? data.email.trim() : data.account.trim(), password: data.password }) });
       if (!result.token) throw new Error('登录响应缺少会话信息，请重试。');
       sessionGeneration++;
+      dashboardToken = '';
       try { localStorage.removeItem('dwgc2e.device-id'); } catch {}
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at, userId: result.user_id }));
+      if (returnTarget && returnTarget !== 'account.html' && readSession()?.token === result.token) {
+        window.location.replace(returnTarget); return;
+      }
       await loadDashboard(result.token);
       void checkApiStatus();
-      if (returnTarget && returnTarget !== 'account.html') window.location.replace(returnTarget);
     } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
     finally { button.disabled = false; authSubmitting = false; }
   });
