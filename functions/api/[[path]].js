@@ -5,8 +5,9 @@ export async function onRequest({ request }) {
  const path = incoming.pathname.slice('/api'.length);
  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
  const feedbackAdmin = (path === '/v1/admin/feedback' && request.method === 'GET') || (/^\/v1\/admin\/feedback\/[a-f0-9-]{36}$/.test(path) && request.method === 'POST');
+ const usersAdmin = (path === '/v1/admin/users' && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}\/membership$/.test(path) && request.method === 'POST');
  // The Worker validates ADMIN_API_KEY independently; a browser account token never grants admin access.
- if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin) || path.startsWith('/v1/billing/notify/')) {
+ if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin && !usersAdmin) || path.startsWith('/v1/billing/notify/')) {
   return new Response(JSON.stringify({error_code:'not_found',message:'接口不存在'}),{status:404,headers});
  }
  const target = new URL(upstreamOrigin); target.pathname = path; target.search = incoming.search;
