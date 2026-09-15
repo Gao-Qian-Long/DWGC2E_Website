@@ -7,3 +7,6 @@ assets/png2svg*
 Thumbs.db
 desktop.ini
 *.log
+
+# Local Cloudflare state (not a deployment asset)
+/.wrangler/

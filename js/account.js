@@ -4,15 +4,7 @@
   const site = window.DWGC2E_SITE || {};
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
-  const deviceKey = 'dwgc2e.device-id';
   const returnTarget = (() => { try { const value = new URLSearchParams(location.search).get('return'); return value && /^[a-z0-9._-]+\.html$/i.test(value) ? value : ''; } catch { return ''; } })();
-  const getDeviceId = () => {
-    try {
-      let id = localStorage.getItem(deviceKey);
-      if (!id) { id = `web-${crypto.randomUUID()}`; localStorage.setItem(deviceKey, id); }
-      return id;
-    } catch { return 'web-browser'; }
-  };
   const $ = selector => document.querySelector(selector);
   const form = $('#accountForm');
   const root = document.documentElement;
@@ -24,6 +16,8 @@
   if (!form || !api || !authPanel || !accountPanel) return;
 
   let mode = 'login';
+  let sessionGeneration = 0;
+  let authSubmitting = false;
   const codeTimers = new Map();
 
   const clearEntryState = () => {
@@ -71,21 +65,9 @@
     setMessage('');
   };
 
-  const request = async (path, options = {}) => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-    let response;
-    try {
-      response = await fetch(`${api}${path}`, {
-        ...options,
-        headers: { 'content-type': 'application/json', ...(options.headers || {}) },
-        signal: controller.signal
-      });
-    } finally { clearTimeout(timeout); }
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) { const error = new Error(data.message || data.error || data.error_code || `请求失败（${response.status}）`); error.status = response.status; throw error; }
-    return data;
-  };
+  const request = (path, options = {}) => window.DWGC2E_API.request(path, {
+    ...options, anonymous:path.startsWith('/v1/auth/') && path !== '/v1/auth/logout'
+  });
   const checkApiStatus = async () => {
     const status = $('#apiStatus');
     if (!status) return;
@@ -99,6 +81,7 @@
     }
   };
   const loadDashboard = async token => {
+    const generation = sessionGeneration;
     const headers = { Authorization: `Bearer ${token}` };
     const [profile, subscription, usage, devices] = await Promise.all([
       request('/v1/profile', { headers }),
@@ -106,6 +89,8 @@
       request('/v1/usage', { headers }),
       request('/v1/devices', { headers }).catch(() => null)
     ]);
+    if (generation !== sessionGeneration) return;
+
     const displayName = profile.display_name || profile.account || profile.email || 'DWGC2E 用户';
     $("#profileName").textContent = displayName;
     $("#profileShortName") && ($("#profileShortName").textContent = displayName.split(/\s+/)[0]);
@@ -154,15 +139,17 @@
 
   $('#sendCode')?.addEventListener('click', () => sendVerificationCode('password_reset', form.elements.reset_email.value.trim(), $('#sendCode')));
   $('#sendRegisterCode')?.addEventListener('click', () => sendVerificationCode('register', form.elements.email.value.trim(), $('#sendRegisterCode')));
-  document.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.authMode)));
+  document.querySelectorAll('[data-auth-mode]').forEach(button => button.addEventListener('click', () => { if (!authSubmitting) setMode(button.dataset.authMode); }));
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
+    if (authSubmitting) return;
     const data = Object.fromEntries(new FormData(form));
     if (mode === 'forgot') {
       if (!data.reset_email || !data.code || !data.new_password || data.new_password.length < 8) return setMessage('请填写邮箱、验证码和至少 8 位新密码。', true);
     } else if (!data.password || data.password.length < 8) return setMessage('密码至少需要 8 位。', true);
     const button = $('#authSubmit');
+    authSubmitting = true;
     button.disabled = true;
     setMessage(mode === 'login' ? '正在登录…' : mode === 'register' ? '正在创建账号…' : '正在重置密码…');
     try {
@@ -174,17 +161,29 @@
         if (!data.email || !data.register_code) return setMessage('请填写邮箱和邮箱验证码。', true);
         await request('/v1/auth/register', { method: 'POST', body: JSON.stringify({ account: data.email.trim(), email: data.email.trim(), password: data.password, display_name: data.display_name.trim() || data.email.trim(), verification_code: data.register_code }) });
       }
-      const result = await request('/v1/auth/login', { method: 'POST', body: JSON.stringify({ account: mode === 'register' ? data.email.trim() : data.account.trim(), password: data.password, device_id: getDeviceId(), device_name: data.device_name || '网页端' }) });
+      const result = await request('/v1/auth/web/login', { method: 'POST', body: JSON.stringify({ account: mode === 'register' ? data.email.trim() : data.account.trim(), password: data.password }) });
       if (!result.token) throw new Error('登录响应缺少会话信息，请重试。');
+      sessionGeneration++;
+      try { localStorage.removeItem('dwgc2e.device-id'); } catch {}
       sessionStorage.setItem(storageKey, JSON.stringify({ token: result.token, expiresAt: result.expires_at }));
       await loadDashboard(result.token);
       void checkApiStatus();
       if (returnTarget && returnTarget !== 'account.html') window.location.replace(returnTarget);
     } catch (error) { setMessage(error.name === 'AbortError' ? '服务器响应超时，请检查 API 部署状态后重试。' : (error.message || '请求失败，请稍后重试。'), true); }
-    finally { button.disabled = false; }
+    finally { button.disabled = false; authSubmitting = false; }
   });
 
-  $('#logoutButton')?.addEventListener('click', () => { sessionStorage.removeItem(storageKey); showAuth('已退出登录。'); });
+  $('#logoutButton')?.addEventListener('click', async () => {
+    const button = $('#logoutButton'); button.disabled = true;
+    sessionGeneration++;
+    try {
+      await window.DWGC2E_API.auth.logout();
+      sessionStorage.removeItem(storageKey); showAuth('已退出登录，APP 设备绑定不受影响。');
+    } catch (error) {
+      if (error.authExpired) { sessionStorage.removeItem(storageKey); showAuth('登录已失效。'); }
+      else { $('#dashboardMessage').textContent = '服务端退出尚未确认，请检查网络后重试。'; }
+    } finally { button.disabled = false; }
+  });
 
   $('#refreshButton')?.addEventListener('click', async () => {
     let saved;
@@ -198,7 +197,7 @@
     finally { button.disabled = false; button.textContent = '↻ 刷新数据'; void checkApiStatus(); }
   });
   function handleDashboardError(error) {
-    if (error.status === 401) { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); return; }
+    if (error.authExpired) { sessionStorage.removeItem(storageKey); showAuth('登录状态已失效，请重新登录。'); return; }
     showDashboard();
     $('#dashboardMessage').textContent = '同步失败，登录会话已保留。请点击刷新数据重试。';
     $('#dashboardMessage').className = 'form-message error';
