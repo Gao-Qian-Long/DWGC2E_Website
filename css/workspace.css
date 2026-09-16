@@ -43,7 +43,7 @@
   border:1px solid var(--sand-light);
   border-radius:2px;
   background:var(--sand-light);
-  font-size:13px;
+  font-size:var(--text-secondary);
   line-height:1.6
 }
 .ws-release b {
@@ -56,7 +56,7 @@
   color:var(--ink)
 }
 .ws-top-update {
-  font-size:13px;
+  font-size:var(--text-secondary);
   color:var(--brand-deep)!important;
   margin-left:auto;
   margin-right:24px
@@ -68,7 +68,7 @@
   border:1px solid var(--ws-line);
   border-radius:2px;
   background:var(--paper);
-  font:13px/1.7 var(--body);
+  font:var(--text-secondary)/1.7 var(--body);
   color:var(--ws-ink)
 }
 .ws-status-head {
@@ -80,7 +80,7 @@
 .ws-status-head span {
   margin-left:auto;
   color:var(--ws-muted);
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .ws-status-grid {
   display:grid;
@@ -126,7 +126,7 @@
   background:var(--ink);
   color:var(--paper);
   box-shadow:4px 4px 0 var(--sand);
-  font:600 14px system-ui;
+  font:600 var(--text-secondary) system-ui;
   cursor:pointer
 }
 .ws-support {
@@ -143,7 +143,7 @@
   border-radius:2px;
   padding:22px;
   box-shadow:3px 3px 0 var(--sand);
-  font:14px/1.6 var(--body);
+  font:var(--text-body)/1.6 var(--body);
   color:var(--ws-ink)
 }
 .ws-support[hidden] {
@@ -154,7 +154,7 @@
   margin:0
 }
 .ws-support p {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--ws-muted);
   margin:8px 0 16px
 }
@@ -172,7 +172,7 @@
 .ws-feedback-form label {
   display:grid;
   gap:5px;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .ws-feedback-form input,.ws-feedback-form select,.ws-feedback-form textarea {
   box-sizing:border-box;
@@ -202,7 +202,7 @@
   max-width:1000px;
   margin:40px auto;
   padding:0 24px;
-  font:14px/1.6 system-ui
+  font:var(--text-body)/1.6 system-ui
 }
 .ws-ticket {
   border:1px solid var(--ws-line);
@@ -254,7 +254,7 @@
   padding-right:18px
 }
 .billing-sidebar strong {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--ws-muted)
 }
 .billing-sidebar a {
@@ -262,7 +262,7 @@
   padding:12px;
   margin-top:6px;
   border-radius:2px;
-  font-size:14px;
+  font-size:var(--text-secondary);
   color:var(--ws-ink)
 }
 .billing-sidebar a[aria-current] {
@@ -277,7 +277,7 @@
   margin:0 0 4px
 }
 .billing-lead {
-  font-size:13px;
+  font-size:var(--text-secondary);
   color:var(--ws-muted);
   margin-bottom:16px
 }
@@ -286,7 +286,7 @@
   background:var(--sand-light);
   color:var(--ink);
   border-radius:2px;
-  font-size:13px;
+  font-size:var(--text-secondary);
   margin:14px 0
 }
 .billing-workbench {
@@ -302,7 +302,7 @@
   padding:20px
 }
 .billing-selection h2,.orders-section h2 {
-  font-size:16px;
+  font-size:var(--text-body);
   margin:0 0 14px
 }
 .billing-channel {
@@ -310,7 +310,7 @@
   padding:12px 14px;
   gap:20px;
   border-radius:2px;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 #plans {
   display:grid;
@@ -323,10 +323,10 @@
   border-radius:2px
 }
 #plans h2 {
-  font-size:15px
+  font-size:var(--text-secondary)
 }
 #plans p {
-  font-size:12px;
+  font-size:var(--text-secondary);
   line-height:1.6;
   color:var(--ws-muted)
 }
@@ -363,11 +363,11 @@
   font-size:17px
 }
 .billing-payment h3 {
-  font-size:13px;
+  font-size:var(--text-secondary);
   margin:16px 0 6px
 }
 .billing-payment p {
-  font-size:12px;
+  font-size:var(--text-secondary);
   line-height:1.7;
   color:var(--ws-muted)
 }
@@ -375,7 +375,7 @@
   color:var(--ws-ink)
 }
 .billing-order-no {
-  font-size:11px!important
+  font-size:var(--text-secondary)!important
 }
 .billing-payment:has(#checkout:not([hidden])) .billing-placeholder {
   display:none
@@ -383,7 +383,7 @@
 .billing-placeholder {
   padding:50px 12px;
   color:var(--ws-muted);
-  font-size:13px;
+  font-size:var(--text-secondary);
   line-height:1.9
 }
 .billing-placeholder span {
@@ -400,15 +400,15 @@
   display:grid;
   grid-template-columns:minmax(0,1fr) auto auto;
   gap:10px;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .billing-order small {
-  font-size:11px;
+  font-size:var(--text-secondary);
   color:var(--ws-muted)
 }
 .billing-order .btn {
   padding:6px 10px;
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .billing-body .btn-primary {
   background:var(--brand);
@@ -419,7 +419,7 @@
   display:none
 }
 .billing-body .form-message {
-  font-size:13px;
+  font-size:var(--text-secondary);
   margin:12px 0
 }
 .billing-body .ws-status {
@@ -477,7 +477,7 @@
   .billing-sidebar a {
     white-space:nowrap;
     padding:8px;
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .billing-checkout:not([hidden]) {
     display:block
@@ -513,7 +513,7 @@
   }
   .ws-top-update {
     margin:0 12px;
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .ws-release a {
     margin-left:0
@@ -527,7 +527,7 @@
   bottom:90px!important
 }
 .ws-feedback-form small {
-  font-size:11px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .billing-body .billing-channel {
@@ -546,3 +546,9 @@
 .ws-state { min-width:0; }
 .ws-status button:disabled { opacity:.6; cursor:wait; }
 @media(max-width:600px) { .ws-status-head span { margin-left:0; } .billing-main>.ws-status { padding:18px 16px; } }
+
+/* Preserve the three-card tablet row without squeezing readable action labels. */
+@media(min-width:641px) and (max-width:1000px) {
+ .account-dashboard .summary-card { padding:16px 12px!important; }
+ .account-dashboard .summary-card a { gap:6px; }
+}

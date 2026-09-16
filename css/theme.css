@@ -12,6 +12,17 @@
   font-weight:600
 }
 :root {
+  /* Semantic reading scale: do not reduce functional copy at mobile breakpoints. */
+  --text-decorative:11px;
+  --text-copyright:12px;
+  --text-badge:13px;
+  --text-small:14px;
+  --text-secondary:15px;
+  --text-body:16px;
+  --text-workflow:18px;
+  --text-subtitle:18px;
+  --leading-body:1.75;
+  --leading-secondary:1.65;
   --bg:#F5F1E8;
   --paper:#FFFCF5;
   --ink:#262521;
@@ -44,7 +55,8 @@ body {
   background:var(--bg);
   color:var(--ink);
   font-family:var(--body);
-  line-height:1.7;
+  font-size:var(--text-body);
+  line-height:var(--leading-body);
   -webkit-font-smoothing:antialiased
 }
 body:before {
@@ -128,7 +140,7 @@ a,button {
   border:1px solid var(--ink);
   border-radius:2px;
   font-family:var(--body);
-  font-size:14px;
+  font-size:var(--text-secondary);
   font-weight:600;
   line-height:1.5;
   box-shadow:3px 3px 0 var(--sand);
@@ -157,7 +169,7 @@ a,button {
   min-height:54px
 }
 .btn-sm {
-  font-size:12px;
+  font-size:var(--text-secondary);
   padding:8px 14px;
   min-height:38px
 }
@@ -173,7 +185,7 @@ a,button {
 }
 .eyebrow,.section-kicker,.section-label,.ticket-code {
   font-family:var(--mono);
-  font-size:11px;
+  font-size:var(--text-decorative);
   letter-spacing:1.6px;
   color:var(--brand-deep)
 }
@@ -184,7 +196,7 @@ a,button {
 .text-link,.inline-link {
   border-bottom:1px solid var(--ink);
   padding-bottom:4px;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .sr-only {
   position:absolute;
@@ -225,7 +237,7 @@ input::placeholder,textarea::placeholder {
   color:var(--muted)
 }
 .form-message {
-  font-size:13px;
+  font-size:var(--text-secondary);
   overflow-wrap:anywhere
 }
 .form-message.error {
@@ -252,3 +264,8 @@ button:not(.btn):active {
     transform:none
   }
 }
+
+/* Readable shared primitives, including dynamically rendered account/admin content. */
+small { font-size:var(--text-small); line-height:var(--leading-secondary); }
+.btn-sm { min-height:40px; }
+button,input,select,textarea { line-height:1.5; }

@@ -4,7 +4,7 @@
   color:var(--ink);
   background:var(--bg);
   font-synthesis:none;
-  font-size:14px;
+  font-size:var(--text-body);
   line-height:1.5;
   color-scheme:light
 }
@@ -49,7 +49,7 @@ button {
   border:0
 }
 small {
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .account-header {
   height:64px;
@@ -69,14 +69,14 @@ small {
   letter-spacing:-.4px
 }
 .header-caption {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   border-left:1px solid var(--sand-light);
   padding-left:24px
 }
 .account-home {
   margin-left:auto;
-  font-size:13px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .account-home span {
@@ -116,7 +116,7 @@ small {
   min-width:0
 }
 .identity h2 {
-  font-size:15px;
+  font-size:var(--text-secondary);
   overflow-wrap:anywhere;
   line-height:1.35
 }
@@ -124,7 +124,7 @@ small {
   display:flex;
   align-items:center;
   gap:5px;
-  font-size:11px;
+  font-size:var(--text-badge);
   color:var(--muted);
   margin-top:3px
 }
@@ -135,7 +135,7 @@ small {
   border-radius:2px
 }
 .identity-email {
-  font-size:11px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   overflow-wrap:anywhere;
   margin:10px 0 22px
@@ -149,7 +149,7 @@ small {
   align-items:center;
   gap:12px;
   border-radius:2px;
-  font-size:13px;
+  font-size:var(--text-secondary);
   padding:11px 12px;
   color:var(--muted)
 }
@@ -177,7 +177,7 @@ small {
   border-top:1px solid var(--sand-light);
   padding:17px 12px 8px;
   color:var(--muted);
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .logout-button:hover {
   color:var(--muted)
@@ -193,7 +193,7 @@ small {
   margin-bottom:20px
 }
 .section-label {
-  font-size:10px;
+  font-size:var(--text-decorative);
   letter-spacing:1.7px;
   font-weight:650;
   color:var(--muted)
@@ -213,7 +213,7 @@ small {
   padding:9px 16px;
   border-radius:2px;
   font-weight:600;
-  font-size:13px;
+  font-size:var(--text-secondary);
   white-space:nowrap;
   transition:background .15s
 }
@@ -253,7 +253,7 @@ small {
   gap:10px
 }
 .metric-label {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .summary-card strong {
@@ -266,7 +266,7 @@ small {
   max-width:100%
 }
 .summary-card a {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--brand-deep);
   display:flex;
   gap:12px
@@ -281,7 +281,7 @@ small {
   flex-wrap:wrap
 }
 .metric-value>span {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .metric-value b {
@@ -305,11 +305,11 @@ small {
   justify-content:space-between
 }
 .card-heading h2 {
-  font-size:14px;
+  font-size:var(--text-secondary);
   font-weight:650
 }
 .period-label {
-  font-size:11px;
+  font-size:var(--text-secondary);
   padding:3px 9px;
   border-radius:2px;
   background:var(--sand-light);
@@ -327,7 +327,7 @@ small {
   letter-spacing:-1px
 }
 .quota-reading span {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .usage-bar {
@@ -346,7 +346,7 @@ small {
 }
 .quota-card>p {
   color:var(--muted);
-  font-size:12px;
+  font-size:var(--text-secondary);
   margin-top:13px;
   overflow-wrap:anywhere
 }
@@ -380,7 +380,7 @@ small {
   margin:5px 0 8px
 }
 .client-copy p {
-  font-size:12px;
+  font-size:var(--text-secondary);
   line-height:1.8;
   color:var(--muted);
   max-width:380px;
@@ -392,11 +392,11 @@ small {
   justify-content:space-between;
   gap:16px;
   margin:16px 2px 0;
-  font-size:11px;
+  font-size:var(--text-secondary);
   flex-wrap:wrap
 }
 .form-message {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   overflow-wrap:anywhere;
   min-height:18px
@@ -406,7 +406,7 @@ small {
 }
 .api-status {
   color:var(--muted);
-  font-size:11px
+  font-size:var(--text-secondary)
 }
 .api-status.online {
   color:var(--muted)
@@ -417,7 +417,7 @@ small {
 .account-footer {
   text-align:center;
   color:var(--muted);
-  font-size:11px;
+  font-size:var(--text-copyright);
   padding:24px 16px
 }
 .account-footer span {
@@ -427,7 +427,7 @@ small {
   display:none;
   min-height:300px;
   place-items:center;
-  font-size:14px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 html.has-session .account-loading {
@@ -453,7 +453,7 @@ html.has-session .account-shell {
   font-weight:700;
   color:var(--brand-deep);
   letter-spacing:3px;
-  font-size:12px;
+  font-size:var(--text-decorative);
   margin-bottom:20px
 }
 .auth-mark span {
@@ -466,7 +466,7 @@ html.has-session .account-shell {
   margin-bottom:16px
 }
 .auth-intro p {
-  font-size:14px;
+  font-size:var(--text-body);
   color:var(--muted);
   line-height:1.9;
   max-width:360px
@@ -474,7 +474,7 @@ html.has-session .account-shell {
 .auth-points {
   display:flex;
   gap:18px;
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   margin-top:22px
 }
@@ -497,7 +497,7 @@ html.has-session .account-shell {
 .account-tab {
   flex:1;
   padding:8px 4px;
-  font-size:13px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   background:none;
   border-radius:2px
@@ -508,7 +508,7 @@ html.has-session .account-shell {
   box-shadow:3px 3px 0 var(--sand)
 }
 .auth-hint {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted);
   margin-bottom:16px
 }
@@ -519,7 +519,7 @@ html.has-session .account-shell {
 .auth-card label {
   display:grid;
   gap:5px;
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--muted)
 }
 .auth-card input {
@@ -548,7 +548,7 @@ html.has-session .account-shell {
 }
 .code-row button {
   padding:8px;
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .auth-submit {
   width:100%;
@@ -641,7 +641,7 @@ html.has-session .account-shell {
   }
   .account-nav a {
     padding:8px 10px;
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .account-nav a span {
     display:none
@@ -673,16 +673,16 @@ html.has-session .account-shell {
   }
   .summary-card a {
     gap:3px;
-    font-size:11px
+    font-size:var(--text-secondary)
   }
   .metric-label,.summary-card small {
-    font-size:10px
+    font-size:var(--text-secondary)
   }
   .metric-value {
     gap:3px
   }
   .metric-value>span {
-    font-size:10px
+    font-size:var(--text-secondary)
   }
   .detail-grid {
     grid-template-columns:1fr
@@ -732,5 +732,11 @@ html.has-session .account-shell {
   .account-dashboard .summary-card strong { font-size:24px; }
   .account-dashboard .metric-label,
   .account-dashboard .summary-card small,
-  .account-dashboard .summary-card a { font-size:12px; }
+  .account-dashboard .summary-card a { font-size:var(--text-secondary); }
 }
+
+/* Cards and forms retain the same visual hierarchy at every breakpoint. */
+.account-body { font-size:var(--text-body); }
+.card-heading h2 { font-size:var(--text-workflow); line-height:1.4; }
+.auth-hint,.auth-points,.client-copy p,.quota-card>p { line-height:var(--leading-secondary); }
+.account-footer a { font-size:var(--text-small); }

@@ -20,7 +20,7 @@
 .desktop-nav {
   display:flex;
   gap:25px;
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .desktop-nav a {
   padding:9px 0
@@ -34,7 +34,7 @@
   align-items:center
 }
 .nav-actions .account-nav {
-  font-size:12px;
+  font-size:var(--text-secondary);
   display:flex;
   gap:6px;
   align-items:center
@@ -67,7 +67,7 @@
   justify-content:space-between;
   color:var(--muted);
   font-family:var(--mono);
-  font-size:10px;
+  font-size:var(--text-decorative);
   letter-spacing:1px
 }
 .hero-grid {
@@ -78,7 +78,7 @@
   padding:76px 0 85px
 }
 .hero-copy .eyebrow {
-  font-size:12px;
+  font-size:var(--text-secondary);
   letter-spacing:2px;
   margin-bottom:23px
 }
@@ -103,7 +103,7 @@
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14'%3E%3Cpath d='M2 9Q45 1 88 8T170 7T252 8T298 5' fill='none' stroke='%23D97728' stroke-width='3'/%3E%3C/svg%3E") center/100% 100% no-repeat
 }
 .hero-lead {
-  font-size:14px;
+  font-size:var(--text-body);
   line-height:2;
   margin-bottom:28px
 }
@@ -116,7 +116,7 @@
   display:flex;
   gap:15px;
   font-family:var(--mono);
-  font-size:10px;
+  font-size:var(--text-decorative);
   color:var(--muted);
   margin-top:22px
 }
@@ -132,7 +132,7 @@
   margin-top:31px;
   font-family:var(--serif);
   color:var(--muted);
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .hero-note>span {
   color:var(--brand-deep);
@@ -158,7 +158,7 @@
   justify-content:space-between;
   gap:10px;
   font-family:var(--mono);
-  font-size:9px;
+  font-size:var(--text-small);
   color:var(--muted)
 }
 .sheet-head {
@@ -166,7 +166,7 @@
   border-bottom:1px solid var(--line)
 }
 .sheet-head span:last-child {
-  font-size:8px
+  font-size:var(--text-small)
 }
 .engineering-drawing {
   display:block;
@@ -200,7 +200,7 @@
 }
 .slip-kicker {
   display:block;
-  font:9px var(--mono);
+  font:var(--text-small) var(--mono);
   letter-spacing:1px;
   border-bottom:1px dashed var(--line);
   padding-bottom:10px;
@@ -210,7 +210,7 @@
   display:grid;
   grid-template-columns:1fr 20px;
   gap:2px 10px;
-  font:12px var(--mono)
+  font:var(--text-secondary) var(--mono)
 }
 .translation-slip strong {
   font:18px var(--serif);
@@ -224,7 +224,7 @@
   color:var(--brand-deep)
 }
 .translation-slip p {
-  font-size:10px;
+  font-size:var(--text-secondary);
   margin:10px 0 0
 }
 .translation-slip p span {
@@ -241,7 +241,7 @@
   text-align:center;
   padding-top:13px;
   color:var(--brand-deep);
-  font:10px/1.6 var(--mono);
+  font:var(--text-decorative)/1.6 var(--mono);
   transform:rotate(-12deg)
 }
 .round-stamp b {
@@ -250,7 +250,7 @@
 .hero-bottom {
   display:flex;
   justify-content:space-between;
-  font:10px var(--mono);
+  font:var(--text-small) var(--mono);
   color:var(--muted);
   border-top:1px solid var(--line);
   padding:17px 0 22px
@@ -283,7 +283,7 @@
   position:absolute;
   right:20px;
   bottom:8px;
-  font:9px var(--mono);
+  font:var(--text-small) var(--mono);
   background:var(--bg);
   border:1px solid var(--line);
   padding:4px 8px
@@ -311,7 +311,7 @@
   margin:0
 }
 .section-head>p,.section-head>div>p {
-  font-size:13px;
+  font-size:var(--text-secondary);
   max-width:340px;
   line-height:1.9;
   margin-bottom:4px
@@ -348,7 +348,7 @@
   color:var(--brand-deep)
 }
 .craft-card .section-kicker {
-  font-size:9px;
+  font-size:var(--text-decorative);
   margin-bottom:12px
 }
 .craft-card h3 {
@@ -356,7 +356,7 @@
   margin-bottom:13px
 }
 .craft-card p {
-  font-size:13px;
+  font-size:var(--text-secondary);
   max-width:85%;
   margin-bottom:0
 }
@@ -380,7 +380,7 @@
   white-space:nowrap
 }
 .privacy-strip p {
-  font-size:12px;
+  font-size:var(--text-secondary);
   margin:0
 }
 .proof-section {
@@ -408,14 +408,14 @@
   max-width:400px
 }
 .b-tech p {
-  font-size:13px;
+  font-size:var(--text-secondary);
   line-height:1.9
 }
 .tech-points {
   list-style:none;
   padding:0;
   margin:0;
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .tech-points li {
   padding:12px 0;
@@ -434,7 +434,7 @@
 .cmp-head {
   display:flex;
   justify-content:space-between;
-  font:10px var(--mono);
+  font:var(--text-small) var(--mono);
   margin-bottom:17px
 }
 .cmp-zoom {
@@ -527,11 +527,11 @@
   display:none
 }
 .steps span {
-  font-size:14px
+  font-size:var(--text-secondary)
 }
 .steps small {
   display:block;
-  font-size:11px;
+  font-size:var(--text-secondary);
   color:#C9C1B4;
   margin-top:5px
 }
@@ -572,12 +572,12 @@
   font-size:27px
 }
 .pass-card p {
-  font-size:13px;
+  font-size:var(--text-secondary);
   min-height:58px
 }
 .ticket-code {
   display:block;
-  font-size:9px;
+  font-size:var(--text-decorative);
   border-top:1px dashed var(--line);
   padding-top:20px;
   margin-top:32px
@@ -605,7 +605,7 @@
 }
 .faq-q:before {
   content:'0' counter(faq);
-  font:12px var(--mono);
+  font:var(--text-decorative) var(--mono);
   color:var(--brand-deep)
 }
 .faq-q i {
@@ -624,7 +624,7 @@
   display:block
 }
 .faq-a p {
-  font-size:13px;
+  font-size:var(--text-body);
   line-height:1.9;
   margin:0
 }
@@ -644,7 +644,7 @@
 }
 .download-inner p {
   max-width:560px;
-  font-size:13px;
+  font-size:var(--text-body);
   margin-bottom:0
 }
 .download-action {
@@ -653,7 +653,7 @@
 .download-action small {
   display:block;
   text-align:center;
-  font:10px var(--mono);
+  font:var(--text-secondary) var(--mono);
   margin-top:18px;
   color:var(--muted)
 }
@@ -664,7 +664,7 @@
   display:grid;
   grid-template-columns:1.3fr 1fr .7fr;
   gap:40px;
-  font-size:11px
+  font-size:var(--text-small)
 }
 .footer-grid p {
   margin:16px 0 6px
@@ -677,7 +677,7 @@
 .footer-copy {
   text-align:right;
   color:var(--muted);
-  font:11px/2 var(--mono)
+  font:var(--text-copyright)/2 var(--mono)
 }
 .to-top {
   position:fixed;
@@ -739,7 +739,7 @@ body.menu-open {
   color:var(--paper);
   z-index:150;
   max-width:90%;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .toast.show {
   display:block
@@ -756,7 +756,7 @@ body.menu-open {
 }
 .account-home {
   margin-left:auto;
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .portal-page,.legal-page {
   width:min(1100px,calc(100% - 64px));
@@ -775,7 +775,7 @@ body.menu-open {
   margin-bottom:28px
 }
 .portal-back {
-  font-size:12px;
+  font-size:var(--text-secondary);
   color:var(--brand-deep)
 }
 .portal-page h1,.legal-page h1 {
@@ -787,7 +787,7 @@ body.menu-open {
   margin-top:26px
 }
 .portal-page p,.legal-page p {
-  font-size:14px;
+  font-size:var(--text-body);
   line-height:1.9
 }
 .legal-page {
@@ -811,7 +811,7 @@ body.menu-open {
   padding:28px 15px;
   text-align:center;
   color:var(--muted);
-  font-size:13px;
+  font-size:var(--text-secondary);
   background:var(--sand-light)
 }
 .profile-form,.contact-form,.translate-form {
@@ -822,7 +822,7 @@ body.menu-open {
 .profile-form label,.contact-form label,.translate-options label {
   display:grid;
   gap:7px;
-  font-size:13px
+  font-size:var(--text-secondary)
 }
 .profile-form input,.contact-form input {
   width:100%
@@ -857,13 +857,13 @@ body.menu-open {
   width:100%;
   border-collapse:collapse;
   text-align:left;
-  font-size:13px;
+  font-size:var(--text-secondary);
   min-width:630px
 }
 .glossary-table th {
   background:var(--sand-light);
   font-family:var(--mono);
-  font-size:11px;
+  font-size:var(--text-secondary);
   font-weight:400
 }
 .glossary-table td,.glossary-table th {
@@ -873,7 +873,7 @@ body.menu-open {
   max-width:350px
 }
 .table-actions {
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .table-actions input {
   width:auto
@@ -899,7 +899,7 @@ body.menu-open {
   padding:32px
 }
 .dropzone span {
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .dropzone input {
   max-width:100%;
@@ -917,16 +917,16 @@ body.menu-open {
   gap:20px;
   padding:20px 0;
   border-bottom:1px solid var(--line);
-  font-size:13px;
+  font-size:var(--text-secondary);
   overflow-wrap:anywhere
 }
 .device-row span {
   display:block;
   color:var(--muted);
-  font-size:12px
+  font-size:var(--text-secondary)
 }
 .file-list {
-  font:12px var(--mono);
+  font:var(--text-secondary) var(--mono);
   overflow-wrap:anywhere
 }
 .status-dot {
@@ -1102,14 +1102,14 @@ body.menu-open {
     display:none
   }
   .nav-actions .account-nav {
-    font-size:11px
+    font-size:var(--text-secondary)
   }
   .hero h1 {
     font-size:40px;
     letter-spacing:-1px
   }
   .hero-copy .eyebrow {
-    font-size:10px;
+    font-size:var(--text-secondary);
     letter-spacing:1px
   }
   .hero-grid {
@@ -1117,17 +1117,17 @@ body.menu-open {
     gap:42px
   }
   .hero-lead {
-    font-size:13px
+    font-size:var(--text-body)
   }
   .hero-cta {
     gap:23px
   }
   .hero-meta {
     flex-wrap:wrap;
-    font-size:9px
+    font-size:var(--text-decorative)
   }
   .hero-note {
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .hero-visual {
     width:94%;
@@ -1138,13 +1138,13 @@ body.menu-open {
     box-shadow:5px 6px 0 var(--sand)
   }
   .sheet-head {
-    font-size:7px
+    font-size:var(--text-small)
   }
   .sheet-head span:last-child {
     display:none
   }
   .sheet-title {
-    font-size:7px
+    font-size:var(--text-small)
   }
   .studio-spark {
     width:44px;
@@ -1158,18 +1158,18 @@ body.menu-open {
     padding:12px 15px
   }
   .translation-slip>div {
-    font-size:10px
+    font-size:var(--text-secondary)
   }
   .translation-slip strong {
-    font-size:16px
+    font-size:var(--text-body)
   }
   .slip-kicker {
-    font-size:7px
+    font-size:var(--text-small)
   }
   .round-stamp {
     width:67px;
     height:67px;
-    font-size:8px;
+    font-size:var(--text-decorative);
     left:-14px;
     bottom:18px;
     padding-top:6px
@@ -1178,7 +1178,7 @@ body.menu-open {
     font-size:18px
   }
   .hero-bottom {
-    font-size:8px
+    font-size:var(--text-small)
   }
   .hero-bottom span:first-child {
     max-width:170px
@@ -1235,7 +1235,7 @@ body.menu-open {
     padding:10px
   }
   .cmp-head {
-    font-size:9px
+    font-size:var(--text-small)
   }
   .cmp-nav {
     width:30px;
@@ -1254,7 +1254,7 @@ body.menu-open {
     gap:10px
   }
   .steps span {
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .pass-grid {
     grid-template-columns:1fr;
@@ -1267,7 +1267,7 @@ body.menu-open {
     font-size:24px
   }
   .faq-q {
-    font-size:16px;
+    font-size:var(--text-body);
     gap:13px;
     padding-block:21px
   }
@@ -1315,7 +1315,7 @@ body.menu-open {
   }
   .glossary-toolbar .btn {
     padding:9px 12px;
-    font-size:12px
+    font-size:var(--text-secondary)
   }
   .device-row,.order-row {
     flex-wrap:wrap
@@ -1341,7 +1341,7 @@ body.menu-open {
   gap:20px;
   padding:18px 0;
   border-bottom:1px solid var(--line);
-  font-size:14px
+  font-size:var(--text-secondary)
 }
 .status-dot {
   display:inline-block;
@@ -1351,3 +1351,19 @@ body.menu-open {
   margin-right:10px;
   border-radius:50%
 }
+
+/* Reading rhythm without changing the editorial layout or display headings. */
+.hero-lead,.craft-card p,.pass-card p,.faq-a p,.download-inner p { line-height:var(--leading-body); }
+.hero-lead { max-width:620px; }
+.section-head>p,.section-head>div>p { font-size:var(--text-subtitle); line-height:1.65; }
+.steps span { font-size:var(--text-workflow); line-height:1.4; }
+.steps small { line-height:var(--leading-secondary); }
+.hero-cta,.sheet-head,.sheet-title { flex-wrap:wrap; }
+.footer-grid a { font-size:var(--text-small); }
+.hero-copy .eyebrow { letter-spacing:1px; }
+/* Mixed Chinese/English labels convey meaning, so they are not tiny decoration. */
+.issue-line>span:last-child,.craft-card:first-child .section-kicker,.pass-card .section-kicker { font-size:var(--text-small); }
+.footer-copy>span { font-size:var(--text-small); }
+
+/* Managed announcements use the same paper, ink and fine rules as the site. */
+.site-announcement{border-color:var(--sand);border-left:3px solid var(--brand-deep);border-radius:2px;background:var(--paper);color:var(--ink);font-size:var(--text-body);line-height:var(--leading-body)}

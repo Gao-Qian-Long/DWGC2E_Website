@@ -148,8 +148,8 @@
     const user = current.user, generation = epoch, run = detailRun;
     const plan = $('#editPlan').value, reason = $('#editReason').value.trim(), raw = $('#editExpiry').value;
     if (reason.length < 5) { tell('#detailMessage', '请填写至少 5 个字的修改原因。', true); return; }
-    if (plan === 'pro' && (!raw || !Number.isFinite(new Date(raw).getTime()))) { tell('#detailMessage', '请填写有效的会员到期时间。', true); $('#editExpiry').focus(); return; }
-    const expiry = plan === 'pro' ? new Date(raw).toISOString() : null;
+    if (plan !== 'free' && (!raw || !Number.isFinite(new Date(raw).getTime()))) { tell('#detailMessage', '请填写有效的会员到期时间。', true); $('#editExpiry').focus(); return; }
+    const expiry = ['pro', 'max'].includes(plan) ? new Date(raw).toISOString() : null;
     const changes = { plan_name: plan, expires_at: expiry, reason, version: user.version };
     const signature = JSON.stringify(changes);
     if (!attempt || attempt.signature !== signature) attempt = { signature, body: { ...changes, request_id: crypto.randomUUID() } };
