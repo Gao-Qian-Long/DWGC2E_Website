@@ -63,3 +63,8 @@ test('homepage toast and scripts are not trapped inside the closed lightbox',asy
  assert.equal(await p.locator('#lightbox .toast, #lightbox script').count(),0);
  assert.equal(await p.locator('body > .toast').count(),1);
 });
+test('account update log stays in the account navigation instead of the top header',async t=>{
+ const p=await pageFor(t,'account.html');
+ assert.equal(await p.locator('.account-header .ws-top-update').count(),0);
+ assert.equal(await p.locator('.account-sidebar .account-nav a[href="updates.html"]').count(),1);
+});
