@@ -24,6 +24,15 @@ test('managed download activates a previously disabled static link',async t=>{
  await p.waitForFunction(()=>document.querySelector('[data-download]').href==='https://download.test/app');
  assert.equal(await p.locator('[data-download]').first().evaluate(el=>{let prevented;el.addEventListener('click',e=>{prevented=e.defaultPrevented;e.preventDefault();},{once:true});el.click();return prevented;}),false);
 });
+test('homepage backup download remains grouped with the primary download action',async t=>{
+ const p=await pageFor(t,'index.html',async(u,r)=>{if(!u.pathname.endsWith('/site'))return false;await r.fulfill({json:{release:{latest_version:'2.1.1',download_url:'https://download.test/app',backup_download_url:'https://backup.test/app',release_notes:'修复下载体验。'},content:{},controls:{}}});return true;});
+ await p.locator('#managedRelease').waitFor();
+ assert.equal(await p.locator('#download>.container>#managedRelease').count(),0);
+ assert.equal(await p.locator('#download .download-action>#managedRelease').count(),1);
+ assert.equal(await p.locator('#managedRelease .managed-release-link').textContent(),'备用下载↗');
+ const layout=await p.locator('#download .download-action').evaluate(el=>({width:el.getBoundingClientRect().width,scrollWidth:el.scrollWidth}));
+ assert.ok(layout.scrollWidth<=layout.width+1);
+});
 test('authoritative empty download revokes old links on a restored page',async t=>{
  let url='https://download.test/app',reads=0;
  const p=await pageFor(t,'index.html',async(u,r)=>{if(!u.pathname.endsWith('/site'))return false;reads++;await r.fulfill({json:config(url)});return true;});

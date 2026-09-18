@@ -648,7 +648,13 @@
   margin-bottom:0
 }
 .download-action {
-  flex-shrink:0
+  flex:0 0 310px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch
+}
+.download-action>.btn {
+  width:100%
 }
 .download-action small {
   display:block;
@@ -656,6 +662,50 @@
   font:var(--text-secondary) var(--mono);
   margin-top:18px;
   color:var(--muted)
+}
+.download-section .managed-release {
+  display:grid;
+  gap:10px;
+  width:100%;
+  margin-top:12px
+}
+.download-section .managed-release-link {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:42px;
+  margin:0;
+  padding:8px 13px;
+  border:1px solid color-mix(in srgb,var(--ink) 45%,transparent);
+  background:color-mix(in srgb,var(--paper) 40%,transparent);
+  font-size:var(--text-small);
+  font-weight:600;
+  line-height:1.4;
+  transition:background .16s,transform .16s
+}
+.download-section .managed-release-link span:last-child {
+  font:17px var(--mono)
+}
+.download-section .managed-release-link:hover {
+  background:var(--paper);
+  transform:translateY(-1px)
+}
+.download-section .managed-release details {
+  width:100%;
+  padding-top:3px;
+  border-top:1px solid color-mix(in srgb,var(--ink) 25%,transparent);
+  font-size:var(--text-small)
+}
+.download-section .managed-release summary {
+  cursor:pointer;
+  color:var(--muted);
+  line-height:1.6
+}
+.download-section .managed-release details p {
+  margin:8px 0 0;
+  color:var(--muted);
+  font-size:var(--text-small);
+  line-height:var(--leading-secondary)
 }
 .site-footer {
   padding:50px 0
