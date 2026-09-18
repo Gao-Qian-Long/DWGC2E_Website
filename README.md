@@ -23,11 +23,11 @@ python -m http.server 8080
 
 ## 下载与版本配置
 
-`js/site-config.js` 中的 `downloadUrl` 和 `version` 统一控制下载入口与版本显示。更换安装包时更新配置后按现有流程发布。
+登录 `admin-release.html` 后管理软件版本、主下载链接、备用链接和更新说明，保存后由站点运行配置同步到官网，无需修改代码或重新发布。`js/site-config.js` 仅作为静态回退配置；不要用旧默认值覆盖后台设置。
 
 ## 产品边界
 
-官网用于介绍 Windows 客户端、管理账户、会员、额度和订单。图纸解析与写回在客户端完成；官网不提供在线 DWG/DXF 上传处理。术语及在线翻译预览页继续明确当前能力边界，不伪造结果。首页会员入口连接现有购买页，价格以购买页实时信息为准。
+官网用于介绍 Windows 客户端、管理账户、会员、额度和订单。图纸解析与写回在客户端完成；官网不提供在线 DWG/DXF 上传处理。术语及在线翻译预览页继续明确当前能力边界，不伪造结果。查看权益入口连接 `plans.html`，显示 Free / Pro / Max / Go；Go 为独立有效期的加量包，不替换会员。价格与额度以后台实时目录为准。
 
 ## 视觉与交互
 
@@ -38,3 +38,21 @@ python -m http.server 8080
 - 可见焦点、菜单和弹层关闭后焦点返回、减少动态效果支持。
 
 共享样式位于 `css/theme.css`；详细变更、字体维护方式、本地验证范围及限制见 `docs/WORKSHOP_REDESIGN.md`。接口接入说明继续保留在 `docs/WEB_INTEGRATION.md`。
+
+## 运营后台
+
+用户名为 `admin`，配合现有管理员密钥登录；共享安全会话最长 8 小时，切换模块无需重复登录。
+
+- `admin-users.html`：用户与会员调整。
+- `admin-plans.html`：价格、额度、有效期、展示说明与启用状态。
+- `admin-orders.html`：订单查询。
+- `admin-devices.html`：设备与解绑时间查询。
+- `admin-usage.html`：用量与额度补偿。
+- `admin-release.html`：下载链接、版本与更新说明。
+- `admin-content.html`：公告、客服、帮助与教程内容。
+- `admin-controls.html`：注册、购买、维护与设备等待天数设置。
+- `admin-feedback.html`：反馈处理、状态与内部备注。
+- `admin-audit.html`：操作审计。
+
+普通原因、反馈允许 1 个有效字符；密码、密钥、安全校验与长度上限不放宽。
+

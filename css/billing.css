@@ -108,3 +108,17 @@
     grid-template-columns:1fr
   }
 }
+/* Keep prices and purchase actions aligned despite wrapping descriptions. */
+#plans > article { display:flex; flex-direction:column; }
+#plans > article > strong { margin-top:auto; padding-top:16px; }
+#plans > article > :last-child { min-height:48px; display:flex; align-items:center; }
+#plans > article > button:last-child { justify-content:center; width:100%; }
+
+/* Equal footer geometry for paid, unavailable and free cards. */
+#plans > article > :last-child { margin: 0; flex-shrink: 0; }
+#plans > article > strong { flex-shrink: 0; }
+
+
+/* Payment diagnostics must wrap instead of expanding the mobile checkout grid. */
+.billing-body .billing-workbench > *, .billing-body .billing-checkout > * { min-width:0; }
+.billing-body .billing-qr { width:fit-content; max-width:100%; box-sizing:border-box; overflow-wrap:anywhere; }

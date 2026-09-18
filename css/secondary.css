@@ -110,3 +110,6 @@
 
 .secondary-page .secondary-footer a,.secondary-page .site-footer a { font-size:var(--text-small); }
 .secondary-page .secondary-footer,.secondary-page .site-footer { font-size:var(--text-copyright); }
+
+.managed-release p, .managed-help p { white-space: pre-wrap; overflow-wrap: anywhere; }
+

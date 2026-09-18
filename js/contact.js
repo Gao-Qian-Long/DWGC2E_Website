@@ -8,8 +8,8 @@
   form.addEventListener('submit', async event => {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(form));
-    if (!/^\S+@\S+\.\S+$/.test(data.email || '') || String(data.message || '').trim().length < 10) {
-      message.textContent = '请填写有效邮箱，并至少描述 10 个字符的问题。'; message.className = 'form-message error'; return;
+    if (!/^\S+@\S+\.\S+$/.test(data.email || '') || String(data.message || '').trim().length < 1) {
+      message.textContent = '请填写有效邮箱，并填写问题描述。'; message.className = 'form-message error'; return;
     }
     const button = form.querySelector('button[type="submit"]'); button.disabled = true; button.textContent = '提交中…';
     try {

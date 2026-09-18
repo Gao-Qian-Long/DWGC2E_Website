@@ -1,11 +1,20 @@
 (() => {
   const site = window.DWGC2E_SITE || {};
-  const APP_VERSION = site.version || "1.0.0";
+  const APP_VERSION = site.version || "";
   const DOWNLOAD_URL = site.downloadUrl || "";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+  // Keep the studies panel legible if an image fails to load on mobile.
+  $$(".cmp-slide img").forEach(img => {
+    const note = document.createElement('span'); note.className = 'study-image-status'; note.textContent = '正在加载案例图片…'; note.setAttribute('role','status'); img.after(note);
+    const loaded = () => { note.hidden = true; img.classList.remove('image-fallback'); };
+    const failed = () => { note.hidden = false; note.textContent = '案例图片暂时无法加载，请刷新重试。'; img.classList.add('image-fallback'); };
+    img.addEventListener('load',loaded); img.addEventListener('error',failed);
+    if(img.complete) { if(img.naturalWidth) loaded(); else failed(); }
+  });
 
   /* 版本号 / 下载地址：未配置时给出明确反馈，不跳转到空地址。 */
   $$('[data-version]').forEach(el => { el.textContent = APP_VERSION; });
@@ -18,11 +27,13 @@
     } else {
       el.href = '#download';
       el.setAttribute('aria-disabled', 'true');
-      el.addEventListener('click', event => {
-        event.preventDefault();
-        showToast('下载地址尚未发布，请稍后再试');
-      });
     }
+    // Read current state: managed configuration can enable or revoke this link later.
+    el.addEventListener('click', event => {
+      if (el.getAttribute('aria-disabled') !== 'true') return;
+      event.preventDefault();
+      showToast('下载地址尚未发布，请稍后再试');
+    });
   });
 
   /* 登录状态：在首页顶部明确显示头像、显示名称和登录状态。 */
@@ -94,7 +105,7 @@
     mobileNav.classList.remove("open");
     menuBtn.setAttribute("aria-expanded", "false");
     mobileNav.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("menu-open");
+    document.body.classList.remove("lightbox-open");
   }));
 
   /* 入场揭示（只切 class，动画由 CSS 负责） */
@@ -213,11 +224,12 @@
     let inertBackground = [];
     const closeLb = () => {
       lightbox.classList.remove("show");
+      if(lightbox.open)lightbox.close();
       lightbox.setAttribute("aria-hidden", "true");
       inertBackground.forEach(el => { el.inert = false; });
       inertBackground = [];
       returnFocus?.focus();
-      document.body.classList.remove("menu-open");
+      document.body.classList.remove("menu-open", "lightbox-open");
     };
     $$(".cmp-slide img").forEach(img => {
       img.tabIndex = 0;
@@ -231,13 +243,15 @@
         lbImg.src = img.currentSrc || img.src;
         lbImg.alt = img.alt;
         lightbox.classList.add("show");
+        if(!lightbox.open)lightbox.showModal();
         lightbox.setAttribute("aria-hidden", "false");
         lightbox.querySelector("button").focus();
-        document.body.classList.add("menu-open");
+        document.body.classList.add("lightbox-open");
         carousel?._stop?.();
       });
     });
     lightbox.setAttribute("aria-hidden", "true");
+    lightbox.addEventListener("cancel", e => { e.preventDefault(); closeLb(); });
     lightbox.addEventListener("click", e => { if (e.target !== lbImg) closeLb(); });
     lightbox.addEventListener("keydown", e => { if (e.key === "Tab") { e.preventDefault(); lightbox.querySelector("button").focus(); } });
     document.addEventListener("keydown", e => {
@@ -272,7 +286,7 @@
   $$('a[href^="#"]').forEach(link => {
     link.addEventListener("click", e => {
       const id = link.getAttribute("href");
-      if (!id || id === "#") return;
+      if (!id || !id.startsWith("#") || id === "#") return;
       const target = $(id);
       if (!target) return;
       e.preventDefault();
@@ -282,4 +296,3 @@
 
 
 })();
-

@@ -1351,6 +1351,13 @@ body.menu-open {
   margin-right:10px;
   border-radius:50%
 }
+.lightbox { z-index:var(--z-lightbox); overscroll-behavior:contain; }
+body.lightbox-open { overflow:hidden; }
+@media (max-width:600px) { .lightbox { padding:56px 12px calc(12px + env(safe-area-inset-bottom)); } .lightbox img { max-height:calc(100dvh - 100px); } .lightbox-close { top:12px; right:12px; min-width:44px; min-height:44px; } }
+
+
+
+.cmp-slide{position:relative}.study-image-status{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;background:#f5f0e6;color:#685744;pointer-events:none}.image-fallback{opacity:0}
 
 /* Reading rhythm without changing the editorial layout or display headings. */
 .hero-lead,.craft-card p,.pass-card p,.faq-a p,.download-inner p { line-height:var(--leading-body); }
@@ -1364,6 +1371,6 @@ body.menu-open {
 /* Mixed Chinese/English labels convey meaning, so they are not tiny decoration. */
 .issue-line>span:last-child,.craft-card:first-child .section-kicker,.pass-card .section-kicker { font-size:var(--text-small); }
 .footer-copy>span { font-size:var(--text-small); }
-
+.site-announcement{max-width:1100px;margin:20px auto;padding:16px 22px;border:1px solid #cad6bc;border-radius:12px;background:#f2f5e9;color:#23332d;white-space:pre-wrap;overflow-wrap:anywhere}.managed-help{padding-top:36px;padding-bottom:36px}.managed-help p,.managed-release p{white-space:pre-wrap;overflow-wrap:anywhere}.managed-help a,.managed-release a{display:inline-block;margin:12px 20px 12px 0}.managed-release{margin-top:14px}.managed-release details{max-width:800px}
 /* Managed announcements use the same paper, ink and fine rules as the site. */
 .site-announcement{border-color:var(--sand);border-left:3px solid var(--brand-deep);border-radius:2px;background:var(--paper);color:var(--ink);font-size:var(--text-body);line-height:var(--leading-body)}

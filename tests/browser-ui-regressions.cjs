@@ -7,6 +7,7 @@ const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 let browser, server, origin;
+const clouds=new WeakMap();
 before(async () => {
   server = http.createServer((req, res) => {
     const pathname = new URL(req.url, 'http://localhost').pathname;
@@ -48,24 +49,35 @@ async function pageFor(t, file, options = {}) {
       if (window.storageBlocked && this === localStorage) throw new DOMException('Storage unavailable','QuotaExceededError');
       return write.call(this, key, value);
     };
-  }, {session:options.session || false, rows:options.rows});
+  }, {session:options.session ?? (file === 'terminology.html'), rows:options.localRows});
+  const cloud={rows:structuredClone(options.rows||[]),revision:1};clouds.set(page,cloud);
   await page.route('**/*', async route => {
     const url = new URL(route.request().url());
     if (url.origin !== origin) return route.abort();
     if (!url.pathname.startsWith('/api/')) return route.continue();
     const endpoint = url.pathname.slice(4);
     if (options.api && await options.api(endpoint, route)) return;
+    if(endpoint==='/v1/glossary'){
+      if(route.request().method()==='PUT'){
+        if(await page.evaluate(()=>window.storageBlocked))return route.fulfill({status:503,json:{message:'未保存：云端暂时不可用'}});
+        const body=route.request().postDataJSON();
+        if(body.expected_revision!==String(cloud.revision))return route.fulfill({status:409,json:{message:'云端词库已变化'}});
+        cloud.rows=body.entries.map(row=>({...row,id:row.id||cloud.rows.find(old=>old.source===row.source)?.id||'new-'+row.source}));cloud.revision++;
+      }
+      return route.fulfill({json:{entries:cloud.rows,revision:String(cloud.revision)}});
+    }
     return route.fulfill({json:fixtures[endpoint] || {items:[]}});
   });
   await page.goto(origin + '/' + file);
   return page;
 }
 const initialRows = [{id:'a',source:'bolt',target:'螺栓',note:''},{id:'b',source:'nut',target:'螺母',note:''}];
-const stored = page => page.evaluate(() => JSON.parse(localStorage.getItem('dwgc2e.glossary.ui-test') || '[]'));
+const stored = async page => structuredClone(clouds.get(page).rows);
 async function add(page, source='washer') {
   await page.locator('#glossaryForm [name=source]').fill(source);
   await page.locator('#glossaryForm [name=target]').fill('垫圈');
   await page.locator('#saveGlossary').click();
+  await page.waitForFunction(()=>!document.querySelector('#retryGlossary').disabled);
 }
 async function login(page) {
   await page.locator('[name=account]').fill('ui@example.test');
@@ -118,12 +130,9 @@ test('row selection updates all/partial state and search clears selections', asy
   assert.equal(await p.locator('#selectAll').isChecked(),false);
   assert.equal(await p.locator('#selectAll').evaluate(e=>e.indeterminate),false);
 });
-for (const operation of ['add','edit','delete','bulk-delete','import','cloud']) {
+for (const operation of ['add','edit','delete','bulk-delete','import','local-migration']) {
   test(`glossary ${operation}: failed write, candidate export, leave warning and retry`, async t => {
-    const p = await pageFor(t,'terminology.html',{rows:initialRows, api:async (endpoint,route) => {
-      if (endpoint !== '/v1/terminology') return false;
-      await route.fulfill({json:{items:[{id:'cloud',source:'washer',target:'垫圈'}]}}); return true;
-    }});
+    const p = await pageFor(t,'terminology.html',{rows:initialRows,localRows:operation==='local-migration'?[{source:'washer',target:'垫圈'}]:undefined});
     await p.locator('[data-check=a]').waitFor();
     await p.evaluate(() => window.storageBlocked = true);
     p.on('dialog', dialog => dialog.type() === 'beforeunload' ? dialog.dismiss() : dialog.accept());
@@ -132,8 +141,9 @@ for (const operation of ['add','edit','delete','bulk-delete','import','cloud']) 
     if (operation === 'delete') await p.locator('[data-delete=a]').click();
     if (operation === 'bulk-delete') { await p.locator('#selectAll').check(); await p.locator('#deleteSelected').click(); }
     if (operation === 'import') await p.locator('#importGlossary').setInputFiles({name:'terms.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify([{source:'washer',target:'垫圈'}]))});
-    if (operation === 'cloud') await p.locator('#syncGlossary').click();
+    if (operation === 'local-migration') await p.getByRole('button',{name:'合并本机词条到云端'}).click();
     await p.locator('#retryGlossary:visible').waitFor();
+    await p.waitForFunction(()=>!document.querySelector('#retryGlossary').disabled);
     assert.match(await p.locator('#glossaryMessage').textContent(),/未保存/);
     assert.deepEqual(await stored(p),initialRows);
     assert.equal(await p.locator('[data-check]').count(),2);
@@ -149,20 +159,22 @@ for (const operation of ['add','edit','delete','bulk-delete','import','cloud']) 
     }),true);
     await p.evaluate(() => window.storageBlocked = false);
     await p.locator('#retryGlossary').click();
-    assert.deepEqual(await stored(p),exported);
+    await p.waitForFunction(()=>document.querySelector('#retryGlossary').closest('div').hidden);
+    const withoutId=rows=>rows.map(({id,...row})=>row);assert.deepEqual(withoutId(await stored(p)),withoutId(exported));
     assert.equal(await p.locator('#retryGlossary').isVisible(),false);
     assert.equal(await p.locator('#saveGlossary').isDisabled(),false);
     assert.equal(await p.evaluate(() => { const event = new Event('beforeunload',{cancelable:true}); window.dispatchEvent(event); return event.defaultPrevented; }),false);
   });
 }
-test('discarding failed edit keeps persisted data and user input', async t => {
+test('discarding failed edit reloads latest cloud without saving the draft', async t => {
   const p = await pageFor(t,'terminology.html',{rows:initialRows});
   await p.locator('[data-edit=a]').click();
   await p.evaluate(() => window.storageBlocked = true);
   await p.locator('[name=target]').fill('未保存译文'); await p.locator('#saveGlossary').click();
   p.once('dialog',d=>d.accept()); await p.locator('#discardPendingGlossary').click();
   assert.deepEqual(await stored(p),initialRows);
-  assert.equal(await p.locator('[name=target]').inputValue(),'未保存译文');
+  await p.waitForFunction(()=>!document.querySelector('#saveGlossary').disabled);
+  assert.equal(await p.locator('[name=target]').inputValue(),'');
   assert.equal(await p.locator('#saveGlossary').isEnabled(),true);
 });
 test('bulk delete respects filtering and cancellation', async t => {
@@ -171,6 +183,7 @@ test('bulk delete respects filtering and cancellation', async t => {
   p.once('dialog',d=>d.dismiss()); await p.locator('#deleteSelected').click();
   assert.deepEqual(await stored(p),initialRows);
   p.once('dialog',d=>d.accept()); await p.locator('#deleteSelected').click();
+  await p.waitForFunction(()=>!document.querySelector('#saveGlossary').disabled);
   assert.deepEqual(await stored(p),[initialRows[1]]);
   assert.equal(await p.locator('#selectAll').isChecked(),false);
 });

@@ -22,6 +22,6 @@ paid=true;snapshotFails=true;await b.locator('#refreshOrder').click();await b.wa
 snapshotFails=false;await b.locator('#refreshOrder').click();await b.waitForFunction(()=>document.querySelector('#membership').textContent.includes('pro'));assert.equal(await b.evaluate(()=>localStorage.getItem('dwgc2e.payment.pending.local-user')),null);
 assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);assert.deepEqual(errors,[]);
 const out=process.env.PAYMENT_SCREENSHOTS;if(out){fs.mkdirSync(out,{recursive:true});await b.screenshot({path:path.join(out,'billing-paid-'+width+'.png'),fullPage:true});}
-await b.evaluate(()=>sessionStorage.setItem('dwgc2e.session',JSON.stringify({token:'OTHER-LOCAL-ACCOUNT',userId:'other'})));await b.locator('#refreshOrder').click();await b.waitForFunction(()=>document.querySelector('#checkout').hidden);assert.equal(created,1,'changed account must not purchase with the old intent');
+await b.evaluate(()=>sessionStorage.setItem('dwgc2e.session',JSON.stringify({token:'OTHER-LOCAL-ACCOUNT',userId:'other'})));await b.locator('#refreshOrder').click();await b.locator('#checkout').waitFor({state:'hidden'});assert.equal(created,1,'changed account must not purchase with the old intent');
 await context.close();console.log('PASS payment browser '+width+': QR, reload, cross-tab idempotency, expiry, paid/snapshot failure, recovery');}
 }finally{await browser.close();server.close();}})().catch(e=>{console.error(e);server.close();process.exitCode=1;});

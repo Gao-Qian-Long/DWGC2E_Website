@@ -3,27 +3,22 @@
   const api = window.DWGC2E_API;
   const readSession = () => { try { return JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null'); } catch { return null; } };
   const session = readSession();
-  const valid = () => !!(session?.token && readSession()?.token === session.token && (!session.expiresAt || new Date(session.expiresAt) > new Date()));
+  const valid = () => { const current = readSession(); return !!(session?.token && current?.token === session.token && (!current.expiresAt || Date.parse(current.expiresAt) > Date.now())); };
   const profile = document.querySelector('#profileForm'), password = document.querySelector('#passwordForm'), list = document.querySelector('#deviceList');
   const retryProfile = document.querySelector('#retryProfile'), retryDevices = document.querySelector('#retryDevices');
   const say = (text, error = false) => { const node = document.querySelector('#portalMessage'); if (node) { node.textContent = text; node.className = 'form-message' + (error ? ' error' : ''); } };
   let ended = false;
   function requireLogin(text = '登录已失效，请重新登录后继续。') {
-    ended = true; say(text, true);
-    document.querySelectorAll('main input, main button, main select').forEach(node => node.disabled = true);
+    ended = true; window.DWGC2E_AUTH.requireLogin(text);
     if (list) list.replaceChildren();
-    if (profile) profile.reset();
-    if (password) password.reset();
-    const card = document.querySelector('.portal-card');
-    if (card && !card.querySelector('.portal-login-link')) {
-      const link = document.createElement('a'); link.className = 'btn btn-primary portal-login-link';
-      let target = location.pathname.split('/').pop() || 'account.html';
-      if (!target.endsWith('.html')) target += '.html';
-      link.href = 'account.html?return=' + encodeURIComponent(target); link.textContent = '重新登录'; card.append(link);
-    }
+    profile?.reset(); password?.reset();
+    document.querySelectorAll("main input,main button,main select,main textarea").forEach(el=>el.disabled=true);
   }
   const active = () => { if (ended) return false; if (!valid()) { requireLogin(); return false; } return true; };
   if (!valid()) { requireLogin('请先登录后再管理你的账户。'); return; }
+  for (const event of ['focus', 'pageshow', 'storage']) window.addEventListener(event, active);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) active(); });
+  const sessionTimer = setInterval(() => { if (!active()) clearInterval(sessionTimer); }, 1000);
   let profileBusy = false, profileReady = false;
   async function loadProfile() {
     if (profileBusy || !active()) return;
@@ -35,8 +30,8 @@
       profile.elements.display_name.value = data?.display_name || '';
       profile.dataset.savedName = profile.elements.display_name.value;
       profile.elements.email.value = data?.email || data?.account || '';
-      profile.elements.display_name.placeholder = '输入显示名称'; profileReady = true; say('');
-    } catch (error) { if (active()) say('资料暂时无法读取，请点击「重新读取」重试。' + (profileReady ? ' 已保留之前的资料。' : ''), true); }
+      profile.elements.display_name.placeholder = '输入显示名称'; profileReady = true; window.DWGC2E_AUTH.ready(); say('');
+    } catch (error) { if (active()) { window.DWGC2E_AUTH.error(); profile.elements.display_name.placeholder='暂不可用'; say('资料暂时无法读取，请点击「重新读取」重试。' + (profileReady ? ' 已保留之前的资料。' : ''), true); } }
     finally { profileBusy = false; if (!ended) { retryProfile.disabled = false; profile.elements.display_name.disabled = !profileReady; submit.disabled = !profileReady; } }
   }
   if (profile) {
@@ -74,15 +69,15 @@
         const info = document.createElement('div'), title = document.createElement('strong'), meta = document.createElement('span');
         title.textContent = device.device_name || device.name || '未命名设备'; meta.textContent = (device.platform || 'Windows') + ' · ' + (device.last_seen || device.last_seen_at || '已绑定'); info.append(title,meta); row.append(info);
         const id = device.device_id || device.id;
-        if (id) { const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-ghost btn-sm'; button.textContent = '解除绑定'; button.dataset.revoke = id;
+        if (id) { const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-ghost btn-sm'; const locked = device.can_revoke !== true; button.textContent = locked ? '尚未到可解绑时间' : '解除绑定'; button.disabled = locked; button.dataset.revoke = id; if(locked) meta.textContent += ' · ' + (device.unbind_available_at ? new Date(device.unbind_available_at).toLocaleString() + ' 后可解绑' : '暂不可解绑，请刷新或联系管理员');
           button.onclick = async () => { if (!active() || !confirm('解除后，这台 APP 的登录将失效。确定继续吗？')) return; button.disabled = true;
             try { await api.deviceManagement.revoke(id); if (!active()) return; row.remove(); emptyDevices(); say('APP 绑定已解除，设备名额已释放。'); }
             catch (error) { if (active()) { button.disabled = false; say(error.message || '解绑失败，请重试。',true); } }
           }; row.append(button); }
         list.append(row);
       }
-      devicesReady = true; emptyDevices(); say('设备列表已更新。');
-    } catch (error) { if (active()) { if (!devicesReady) { list.textContent = '设备列表暂不可用。'; } say('设备读取失败，请点击「刷新设备」重试。' + (devicesReady ? ' 已保留之前的列表。' : ''), true); } }
+      devicesReady = true; window.DWGC2E_AUTH.ready(); emptyDevices(); say('设备列表已更新。');
+    } catch (error) { if (active()) { window.DWGC2E_AUTH.error(); if (!devicesReady) { list.textContent = '设备列表暂不可用。'; } say('设备读取失败，请点击「刷新设备」重试。' + (devicesReady ? ' 已保留之前的列表。' : ''), true); } }
     finally { devicesBusy = false; if (!ended) retryDevices.disabled = false; }
   }
   function emptyDevices() { if (!list.children.length) { const empty = document.createElement('div'); empty.className = 'portal-empty'; empty.textContent = '还没有已绑定设备。在 Windows 客户端登录后，设备会显示在这里。'; list.append(empty); } }

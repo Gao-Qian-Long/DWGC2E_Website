@@ -4,7 +4,7 @@
   const site = window.DWGC2E_SITE || {};
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
-  const returnTarget = (() => { try { const value = new URLSearchParams(location.search).get('return'); return value && /^[a-z0-9._-]+\.html$/i.test(value) ? value : ''; } catch { return ''; } })();
+  const returnTarget = window.DWGC2E_AUTH.safeReturn(new URLSearchParams(location.search).get('return') || new URLSearchParams(location.search).get('returnTo'));
   const $ = selector => document.querySelector(selector);
   const form = $('#accountForm');
   const root = document.documentElement;
@@ -33,6 +33,7 @@
     authPanel.hidden = false;
     setMode('login');
     if (message) setMessage(message);
+    if (returnTarget) { const name={billing:'套餐与订单',profile:'资料与安全',devices:'设备管理',history:'翻译记录',terminology:'术语库'}[returnTarget.split('.')[0]] || '原页面'; $('#accountStatus').textContent='登录后返回'+name+'。'; }
   };
 
   const showDashboard = () => {
@@ -177,15 +178,53 @@
     return true;
   };
 
+  const captchaStates = new Map();
+  for (const [name, purpose, visibility] of [['email', 'register', 'register-only'], ['reset_email', 'password_reset', 'forgot-only']]) {
+    const input = form.elements[name];
+    const suggestions = document.createElement('datalist');
+    suggestions.id = name + '-suffixes'; input.setAttribute('list', suggestions.id); input.after(suggestions);
+    const updateSuggestions = () => {
+      const value = input.value.trim(), at = value.indexOf('@');
+      const local = at < 0 ? value : value.slice(0, at), suffix = at < 0 ? '' : value.slice(at + 1).toLowerCase();
+      suggestions.replaceChildren();
+      if (!local || /\s/.test(local)) return;
+      for (const domain of ['qq.com', '163.com', '126.com', 'outlook.com', 'gmail.com']) {
+        if (!domain.startsWith(suffix)) continue;
+        const option = document.createElement('option'); option.value = local + '@' + domain; suggestions.append(option);
+      }
+    };
+    input.addEventListener('input', () => { updateSuggestions(); captchaStates.delete(purpose); image.removeAttribute('src'); entry.value = ''; });
+    const box = document.createElement('div'); box.className = visibility + ' code-row';
+    const label = document.createElement('label'); label.textContent = '图片数字验证码';
+    const entry = document.createElement('input'); entry.inputMode = 'numeric'; entry.maxLength = 5; entry.autocomplete = 'off'; entry.placeholder = '5 位数字'; entry.setAttribute('aria-label', '图片数字验证码'); label.append(entry);
+    const image = document.createElement('img'); image.alt = '数字验证码图片'; image.width = 170; image.height = 52;
+    const refresh = document.createElement('button'); refresh.type = 'button'; refresh.className = 'btn btn-secondary'; refresh.textContent = '获取 / 换一张';
+    const right = document.createElement('div'); right.append(image, refresh); box.append(label, right); input.closest('label').after(box);
+    refresh.addEventListener('click', async () => {
+      const email = input.value.trim();
+      if (!/^\S+@\S+\.\S+$/.test(email)) { setMessage('请先填写有效邮箱。', true); input.focus(); return; }
+      refresh.disabled = true; captchaStates.delete(purpose); entry.value = '';
+      try {
+        const result = await request('/v1/auth/captcha', {method:'POST',body:JSON.stringify({email,purpose})});
+        if (input.value.trim() !== email) return;
+        image.src = result.image; captchaStates.set(purpose, {id:result.captcha_id, email, entry}); entry.focus();
+      } catch(error) { image.removeAttribute('src'); setMessage(error.message || '验证码加载失败，请重试。', true); }
+      finally { refresh.disabled = false; }
+    });
+  }
+
   const sendVerificationCode = async (purpose, email, button) => {
     if (!/^\S+@\S+\.\S+$/.test(email)) { setMessage('请先填写有效邮箱。', true); return; }
     if (codeTimers.has(button)) return;
+    const challenge = captchaStates.get(purpose);
+    if (!challenge || challenge.email !== email || !/^\d{5}$/.test(challenge.entry.value)) { setMessage('请先获取图片并填写 5 位数字验证码。', true); return; }
     button.disabled = true;
     try {
       await request(purpose === 'register' ? '/v1/auth/register/request-code' : '/v1/auth/password/request-code', {
-        method: 'POST', body: JSON.stringify({ email })
+        method: 'POST', body: JSON.stringify({ email, captcha_id: challenge.id, captcha_code: challenge.entry.value })
       });
-      setMessage('验证码已发送，请检查邮箱（10 分钟内有效）。');
+      captchaStates.delete(purpose);
+      setMessage('邮件已提交发送（验证码 10 分钟内有效）。请检查收件箱及垃圾邮件；未收到时不要连续点击发送。');
       let seconds = 60;
       button.textContent = `${seconds}s 后重试`;
       const timer = setInterval(() => {
@@ -194,7 +233,7 @@
         if (!seconds) { clearInterval(timer); codeTimers.delete(button); button.disabled = false; }
       }, 1000);
       codeTimers.set(button, timer);
-    } catch (error) { setMessage(error.message || '验证码发送失败。', true); button.disabled = false; }
+    } catch (error) { captchaStates.delete(purpose); setMessage((error.message || '验证码发送失败。') + ' 请刷新图片验证码后重试。', true); button.disabled = false; }
   };
 
   $('#sendCode')?.addEventListener('click', () => sendVerificationCode('password_reset', form.elements.reset_email.value.trim(), $('#sendCode')));
@@ -265,6 +304,17 @@
     $('#dashboardMessage').textContent = '同步失败，登录会话已保留。请点击刷新数据重试。';
     $('#dashboardMessage').className = 'form-message error';
   }
+  // A restored or idle dashboard must not keep exposing the previous account.
+  const validateDisplayedSession = () => {
+    if (accountPanel.hidden) return;
+    const current = readSession();
+    if (!current?.token || current.token !== dashboardToken || (current.expiresAt && !(Date.parse(current.expiresAt) > Date.now()))) {
+      showAuth('登录状态已变化，请重新登录或刷新页面。');
+    }
+  };
+  for (const event of ['focus', 'pageshow', 'storage']) window.addEventListener(event, validateDisplayedSession);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) validateDisplayedSession(); });
+  setInterval(validateDisplayedSession, 1000);
   // 首屏只依据本地会话决定显示：有效会话显示加载层，绝不先显示登录表单。
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');

@@ -59,7 +59,7 @@ const server = http.createServer((req, res) => {
         assert.equal(await menu.getAttribute('aria-expanded'), 'false');
         assert.equal(await menu.evaluate(el => el === document.activeElement), true);
       }
-      const opener = page.locator('a[href="contact.html"]:visible').first();
+      const opener = page.locator('.ws-support-button');
       await opener.click();
       assert.equal(await page.locator('#wsSupport input[name=email]').evaluate(el => el === document.activeElement), true);
       await page.keyboard.press('Escape');
@@ -90,3 +90,4 @@ const server = http.createServer((req, res) => {
     }
   } finally { await browser.close(); server.close(); }
 })().catch(error => { console.error(error); server.close(); process.exitCode = 1; });
+
