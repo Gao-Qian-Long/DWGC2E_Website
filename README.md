@@ -53,6 +53,9 @@ python -m http.server 8080
 - `admin-controls.html`：注册、购买、维护与设备等待天数设置。
 - `admin-feedback.html`：反馈处理、状态与内部备注。
 - `admin-audit.html`：操作审计。
+- `admin-ai.html`：模型 Provider、路由策略、服务端 Prompt、健康状态与版本回滚。
 
 普通原因、反馈允许 1 个有效字符；密码、密钥、安全校验与长度上限不放宽。
+
+
 

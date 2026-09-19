@@ -42,3 +42,43 @@ test('device force revoke proxy permits POST only; cross-origin cookie writes bl
  assert.equal((await proxy({request:new Request(url)})).status,404);
  assert.equal((await proxy({request:new Request(url,{method:'POST',headers:{cookie:'__Secure-dwgc_admin='+'a'.repeat(64),origin:'https://evil.test'}})})).status,403);assert.equal(n,1);
 });
+
+test('model routing administration forwards every admin-ai endpoint the console calls',async()=>{
+ const forwarded=[];
+ const proxy=setup(async(url,options)=>{forwarded.push(new URL(url).pathname+' '+options.method);return Response.json({ok:true});});
+ const cookie='__Secure-dwgc_admin='+'a'.repeat(64);
+ const calls=[
+  ['/v1/admin/ai/providers','GET',200],
+  ['/v1/admin/ai/policy','GET',200],
+  ['/v1/admin/ai/history','GET',200],
+  ['/v1/admin/ai/providers','POST',200],
+  ['/v1/admin/ai/providers/p1','PUT',200],
+  ['/v1/admin/ai/providers/p1/test','POST',200],
+  ['/v1/admin/ai/providers/p1','DELETE',200],
+  ['/v1/admin/ai/publish','POST',200],
+  ['/v1/admin/ai/rollback','POST',200]
+ ];
+ for(const [path,method,status] of calls){
+  const response=await proxy({request:new Request('https://site.test/api'+path,{method,headers:{cookie,origin:'https://site.test'}})});
+  assert.equal(response.status,status,method+' '+path);
+ }
+ assert.deepEqual(forwarded,[
+  '/v1/admin/ai/providers GET','/v1/admin/ai/policy GET','/v1/admin/ai/history GET',
+  '/v1/admin/ai/providers POST','/v1/admin/ai/providers/p1 PUT','/v1/admin/ai/providers/p1/test POST',
+  '/v1/admin/ai/providers/p1 DELETE','/v1/admin/ai/publish POST','/v1/admin/ai/rollback POST'
+ ]);
+});
+
+test('model routing administration still refuses cross-origin writes, other methods and unrelated admin paths',async()=>{
+ let forwarded=0;const proxy=setup(async()=>{forwarded++;return Response.json({ok:true});});
+ const cookie='__Secure-dwgc_admin='+'a'.repeat(64),same='https://site.test';
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/ai/providers',{method:'POST',headers:{cookie,origin:'https://evil.test'}})})).status,403);
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/ai/providers',{method:'POST',headers:{cookie}})})).status,403);
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/ai/providers',{method:'PATCH',headers:{cookie,origin:same}})})).status,404);
+ // The allowlist must match the '/v1/admin/ai/' path segment, not a lookalike prefix or sibling module.
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/ai-evil/providers',{method:'GET',headers:{cookie,origin:same}})})).status,404);
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/ai/../secrets',{method:'GET',headers:{cookie,origin:same}})})).status,404);
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/secrets',{method:'GET',headers:{cookie,origin:same}})})).status,404);
+ assert.equal(forwarded,0);
+});
+

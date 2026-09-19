@@ -12,8 +12,11 @@ export async function onRequest({ request, env = {} }) {
  const operationChangeRead = /^\/v1\/admin\/operations\/changes\/[-a-f0-9]{36}$/.test(path)&&request.method==='GET';
  const operationsAdmin = operationChangeRead || ( /^\/v1\/admin\/operations\/(settings|orders|devices|usage|feedback|audit)$/.test(path) && request.method==='GET') || (/^\/v1\/admin\/operations\/settings\/(release|content|controls)$/.test(path)&&request.method==='POST') || (['/v1/admin/operations/notes','/v1/admin/operations/compensations','/v1/admin/operations/devices/revoke'].includes(path)&&request.method==='POST');
  const usersAdmin = (path === '/v1/admin/users' && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}\/(membership|account)$/.test(path) && request.method === 'POST');
+ // Model routing administration. Reads are GET; edits are PUT/POST/DELETE, so they also pass
+ // the same-origin gate above in addition to the Worker's own administrator check.
+ const aiAdmin = path.startsWith('/v1/admin/ai/') && ['GET','POST','PUT','DELETE'].includes(request.method);
  // The Worker validates ADMIN_API_KEY independently; a browser account token never grants admin access.
- if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin && !usersAdmin && !plansAdmin && !operationsAdmin && !sessionAdmin) || path.startsWith('/v1/billing/notify/')) {
+ if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin && !usersAdmin && !plansAdmin && !operationsAdmin && !sessionAdmin && !aiAdmin) || path.startsWith('/v1/billing/notify/')) {
   return new Response(JSON.stringify({error_code:'not_found',message:'接口不存在'}),{status:404,headers});
  }
  const target = new URL(upstreamOrigin); target.pathname = path; target.search = incoming.search;

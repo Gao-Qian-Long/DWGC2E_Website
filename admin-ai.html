@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 路由 - DWGC2E 后台</title>
+<link rel="icon" href="favicon.svg?v=20260916-app-brand">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css?v=20260916-reviewfix">
+<link rel="stylesheet" href="css/workspace.css?v=20260916-reviewfix">
+<link rel="stylesheet" href="css/secondary.css?v=20260916-fullreview">
+<link rel="stylesheet" href="css/admin-users.css?v=20260919-ai">
+</head>
+<body class="secondary-page admin-module-page" data-admin-module="ai">
+<header class="account-header secondary-header">
+  <a class="brand" href="index.html"><img src="assets/logo.svg?v=20260916-app-brand" alt="" width="34" height="34"><span>DWGC2E</span></a>
+  <nav aria-label="主导航"><a href="account.html">账户中心</a><a href="index.html">返回官网 ↗</a></nav>
+</header>
+<nav class="admin-module-nav" aria-label="后台模块">
+  <a href="admin-users.html">用户管理</a>
+  <a href="admin-plans.html">套餐与额度</a>
+  <a href="admin-orders.html">订单售后</a>
+  <a href="admin-devices.html">设备管理</a>
+  <a href="admin-usage.html">用量明细</a>
+  <a href="admin-release.html">软件发布</a>
+  <a href="admin-content.html">公告与帮助</a>
+  <a href="admin-controls.html">功能开关</a>
+  <a href="admin-feedback.html">用户反馈</a>
+  <a href="admin-audit.html">操作记录</a>
+  <a href="admin-ai.html" aria-current="page">AI 路由</a>
+</nav>
+<main class="portal-page users-page ai-page">
+  <div class="page-heading">
+    <div><span class="eyebrow">ADMINISTRATION / AI ROUTING</span><h1>AI 路由</h1><p>配置服务端模型 Provider、故障转移和服务端翻译策略。客户端不会接收模型密钥、Provider 地址或系统提示词。</p></div>
+    <span class="context-tag">管理员专用</span>
+  </div>
+  <p id="adminChecking" class="form-message" role="status">正在验证后台登录状态…</p>
+  <div id="userGate" class="admin-gate" hidden>
+    <section class="portal-card">
+      <h2>登录运营后台</h2>
+      <p>使用管理员密钥验证一次，即可进入所有后台模块。</p>
+      <form id="userLogin" class="portal-form">
+        <label for="userName">管理员用户名</label>
+        <input id="userName" type="text" value="admin" required autocomplete="username" spellcheck="false">
+        <label for="userKey">管理员密钥</label>
+        <input id="userKey" type="password" required autocomplete="off" spellcheck="false" minlength="32" placeholder="输入管理员密钥">
+        <p class="field-hint">原始密钥不保存在浏览器。登录会话最多 8 小时，切换页面或刷新不必重复输入。</p>
+        <button class="btn btn-primary" type="submit">登录后台 →</button>
+      </form>
+    </section>
+  </div>
+  <p id="userMessage" class="form-message" role="status" aria-live="polite"></p>
+  <div class="admin-session-bar"><span>后台会话 · AI 密钥仅提交到后台接口，不写入浏览器存储</span><button id="userLogout" hidden class="btn btn-ghost" type="button">退出管理</button></div>
+
+  <section id="userWorkspace" hidden aria-label="AI 路由工作台">
+    <div class="ai-metrics" aria-label="AI 服务概览">
+      <article><span>已配置 Provider</span><strong id="metricProviders">—</strong><small>包含启用和停用配置</small></article>
+      <article><span>可用 Provider</span><strong id="metricHealthy">—</strong><small>已启用且有凭据</small></article>
+      <article><span>当前上下文版本</span><strong id="metricContext">—</strong><small>服务端 Prompt 版本</small></article>
+      <article><span>配置更新时间</span><strong id="metricUpdated">—</strong><small>以北京时间显示</small></article>
+    </div>
+
+    <section class="portal-card ai-section" aria-labelledby="providerTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">PROVIDERS / HEALTH</span><h2 id="providerTitle">模型服务</h2><p class="field-hint">先按优先级选择健康组，再按权重分配请求；超时、限流和服务端错误会按策略自动故障转移。</p></div><div class="form-actions"><button id="providerRefresh" class="btn btn-ghost" type="button">刷新状态</button><button id="providerNew" class="btn btn-primary" type="button">新增 Provider</button></div></div>
+      <p id="providerMessage" class="form-message" role="status" aria-live="polite"></p>
+      <div id="providerList" class="ai-provider-list" aria-live="polite"></div>
+    </section>
+
+    <section id="providerEditor" class="portal-card ai-section ai-editor" hidden aria-labelledby="providerEditorTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">PROVIDER / CONFIGURATION</span><h2 id="providerEditorTitle">新增模型服务</h2></div><button id="providerCancel" class="btn btn-ghost" type="button">取消</button></div>
+      <p id="providerEditorMessage" class="form-message" role="status" aria-live="polite"></p>
+      <form id="providerForm" class="ai-form">
+        <div class="ai-form-grid">
+          <label>显示名称<input id="providerName" name="name" required maxlength="80" placeholder="例如：主模型 A"></label>
+          <label>API Base URL<input id="providerBaseUrl" name="base_url" type="url" required maxlength="2048" placeholder="https://api.example.com/v1"></label>
+          <label>模型名称<input id="providerModel" name="model" required maxlength="200" placeholder="例如：翻译模型名称"></label>
+          <label class="ai-checkbox"><input id="providerEnabled" name="enabled" type="checkbox" checked><span>启用此 Provider</span></label>
+          <label>优先级<input id="providerPriority" name="priority" type="number" min="1" max="1000" step="1" value="100" required></label>
+          <label>权重<input id="providerWeight" name="weight" type="number" min="1" max="1000" step="1" value="100" required></label>
+          <label>超时（毫秒）<input id="providerTimeout" name="timeout_ms" type="number" min="5000" max="120000" step="1000" value="90000" required></label>
+          <label>连续失败阈值<input id="providerFailures" name="max_failures" type="number" min="1" max="20" step="1" value="3" required></label>
+          <label>冷却时间（秒）<input id="providerCooldown" name="cooldown_seconds" type="number" min="5" max="3600" step="1" value="60" required></label>
+          <label>Temperature<input id="providerTemperature" name="temperature" type="number" min="0" max="2" step="0.01" value="0.1" required></label>
+        </div>
+        <fieldset class="ai-credential-box">
+          <legend>凭据（不会回填已有密钥）</legend>
+          <p id="credentialState" class="field-hint">新增 Provider 需要配置 API Key 或 Worker Secret 名称，两者只能选择一个。</p>
+          <div class="ai-form-grid">
+            <label>新的 API Key<input id="providerApiKey" name="api_key" type="password" autocomplete="new-password" maxlength="4096" placeholder="仅本次提交使用，不会保存到浏览器"></label>
+            <label>Worker Secret 名称<input id="providerSecretName" name="secret_name" type="text" autocomplete="off" maxlength="80" pattern="[A-Z][A-Z0-9_]{2,80}" placeholder="例如：MODEL_PRIMARY_KEY"></label>
+          </div>
+          <label class="ai-checkbox ai-danger-option"><input id="providerClearCredential" name="clear_credential" type="checkbox"><span>清除当前凭据（谨慎操作）</span></label>
+        </fieldset>
+        <label>操作原因<input id="providerReason" name="reason" required minlength="3" maxlength="500" placeholder="说明新增、调整、停用或更换凭据的原因"></label>
+        <div class="form-actions"><button id="providerSave" class="btn btn-primary" type="submit">保存 Provider</button><button id="providerClearFields" class="btn btn-ghost" type="button">清空密钥输入</button></div>
+        <p class="field-hint">API Key 只会在提交请求体中传输，并在请求结束后立即从输入框清除。已有凭据只显示状态，不显示原文。</p>
+      </form>
+    </section>
+
+    <section class="portal-card ai-section" aria-labelledby="policyTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">POLICY / SERVER PROMPT</span><h2 id="policyTitle">服务端翻译策略</h2><p class="field-hint">这里的 Prompt 只保留在 Worker 管理端；APP 只接收上下文版本号和翻译结果。</p></div><button id="policyRefresh" class="btn btn-ghost" type="button">重新读取</button></div>
+      <p id="policyMessage" class="form-message" role="status" aria-live="polite"></p>
+      <form id="policyForm" class="ai-form">
+        <div class="ai-form-grid"><label>策略名称<input id="policyName" maxlength="100" required placeholder="例如：工程图纸标准翻译策略"></label><label>Context Version<input id="policyVersion" maxlength="100" pattern="[a-zA-Z0-9._-]{3,100}" required placeholder="例如：ctx-2026-09-19"></label></div>
+        <label>系统 Prompt<textarea id="policyPrompt" rows="14" minlength="40" maxlength="20000" required spellcheck="false" placeholder="仅管理员可见的服务端提示词"></textarea></label>
+        <label>发布原因<input id="policyReason" maxlength="500" minlength="3" required placeholder="说明本次策略调整原因"></label>
+        <div class="form-actions"><button id="policyPublish" class="btn btn-primary" type="submit">发布新策略</button><button id="policyClear" class="btn btn-ghost" type="button">清空编辑内容</button></div>
+      </form>
+      <div class="ai-current-policy"><h3>当前生效版本</h3><div id="currentPolicy" class="ai-policy-summary"></div></div>
+    </section>
+
+    <section class="portal-card ai-section" aria-labelledby="historyTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">HISTORY / AUDIT</span><h2 id="historyTitle">策略历史和操作记录</h2></div><button id="historyRefresh" class="btn btn-ghost" type="button">刷新历史</button></div>
+      <p id="historyMessage" class="form-message" role="status" aria-live="polite"></p>
+      <div id="profileHistory" class="ai-history-list"></div>
+      <h3>最近操作</h3><div id="changeHistory" class="ai-change-list"></div>
+    </section>
+  </section>
+</main>
+<dialog id="reasonDialog" class="ai-reason-dialog" aria-labelledby="reasonTitle"><form method="dialog" id="reasonForm"><h2 id="reasonTitle">填写操作原因</h2><p id="reasonDescription" class="field-hint"></p><label>原因<textarea id="reasonInput" rows="4" minlength="3" maxlength="500" required></textarea></label><div class="form-actions"><button id="reasonCancel" class="btn btn-ghost" value="cancel" type="submit">取消</button><button id="reasonConfirm" class="btn btn-primary" value="confirm" type="submit">确认操作</button></div></form></dialog>
+<footer class="secondary-footer"><span>© 2026 DWGC2E · 图纸智能翻译</span><nav aria-label="页脚导航"><a href="privacy.html">隐私政策</a><a href="terms.html">用户协议</a><a href="status.html">服务状态</a></nav></footer>
+<script src="js/site-config.js"></script><script src="js/admin-auth.js?v=20260916-fullreview"></script><script src="js/admin-ai.js?v=20260919-ai"></script>
+</body>
+</html>
