@@ -42,7 +42,7 @@
     key = ''; current = null; selectedId = null; attempt = null; page = 1; total = 0;
     listBusy = false; detailBusy = false; saving = false;
     $('#userKey').value = ''; $('#userSearch').value = ''; $('#memberFilter').value = 'all';
-    $('#membershipForm').reset(); $('#userGate').hidden = false;$('#adminChecking').hidden=true; $('#userWorkspace').hidden = true;
+    detailDirty=false; $('#membershipForm').reset(); $('#userGate').hidden = false;$('#adminChecking').hidden=true; $('#userWorkspace').hidden = true;
     $('#detailContent').hidden = true; $('#userDetail').close(); $('#detailTitle').textContent = '用户详情';
     for (const id of ['userList','userIdentity','detailFacts','usageHistory','changeHistory']) $('#' + id).replaceChildren();
     for (const id of ['asOf','resultCount','userPage','detailMessage']) $('#' + id).textContent = '';
@@ -81,7 +81,7 @@
       const usage = node('div', '', 'row-usage');
       usage.append(node('strong', `${number(user.used)} / ${number(user.monthly_quota)}`), node('p', `本月字符 · ${number(user.task_count)} 个任务`));
       const meter = node('div', '', 'usage-meter'), fill = node('span', '');
-      fill.style.width = Math.min(100, Math.max(0, 100 * user.used / user.monthly_quota)) + '%'; meter.append(fill); usage.append(meter);
+      const quotaPct = user.monthly_quota > 0 ? Math.min(100, Math.max(0, 100 * user.used / user.monthly_quota)) : 0; fill.style.width = quotaPct + '%'; meter.append(fill); usage.append(meter);
       const button = node('button', '查看详情', 'btn btn-ghost'); button.type = 'button'; button.onclick = () => openDetail(user.id);
       row.append(identity, membership, usage, button); list.append(row);
     }
@@ -198,12 +198,13 @@
   $('#userFilters').onsubmit = event => { event.preventDefault(); load(1); };
   $('#memberFilter').onchange = () => load(1);
   $('#userRefresh').onclick = () => load();
-  $('#userLogout').onclick = async () => {if((opsDirty||planDirty)&&!confirm('退出会丢弃尚未保存的输入，继续吗？'))return;$('#userLogout').disabled=true;try{await adminAuth.logout();tell('#userMessage','已退出全部后台页面。');}catch(error){tell('#userMessage','退出未完成，请重试。'+describe(error),true);}finally{$('#userLogout').disabled=false;}};
+  $('#userLogout').onclick = async () => {if((opsDirty||planDirty||detailDirty)&&!confirm('退出会丢弃尚未保存的输入，继续吗？'))return;$('#userLogout').disabled=true;try{await adminAuth.logout();tell('#userMessage','已退出全部后台页面。');}catch(error){tell('#userMessage','退出未完成，请重试。'+describe(error),true);}finally{$('#userLogout').disabled=false;}};
   $('#userPrev').onclick = () => load(page - 1); $('#userNext').onclick = () => load(page + 1);
   $('#detailClose').onclick = () => $('#userDetail').close();
   $('#userDetail').addEventListener('close', () => { detailRun++; detailBusy = false; current = null; selectedId = null; attempt = null; $('#detailContent').hidden = true; controls(); });
   $('#detailReload').onclick = () => { if (selectedId && (!$('#editReason').value.trim() || confirm('重新加载会清除尚未保存的输入，是否继续？'))) openDetail(selectedId); };
   $('#editPlan').onchange = controls;
+  $('#membershipForm').oninput = () => { detailDirty = true; };
   $('#membershipForm').onsubmit = async event => {
     event.preventDefault(); if (saving || detailBusy || !current) return;
     const user = current.user, generation = epoch, run = detailRun;
@@ -229,7 +230,7 @@
     } finally { if (generation === epoch) { saving = false; controls(); } }
   };
   // Operations shares the in-memory admin session; never stores credentials in the browser.
-  let planDirty=false;
+  let planDirty=false;let detailDirty=false;
   let opsTab=moduleId,opsRun=0,opsPage=1,opsQuery='',opsBusy=false,opsAttempt=null,opsDirty=false;
   const opsNames={users:'用户管理',plans:'套餐与额度',orders:'订单售后',devices:'设备管理',usage:'用量明细',release:'软件发布',content:'公告与帮助',controls:'功能开关',feedback:'用户反馈',audit:'操作记录'};
   const opsHints={release:'保存后更新官网与软件的版本查询信息，不会生成或上传安装包。仅支持 HTTPS 下载地址。',content:'公告仅显示在独立公告栏，不修改首页标题与产品简介。支持定时发布与下架，时间按本机时区填写。内容只按纯文本显示。',controls:'暂停购买只阻止新订单，不影响旧订单到账。维护开关暂停新的翻译请求。自助解绑默认等待 20 天，可设置 0–365 天（0 表示无需等待）。保存后立即按原绑定时间重新计算所有现有绑定；管理员强制解绑不受限制。',orders:'查询订单和到账记录。售后备注不改变付款或权益状态；异常订单须核对支付方证据，不能手动伪造已支付。',devices:'管理员可立即强制解绑，不受用户等待期限制；须填写原因并确认，将释放设备名额并撤销该设备 APP 登录。',usage:'填写完整用户编号，查看每次请求的预留、实际扣费与 Go 加量包余额。',feedback:'记录处理进度和内部备注；内部备注不会发送给用户。',audit:'记录配置、套餐、会员和售后修改。恢复配置时先载入历史值核对，再以新操作保存，不回滚订单或已消费权益。'};
@@ -274,7 +275,7 @@
   $('#opsRefresh').onclick=()=>{if(!opsDirty||confirm('重新读取将丢弃尚未保存的输入，继续吗？'))loadOps();};
 
   window.addEventListener('admin-logout',()=>{clear();tell('#userMessage','后台会话已退出，请重新登录。');});
-  window.addEventListener('beforeunload',e=>{if(opsDirty||planDirty){e.preventDefault();e.returnValue='';}});
+  window.addEventListener('beforeunload',e=>{if(opsDirty||planDirty||detailDirty){e.preventDefault();e.returnValue='';}});
   window.addEventListener('pagehide',()=>{clear();$('#userGate').hidden=true;$('#adminChecking').hidden=false;tell('#userMessage','');});
   let checking=false;
   async function restoreSession(){if(checking)return;checking=true;const generation=epoch;try{await adminAuth.check();if(generation!==epoch)return;if(!key)await startAdmin();}catch(error){if(generation!==epoch)return;if(error.status===401){clear();tell('#userMessage','请登录后台；有效会话内切换页面和刷新无需重输密钥。');}else {$('#adminChecking').hidden=true;$('#userGate').hidden=!!key;tell('#userMessage','暂时无法检查后台登录状态，请重试。',true);}}finally{checking=false;}}

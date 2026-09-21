@@ -207,7 +207,7 @@
       try {
         const result = await request('/v1/auth/captcha', {method:'POST',body:JSON.stringify({email,purpose})});
         if (input.value.trim() !== email) return;
-        image.src = result.image; captchaStates.set(purpose, {id:result.captcha_id, email, entry}); entry.focus();
+        const captchaImage = String(result.image || ''); if (!/^data:image\//.test(captchaImage) && !/^https:\/\//.test(captchaImage)) throw new Error('验证码图片格式异常，请刷新重试。'); image.src = captchaImage; captchaStates.set(purpose, {id:result.captcha_id, email, entry}); entry.focus();
       } catch(error) { image.removeAttribute('src'); setMessage(error.message || '验证码加载失败，请重试。', true); }
       finally { refresh.disabled = false; }
     });

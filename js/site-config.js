@@ -5,6 +5,6 @@ window.DWGC2E_SITE = Object.freeze({
   downloadLabel: "蓝奏云下载",
   siteOrigin: "https://cad.pocketter.dpdns.org",
   apiBaseUrl: "/api",
-  contactEmail: ""
+  contactEmail: "" // 留空表示未配置：contact.js 会隐藏邮箱入口，填写后自动显示
 });
 

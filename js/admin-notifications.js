@@ -309,6 +309,7 @@
   $('userLogin').addEventListener('submit', async event => {
     event.preventDefault(); if (loading) return;
     const key = $('userKey').value, username = $('userName').value.trim();
+    if (key.trim() !== key || key.length < 32) { setMessage('userMessage', '请输入已部署的管理员密钥（至少 32 个字符，不能含首尾空格）。', true); return; }
     if (!key || !username) return;
     setBusy(true); setMessage('userMessage', '正在验证后台登录…');
     try { await auth.login(key, username); $('userKey').value = ''; showWorkspace(); await loadList(1); }

@@ -12,9 +12,14 @@ export async function onRequest({ request, env = {} }) {
  const operationChangeRead = /^\/v1\/admin\/operations\/changes\/[-a-f0-9]{36}$/.test(path)&&request.method==='GET';
  const operationsAdmin = operationChangeRead || ( /^\/v1\/admin\/operations\/(settings|orders|devices|usage|feedback|audit)$/.test(path) && request.method==='GET') || (/^\/v1\/admin\/operations\/settings\/(release|content|controls)$/.test(path)&&request.method==='POST') || (['/v1/admin/operations/notes','/v1/admin/operations/compensations','/v1/admin/operations/devices/revoke'].includes(path)&&request.method==='POST');
  const usersAdmin = (path === '/v1/admin/users' && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}\/(membership|account)$/.test(path) && request.method === 'POST');
- // Model routing administration. Reads are GET; edits are PUT/POST/DELETE, so they also pass
- // the same-origin gate above in addition to the Worker's own administrator check.
- const aiAdmin = path.startsWith('/v1/admin/ai/') && ['GET','POST','PUT','DELETE'].includes(request.method);
+  // Model routing administration. Reads are GET; edits are POST, so they also pass
+  // the same-origin gate above in addition to the Worker's own administrator check.
+  // Enumerated to match the Worker's actual admin/ai routes exactly — no prefix wildcard.
+  const aiAdmin = (path === '/v1/admin/ai/providers' && ['GET','POST'].includes(request.method))
+    || (path === '/v1/admin/ai/policy' && request.method === 'GET')
+    || (path === '/v1/admin/ai/publish' && request.method === 'POST')
+    || (path === '/v1/admin/ai/rollback' && request.method === 'POST')
+    || (path === '/v1/admin/ai/history' && request.method === 'GET');
  // Targeted user notifications. Enumerated shapes only: the collection, a bare uuid, its recipient
  // list (read) and its withdraw action (write). No prefix or wildcard match is granted.
  const notificationsAdmin = (path === '/v1/admin/notifications' && ['GET','POST'].includes(request.method)) || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}$/.test(path) && ['GET','POST'].includes(request.method)) || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}\/recipients$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}\/withdraw$/.test(path) && request.method === 'POST');
