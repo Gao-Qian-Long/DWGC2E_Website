@@ -75,7 +75,7 @@
     const root = $('selectionList'); root.replaceChildren();
     $('selectionSummary').textContent = selection.size ? `已选择 ${selection.size} 位收件人（上限 ${AUDIENCE_MAX} 位，发送前请再核对一次）。` : '尚未选择收件人。请先搜索并勾选上方列表。';
     $('notifySend').disabled = loading || sending || selection.size === 0;
-    if (!selection.size) { root.append(text('p', '发送范围为空，通知不会提交。', 'portal-empty')); return; }
+    if (!selection.size) return;
     for (const user of selection.values()) {
       const chip = text('span', '', 'nt-chip');
       chip.append(text('span', selectionLabel(user)));
@@ -102,9 +102,19 @@
       const box = document.createElement('input'); box.type = 'checkbox'; box.checked = selection.has(user.id);
       box.setAttribute('aria-label', `选择收件人 ${selectionLabel(user)}`);
       box.onchange = () => { if (!toggleSelection(user, box.checked)) box.checked = false; };
-      const identity = document.createElement('div'); identity.append(text('strong', selectionLabel(user)), text('small', user.account || '未设置账号'));
-      const contact = document.createElement('div'); contact.append(text('small', user.email || '未填写邮箱'));
-      const identityId = document.createElement('div'); identityId.append(text('small', user.id));
+      const label = selectionLabel(user);
+      // 同一信息只出现一次：账号即昵称或邮箱时不再重复展示。
+      const account = user.account && user.account !== label ? user.account : '';
+      const email = user.email && user.email !== label && user.email !== account ? user.email : '';
+      const identity = document.createElement('div'); identity.append(text('strong', label));
+      if (account) identity.append(text('small', account));
+      const contact = document.createElement('div');
+      if (email) contact.append(text('small', email));
+      else if (!user.email) contact.append(text('small', '未填写邮箱'));
+      const identityId = document.createElement('div'); identityId.className = 'nt-id'; identityId.title = user.id;
+      identityId.append(text('small', '用户编号'));
+      const idValue = text('small', user.id); idValue.className = 'nt-id-value';
+      identityId.append(idValue);
       row.append(box, identity, contact, identityId); root.append(row);
     }
     $('targetPrev').disabled = loading || targetPage <= 1;
@@ -281,7 +291,7 @@
       sendAttempt = null; selection.clear(); form.reset(); renderSelection(); renderTargets();
       await loadList(1);
       setMessage('notifyMessage', result?.replayed ? `该请求此前已提交，通知“${title}”未重复发送。` : `已发布“${created.title || title}”，收件人 ${number(created.recipient_count ?? detail.user_ids.length)} 位。`);
-    } catch (error) { setMessage('notifyMessage', describe(error) + ' 未确认成功前请勿修改内容后重复提交，重试会复用同一请求编号。', true); }
+    } catch (error) { setMessage('notifyMessage', describe(error) + ' 相同内容重试会复用同一请求编号，不会重复发送；修改内容后会生成新编号，视为全新发布。', true); }
     finally { sending = false; setBusy(false); renderSelection(); }
   }
 
