@@ -49,3 +49,7 @@
 .nt-danger{color:var(--brand-deep)}
 .nt-notification h3{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:20px;margin:0 0 6px}
 @media(max-width:820px){.nt-target{grid-template-columns:auto minmax(0,1fr);gap:12px}.nt-target>div:last-child{grid-column:2}.nt-recipients-body .user-row{grid-template-columns:minmax(0,1fr) auto}}
+/* 小红点：未处理反馈计数徽标（js/admin-badges.js 渲染，admin-users.css 全后台共用） */
+.admin-module-nav a{position:relative}
+.admin-nav-badge{display:inline-block;min-width:17px;margin-left:6px;padding:0 5px;border:2px solid var(--ink);border-radius:999px;background:#B3261E;color:#fff;font-family:var(--body);font-size:11px;font-weight:700;line-height:1.5;text-align:center;vertical-align:1px;box-shadow:2px 2px 0 var(--ink)}
+
