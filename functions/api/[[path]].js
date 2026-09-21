@@ -15,8 +15,11 @@ export async function onRequest({ request, env = {} }) {
  // Model routing administration. Reads are GET; edits are PUT/POST/DELETE, so they also pass
  // the same-origin gate above in addition to the Worker's own administrator check.
  const aiAdmin = path.startsWith('/v1/admin/ai/') && ['GET','POST','PUT','DELETE'].includes(request.method);
+ // Targeted user notifications. Enumerated shapes only: the collection, a bare uuid, its recipient
+ // list (read) and its withdraw action (write). No prefix or wildcard match is granted.
+ const notificationsAdmin = (path === '/v1/admin/notifications' && ['GET','POST'].includes(request.method)) || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}$/.test(path) && ['GET','POST'].includes(request.method)) || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}\/recipients$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/notifications\/[-a-f0-9]{36}\/withdraw$/.test(path) && request.method === 'POST');
  // The Worker validates ADMIN_API_KEY independently; a browser account token never grants admin access.
- if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin && !usersAdmin && !plansAdmin && !operationsAdmin && !sessionAdmin && !aiAdmin) || path.startsWith('/v1/billing/notify/')) {
+ if (!path.startsWith('/v1/') || (path.startsWith('/v1/admin/') && !feedbackAdmin && !usersAdmin && !plansAdmin && !operationsAdmin && !sessionAdmin && !aiAdmin && !notificationsAdmin) || path.startsWith('/v1/billing/notify/')) {
   return new Response(JSON.stringify({error_code:'not_found',message:'接口不存在'}),{status:404,headers});
  }
  const target = new URL(upstreamOrigin); target.pathname = path; target.search = incoming.search;

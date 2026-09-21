@@ -69,6 +69,18 @@ test('model routing administration forwards every admin-ai endpoint the console 
  ]);
 });
 
+test('targeted notification administration forwards only the enumerated notification shapes',async()=>{
+ const forwarded=[];
+ const proxy=setup(async(url,options)=>{forwarded.push(new URL(url).pathname+' '+options.method);return Response.json({ok:true});});
+ const id='3f2b8c14-9d5e-4a71-8b02-c6de1f4a7b93',cookie='__Secure-dwgc_admin='+'a'.repeat(64),same='https://site.test';
+ const allowed=[['/v1/admin/notifications','GET'],['/v1/admin/notifications','POST'],['/v1/admin/notifications/'+id,'GET'],['/v1/admin/notifications/'+id,'POST'],['/v1/admin/notifications/'+id+'/recipients','GET'],['/v1/admin/notifications/'+id+'/withdraw','POST']];
+ for(const [path,method] of allowed)assert.equal((await proxy({request:new Request('https://site.test/api'+path,{method,headers:{authorization:'Bearer ordinary'}})})).status,200,method+' '+path);
+ const denied=[['/v1/admin/unknown-xyz','GET'],['/v1/admin/notifications','DELETE'],['/v1/admin/notifications','PUT'],['/v1/admin/notifications/'+id,'DELETE'],['/v1/admin/notifications/'+id+'/recipients','POST'],['/v1/admin/notifications/'+id+'/withdraw','GET'],['/v1/admin/notifications/'+id+'/recipients/extra','GET'],['/v1/admin/notifications/not-a-uuid','GET'],['/v1/admin/notifications/'+'A'.repeat(36),'GET'],['/v1/admin/notifications/'+id+'x','GET'],['/v1/admin/notifications-evil','GET'],['/v1/admin/notifications-evil/recipients','GET']];
+ for(const [path,method] of denied)assert.equal((await proxy({request:new Request('https://site.test/api'+path,{method,headers:{cookie,origin:same}})})).status,404,method+' '+path);
+ assert.equal((await proxy({request:new Request('https://site.test/api/v1/admin/notifications',{method:'POST',headers:{cookie,origin:'https://evil.test'}})})).status,403);
+ assert.deepEqual(forwarded,allowed.map(([path,method])=>path+' '+method));
+});
+
 test('model routing administration still refuses cross-origin writes, other methods and unrelated admin paths',async()=>{
  let forwarded=0;const proxy=setup(async()=>{forwarded++;return Response.json({ok:true});});
  const cookie='__Secure-dwgc_admin='+'a'.repeat(64),same='https://site.test';

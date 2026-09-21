@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>定向通知 - DWGC2E 后台</title>
+<link rel="icon" href="favicon.svg?v=20260916-app-brand">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/style.css?v=20260916-reviewfix">
+<link rel="stylesheet" href="css/workspace.css?v=20260916-reviewfix">
+<link rel="stylesheet" href="css/secondary.css?v=20260916-fullreview">
+<link rel="stylesheet" href="css/admin-users.css?v=20260920-notify">
+</head>
+<body class="secondary-page admin-module-page nt-page" data-admin-module="notifications">
+<header class="account-header secondary-header">
+  <a class="brand" href="index.html"><img src="assets/logo.svg?v=20260916-app-brand" alt="" width="34" height="34"><span>DWGC2E</span></a>
+  <nav aria-label="主导航"><a href="account.html">账户中心</a><a href="index.html">返回官网 ↗</a></nav>
+</header>
+<nav class="admin-module-nav" aria-label="后台模块"><a href="admin-users.html">用户管理</a><a href="admin-plans.html">套餐与额度</a><a href="admin-orders.html">订单售后</a><a href="admin-devices.html">设备管理</a><a href="admin-usage.html">用量明细</a><a href="admin-release.html">软件发布</a><a href="admin-content.html">公告与帮助</a><a href="admin-controls.html">功能开关</a><a href="admin-feedback.html">用户反馈</a>
+  <a href="admin-ai.html">AI 路由</a><a href="admin-notifications.html" aria-current="page">定向通知</a><a href="admin-audit.html">操作记录</a></nav>
+<main class="portal-page users-page">
+  <div class="page-heading">
+    <div><span class="eyebrow">ADMINISTRATION / NOTIFICATIONS</span><h1>定向通知</h1><p>按账号、邮箱或用户编号筛选收件人，向指定账户发送站内通知，并跟踪已读/未读名单。</p></div>
+    <span class="context-tag">管理员专用</span>
+  </div>
+  <p id="adminChecking" class="form-message" role="status">正在验证后台登录状态…</p>
+  <div id="userGate" class="admin-gate" hidden>
+    <section class="portal-card">
+      <h2>登录运营后台</h2>
+      <p>使用管理员密钥验证一次，即可进入所有后台模块。</p>
+      <form id="userLogin" class="portal-form">
+        <label for="userName">管理员用户名</label>
+        <input id="userName" type="text" value="admin" required autocomplete="username" spellcheck="false">
+        <label for="userKey">管理员密钥</label>
+        <input id="userKey" type="password" required autocomplete="off" spellcheck="false" minlength="32" placeholder="输入管理员密钥">
+        <p class="field-hint">原始密钥不保存在浏览器。登录会话最多 8 小时，切换页面或刷新不必重复输入。</p>
+        <button class="btn btn-primary" type="submit">登录后台 →</button>
+      </form>
+    </section>
+  </div>
+  <p id="userMessage" class="form-message" role="status" aria-live="polite"></p>
+  <div class="admin-session-bar"><span>后台会话 · 通知正文与收件人选择仅保存在当前页面，不写入浏览器存储</span><button id="userLogout" hidden class="btn btn-ghost" type="button">退出管理</button></div>
+
+  <section id="userWorkspace" hidden aria-label="定向通知工作台">
+    <div id="metrics" class="user-metrics" aria-label="通知概览">
+      <article><span>本页通知</span><strong id="metricTotal">—</strong><small>当前分页已发布的通知</small></article>
+      <article><span>累计收件人次</span><strong id="metricRecipients">—</strong><small>本页通知的投递总数</small></article>
+      <article><span>尚未读取</span><strong id="metricUnread">—</strong><small>等待客户端回执</small></article>
+      <article><span>已撤回</span><strong id="metricWithdrawn">—</strong><small>撤回后客户端不再展示</small></article>
+    </div>
+
+    <section class="portal-card" aria-labelledby="targetTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">AUDIENCE / TARGETING</span><h2 id="targetTitle">选择收件人</h2><p class="field-hint">支持账号、邮箱、昵称或完整用户编号；一次最多发送给 500 位账户，超出请分批发送。</p></div><div class="form-actions"><button id="selectPage" class="btn btn-ghost" type="button">全选本页</button><button id="selectionClear" class="btn btn-ghost" type="button">清空选择</button></div></div>
+      <p id="targetMessage" class="form-message" role="status" aria-live="polite"></p>
+      <form id="targetForm" class="ops-search"><input id="targetSearch" type="search" maxlength="100" placeholder="账号、邮箱、昵称或完整用户编号" aria-label="收件人查询条件"><button id="targetSearchButton" class="btn btn-primary" type="submit">搜索用户</button></form>
+      <div class="directory-heading"><h2>账户列表</h2><span id="targetCount" class="field-hint"></span></div>
+      <div id="targetList" aria-live="polite"></div>
+      <div class="ops-pagination"><button id="targetPrev" class="btn btn-ghost" type="button">上一页</button><span id="targetPage">第 1 页</span><button id="targetNext" class="btn btn-ghost" type="button">下一页</button></div>
+      <h3>已选收件人</h3>
+      <p id="selectionSummary" class="field-hint"></p>
+      <div id="selectionList" class="nt-selection"></div>
+    </section>
+
+    <section class="portal-card" aria-labelledby="composeTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">COMPOSE / DELIVERY</span><h2 id="composeTitle">编写通知</h2><p class="field-hint">标题 1–120 字、正文 1–2000 字。重复提交同一请求编号不会重复发送，最后确认前的失败可以直接重试。</p></div></div>
+      <p id="notifyMessage" class="form-message" role="status" aria-live="polite"></p>
+      <form id="notifyForm" class="ops-form">
+        <label for="notifyTitle">通知标题</label>
+        <input id="notifyTitle" type="text" required maxlength="120" placeholder="例如：服务维护提醒">
+        <label for="notifyBody">通知正文</label>
+        <textarea id="notifyBody" rows="6" required maxlength="2000" placeholder="客户端会在公告中心展示这段内容，请写清生效时间与影响范围。"></textarea>
+        <label for="notifyExpiry">有效期（可选）<span class="field-hint">留空表示长期有效；到期后客户端不再展示。</span></label>
+        <input id="notifyExpiry" type="datetime-local" step="1">
+        <label for="notifyReason">发送原因</label>
+        <textarea id="notifyReason" rows="3" required maxlength="500" placeholder="说明本次推送的原因（必填，写入操作记录）"></textarea>
+        <div class="form-actions"><button id="notifySend" class="btn btn-primary" type="submit" disabled>发送通知 →</button></div>
+      </form>
+    </section>
+
+    <section class="portal-card" aria-labelledby="listTitle">
+      <div class="admin-toolbar"><div><span class="eyebrow">HISTORY / RECEIPTS</span><h2 id="listTitle">已发布通知</h2><p class="field-hint">展开任一通知可查看已读/未读名单；撤回后客户端不再展示，投递与已读记录继续保留。</p></div><button id="notifyRefresh" class="btn btn-ghost" type="button">刷新列表</button></div>
+      <p id="listMessage" class="form-message" role="status" aria-live="polite"></p>
+      <div id="notificationList" class="nt-notification"></div>
+      <div class="ops-pagination"><button id="listPrev" class="btn btn-ghost" type="button">上一页</button><span id="listPage">第 1 页</span><button id="listNext" class="btn btn-ghost" type="button">下一页</button></div>
+    </section>
+  </section>
+</main>
+<dialog id="reasonDialog" class="ai-reason-dialog" aria-labelledby="reasonTitle"><form method="dialog" id="reasonForm"><h2 id="reasonTitle">填写操作原因</h2><p id="reasonDescription" class="field-hint"></p><label>原因<textarea id="reasonInput" rows="4" minlength="3" maxlength="500" required></textarea></label><div class="form-actions"><button id="reasonCancel" class="btn btn-ghost" value="cancel" type="submit">取消</button><button id="reasonConfirm" class="btn btn-primary" value="confirm" type="submit">确认操作</button></div></form></dialog>
+<footer class="secondary-footer"><span>© 2026 DWGC2E · 图纸智能翻译</span><nav aria-label="页脚导航"><a href="privacy.html">隐私政策</a><a href="terms.html">用户协议</a><a href="status.html">服务状态</a></nav></footer>
+<script src="js/site-config.js"></script><script src="js/admin-auth.js?v=20260916-fullreview"></script><script src="js/admin-notifications.js?v=20260920-notify"></script>
+</body>
+</html>
