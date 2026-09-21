@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="css/style.css?v=20260920-unify">
 <link rel="stylesheet" href="css/workspace.css?v=20260920-unify">
 <link rel="stylesheet" href="css/secondary.css?v=20260920-unify">
-<link rel="stylesheet" href="css/admin-users.css?v=20260921-badge">
+<link rel="stylesheet" href="css/admin-users.css?v=20260921-dense">
 </head>
 <body class="secondary-page admin-module-page nt-page" data-admin-module="notifications">
 <header class="account-header secondary-header">
@@ -44,16 +44,16 @@
 
   <section id="userWorkspace" hidden aria-label="定向通知工作台">
     <div id="metrics" class="user-metrics" aria-label="通知概览">
-      <article><span>本页通知</span><strong id="metricTotal">—</strong><small>当前分页已发布的通知</small></article>
-      <article><span>累计收件人次</span><strong id="metricRecipients">—</strong><small>本页通知的投递总数</small></article>
-      <article><span>尚未读取</span><strong id="metricUnread">—</strong><small>等待客户端回执</small></article>
-      <article><span>已撤回</span><strong id="metricWithdrawn">—</strong><small>撤回后客户端不再展示</small></article>
+      <article><span><svg class="admin-metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>本页通知</span><strong id="metricTotal">—</strong><small>当前分页已发布的通知</small></article>
+      <article><span><svg class="admin-metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>累计收件人次</span><strong id="metricRecipients">—</strong><small>本页通知的投递总数</small></article>
+      <article><span><svg class="admin-metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>尚未读取</span><strong id="metricUnread">—</strong><small>等待客户端回执</small></article>
+      <article><span><svg class="admin-metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>已撤回</span><strong id="metricWithdrawn">—</strong><small>撤回后客户端不再展示</small></article>
     </div>
 
     <section class="portal-card" aria-labelledby="targetTitle">
       <div class="admin-toolbar"><div><span class="eyebrow">AUDIENCE / TARGETING</span><h2 id="targetTitle">选择收件人</h2><p class="field-hint">支持账号、邮箱、昵称或完整用户编号；一次最多发送给 500 位账户，超出请分批发送。</p></div><div class="form-actions"><button id="selectPage" class="btn btn-ghost" type="button">全选本页</button><button id="selectionClear" class="btn btn-ghost" type="button">清空选择</button></div></div>
       <p id="targetMessage" class="form-message" role="status" aria-live="polite"></p>
-      <form id="targetForm" class="ops-search"><input id="targetSearch" type="search" maxlength="100" placeholder="账号、邮箱、昵称或完整用户编号" aria-label="收件人查询条件"><button id="targetSearchButton" class="btn btn-primary" type="submit">搜索用户</button></form>
+      <form id="targetForm" class="ops-search"><input id="targetSearch" type="search" maxlength="100" placeholder="账号、邮箱、昵称或完整用户编号" aria-label="收件人查询条件" spellcheck="false"><button id="targetSearchButton" class="btn btn-primary" type="submit">搜索用户</button></form>
       <div class="directory-heading"><h2>账户列表</h2><span id="targetCount" class="field-hint"></span></div>
       <div id="targetList" aria-live="polite"></div>
       <div class="ops-pagination"><button id="targetPrev" class="btn btn-ghost" type="button">上一页</button><span id="targetPage">第 1 页</span><button id="targetNext" class="btn btn-ghost" type="button">下一页</button></div>
@@ -66,13 +66,13 @@
       <p id="notifyMessage" class="form-message" role="status" aria-live="polite"></p>
       <form id="notifyForm" class="ops-form">
         <label for="notifyTitle">通知标题</label>
-        <input id="notifyTitle" type="text" required maxlength="120" placeholder="例如：服务维护提醒">
+        <input id="notifyTitle" type="text" required maxlength="120" placeholder="例如：服务维护提醒" spellcheck="false">
         <label for="notifyBody">通知正文</label>
-        <textarea id="notifyBody" rows="6" required maxlength="2000" placeholder="客户端会在公告中心展示这段内容，请写清生效时间与影响范围。"></textarea>
+        <textarea id="notifyBody" rows="6" required maxlength="2000" placeholder="客户端会在公告中心展示这段内容，请写清生效时间与影响范围。" spellcheck="false"></textarea>
         <label for="notifyExpiry">有效期（可选）<span class="field-hint">留空表示长期有效；到期后客户端不再展示。</span></label>
-        <input id="notifyExpiry" type="datetime-local" step="1">
+        <input id="notifyExpiry" type="datetime-local" step="1" spellcheck="false">
         <label for="notifyReason">发送原因</label>
-        <textarea id="notifyReason" rows="3" required maxlength="500" placeholder="说明本次推送的原因（必填，写入操作记录）"></textarea>
+        <textarea id="notifyReason" rows="3" required maxlength="500" placeholder="说明本次推送的原因（必填，写入操作记录）" spellcheck="false"></textarea>
         <div class="form-actions"><button id="notifySend" class="btn btn-primary" type="submit" disabled>发送通知 →</button></div>
       </form>
     </section>
@@ -85,7 +85,7 @@
     </section>
   </section>
 </main>
-<dialog id="reasonDialog" class="ai-reason-dialog" aria-labelledby="reasonTitle"><form method="dialog" id="reasonForm"><h2 id="reasonTitle">填写操作原因</h2><p id="reasonDescription" class="field-hint"></p><label>原因<textarea id="reasonInput" rows="4" minlength="3" maxlength="500" required></textarea></label><div class="form-actions"><button id="reasonCancel" class="btn btn-ghost" value="cancel" type="submit">取消</button><button id="reasonConfirm" class="btn btn-primary" value="confirm" type="submit">确认操作</button></div></form></dialog>
+<dialog id="reasonDialog" class="ai-reason-dialog" aria-labelledby="reasonTitle"><form method="dialog" id="reasonForm"><h2 id="reasonTitle">填写操作原因</h2><p id="reasonDescription" class="field-hint"></p><label>原因<textarea id="reasonInput" rows="4" minlength="3" maxlength="500" required spellcheck="false"></textarea></label><div class="form-actions"><button id="reasonCancel" class="btn btn-ghost" value="cancel" type="submit">取消</button><button id="reasonConfirm" class="btn btn-primary" value="confirm" type="submit">确认操作</button></div></form></dialog>
 <footer class="secondary-footer"><span>© 2026 DWGC2E · 图纸智能翻译</span><nav aria-label="页脚导航"><a href="privacy.html">隐私政策</a><a href="terms.html">用户协议</a><a href="status.html">服务状态</a></nav></footer>
 <script src="js/site-config.js"></script><script src="js/admin-auth.js"></script><script src="js/admin-badges.js"></script><script src="js/admin-notifications.js"></script>
 </body>

@@ -221,10 +221,10 @@
     let editor = article.querySelector('.nt-editor');
     if (editor) { editor.hidden = !editor.hidden; return; }
     editor = document.createElement('form'); editor.className = 'ai-form nt-editor';
-    const titleLabel = text('label', '通知标题'); const title = document.createElement('input'); title.type = 'text'; title.required = true; title.maxLength = TITLE_MAX; title.value = item.title || ''; titleLabel.append(title);
-    const bodyLabel = text('label', '通知正文'); const body = document.createElement('textarea'); body.rows = 6; body.required = true; body.maxLength = BODY_MAX; body.value = item.body || ''; bodyLabel.append(body);
-    const expiryLabel = text('label', '有效期（可选）'); const expiry = document.createElement('input'); expiry.type = 'datetime-local'; expiry.step = '1'; expiry.value = localInput(item.expires_at); expiryLabel.append(expiry);
-    const reasonLabel = text('label', '修改原因'); const reason = document.createElement('input'); reason.type = 'text'; reason.required = true; reason.minLength = 1; reason.maxLength = REASON_MAX; reasonLabel.append(reason);
+    const titleLabel = text('label', '通知标题'); const title = document.createElement('input'); title.type = 'text'; title.required = true; title.maxLength = TITLE_MAX; title.spellcheck = false; title.value = item.title || ''; titleLabel.append(title);
+    const bodyLabel = text('label', '通知正文'); const body = document.createElement('textarea'); body.rows = 6; body.required = true; body.maxLength = BODY_MAX; body.spellcheck = false; body.value = item.body || ''; bodyLabel.append(body);
+    const expiryLabel = text('label', '有效期（可选）'); const expiry = document.createElement('input'); expiry.type = 'datetime-local'; expiry.step = '1'; expiry.spellcheck = false; expiry.value = localInput(item.expires_at); expiryLabel.append(expiry);
+    const reasonLabel = text('label', '修改原因'); const reason = document.createElement('input'); reason.type = 'text'; reason.required = true; reason.minLength = 1; reason.maxLength = REASON_MAX; reason.spellcheck = false; reasonLabel.append(reason);
     const message = text('p', '', 'form-message'); message.setAttribute('role', 'status');
     const actions = document.createElement('div'); actions.className = 'form-actions';
     const save = document.createElement('button'); save.type = 'submit'; save.className = 'btn btn-primary'; save.textContent = '保存正文修改';
