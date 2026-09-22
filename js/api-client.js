@@ -32,11 +32,12 @@
         const details = data && typeof data === 'object' ? data : {};
         const code = details.error_code || details.error || '';
         const serverText = typeof details.message === 'string' ? details.message : '';
-        // Only coded 4xx replies are written for end users and shown verbatim. Server failures
-        // and uncoded responses fall back to local text so internal detail never reaches the
-        // page; the original wording stays on rawMessage for diagnostics only.
-        const trusted = response.status < 500 && !!code;
-        const message = trusted && serverText ? serverText
+        // Every 4xx from this API carries the Chinese text it wrote for the person using the page
+        // (validation, quota, session state), and most of them have no error_code. Gating on
+        // error_code hid all of that behind "请求失败（400）" and left operators unable to act.
+        // 5xx stays local, and text that looks like internals is never shown.
+        const looksInternal = /SQL|sqlite|D1_ERROR|Error:|Exception|at \w+\(|undefined|\[object|https?:\/\//.test(serverText);
+        const message = response.status < 500 && serverText && !looksInternal && serverText.length <= 300 ? serverText
           : response.status >= 500 ? '服务暂时不可用，请稍后重试。'
           : `请求失败（${response.status}）`;
         const error = Object.assign(new Error(message), { status: response.status, code, rawMessage: serverText });
