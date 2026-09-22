@@ -1,7 +1,7 @@
 /* Shared route gate: local session availability is not proof of server authorization. */
 (() => {
   'use strict';
-  const pages = {plans:'套餐权益',billing:'套餐与订单',profile:'资料与安全',devices:'设备管理',history:'翻译记录',terminology:'术语库'};
+  const pages = {billing:'套餐与订单',profile:'资料与安全',devices:'设备管理',history:'翻译记录',terminology:'术语库'};
   const read = () => { try { return JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null'); } catch { return null; } };
   const valid = s => !!(typeof s?.token === 'string' && s.token && (!s.expiresAt || Date.parse(s.expiresAt) > Date.now()));
   function safeReturn(value) {
