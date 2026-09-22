@@ -7,7 +7,8 @@ if(fs.readdirSync(dest).length)throw Error('public output already exists; choose
 const ROOT_FILES=['favicon.svg','robots.txt','sitemap.xml','_headers','_routes.json'];
 for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.html')||ROOT_FILES.includes(n)))fs.copyFileSync(path.join(root,name),path.join(dest,name));
 // Asset trees: extension allowlist (deny by default) — anything not listed here fails the build loudly.
-const ALLOWED_EXT=new Set(['.css','.js','.svg','.png','.webp','.woff2','.txt','.map']);
+// Source maps would expose unminified sources (and any comments in them) to every visitor.
+const ALLOWED_EXT=new Set(['.css','.js','.svg','.png','.webp','.woff2','.txt']);
 const ALLOWED_DIR_FILES=new Set(['LICENSE','README.md']); // vendor license/readme companions
 const copyAllowed=(src,destPath)=>{
   const rel=path.relative(root,src);

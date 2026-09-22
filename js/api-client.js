@@ -30,7 +30,16 @@
       if (!options.anonymous && sessionAtStart !== readToken()) throw Object.assign(new Error('账号会话已切换，请重新加载。'), { code:'session_changed' });
       if (!response.ok) {
         const details = data && typeof data === 'object' ? data : {};
-        const error = Object.assign(new Error(details.message || details.error || details.error_code || `请求失败（${response.status}）`), { status: response.status, code: details.error_code || details.error });
+        const code = details.error_code || details.error || '';
+        const serverText = typeof details.message === 'string' ? details.message : '';
+        // Only coded 4xx replies are written for end users and shown verbatim. Server failures
+        // and uncoded responses fall back to local text so internal detail never reaches the
+        // page; the original wording stays on rawMessage for diagnostics only.
+        const trusted = response.status < 500 && !!code;
+        const message = trusted && serverText ? serverText
+          : response.status >= 500 ? '服务暂时不可用，请稍后重试。'
+          : `请求失败（${response.status}）`;
+        const error = Object.assign(new Error(message), { status: response.status, code, rawMessage: serverText });
         if (response.status === 409 && error.code === 'payment_order_pending' && path === '/v1/billing/checkout' && data.order && /^DW[a-f0-9]{32}$/.test(data.order.orderNo)) error.order = data.order;
         if (response.status === 401 && usesStoredSession && ['unauthenticated','session_expired','token_expired'].includes(error.code) && sessionAtStart === readToken()) { try { sessionStorage.removeItem(sessionKey); } catch {} error.authExpired = true; }
         throw error;

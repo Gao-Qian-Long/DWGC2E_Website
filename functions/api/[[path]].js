@@ -1,7 +1,12 @@
 // Fixed upstream only. Keeps browser API traffic on the website domain.
-const upstreamOrigin = 'https://api.cad.pocketter.dpdns.org';
+// The host is supplied per environment so the internal API origin is not pinned in the public
+// repository; the production host is only a fallback for environments without the variable.
+const DEFAULT_UPSTREAM = 'https://api.cad.pocketter.dpdns.org';
+const DEFAULT_PUBLIC_ORIGIN = 'https://cad.pocketter.dpdns.org';
 export async function onRequest({ request, env = {} }) {
  const incoming = new URL(request.url);
+ const upstreamOrigin = env.WEB_API_UPSTREAM || DEFAULT_UPSTREAM;
+ if (!/^https:\/\/[a-z0-9.-]+(:\d+)?$/i.test(upstreamOrigin)) return new Response(JSON.stringify({error_code:'api_unreachable',message:'代理目标未正确配置。'}),{status:502,headers:{'content-type':'application/json; charset=utf-8','cache-control':'no-store'}});
  const path = incoming.pathname.slice('/api'.length);
  const headers = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' };
  const sessionAdmin = path==='/v1/admin/session' && ['GET','POST','DELETE'].includes(request.method);
@@ -14,7 +19,9 @@ export async function onRequest({ request, env = {} }) {
  const usersAdmin = (path === '/v1/admin/users' && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}$/.test(path) && request.method === 'GET') || (/^\/v1\/admin\/users\/[a-zA-Z0-9_-]{1,100}\/(membership|account)$/.test(path) && request.method === 'POST');
   // Model routing administration. Reads are GET; edits are POST, so they also pass
   // the same-origin gate above in addition to the Worker's own administrator check.
-  // Enumerated to match the Worker's actual admin/ai routes exactly — no prefix wildcard.
+ // Enumerated to match the Worker's actual routes exactly — no prefix wildcard. When the Worker
+// gains an admin endpoint, this allowlist and tests/proxy.test.mjs must be extended together,
+// otherwise the console call silently returns 404 here.
   const aiAdmin = (path === '/v1/admin/ai/providers' && ['GET','POST'].includes(request.method))
     || (/^\/v1\/admin\/ai\/providers\/[A-Za-z0-9_-]{1,100}$/.test(path) && ['PUT','DELETE'].includes(request.method))
     || (/^\/v1\/admin\/ai\/providers\/[A-Za-z0-9_-]{1,100}\/test$/.test(path) && request.method === 'POST')
@@ -43,7 +50,7 @@ export async function onRequest({ request, env = {} }) {
   const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(env.WEB_PROXY_IDENTITY_KEY),{name:'HMAC',hash:'SHA-256'},false,['sign']);
   const signature=Array.from(new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(payload))),b=>b.toString(16).padStart(2,'0')).join('');
   forwarded.set('x-dwgc-client-ip',clientIp);forwarded.set('x-dwgc-client-time',timestamp);forwarded.set('x-dwgc-client-signature',signature);
- } forwarded.set('origin','https://cad.pocketter.dpdns.org');
+ } forwarded.set('origin', env.WEB_PUBLIC_ORIGIN || DEFAULT_PUBLIC_ORIGIN);
  try {
   const response = await fetch(target.href, {
    method:request.method,headers:forwarded,

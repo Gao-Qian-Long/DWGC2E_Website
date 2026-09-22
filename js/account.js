@@ -275,14 +275,22 @@
     finally { button.disabled = false; authSubmitting = false; }
   });
 
+  // A purchase intent (plan, channel, idempotency key, order number) persists in localStorage
+  // across tabs and restarts. It is meaningless without a session, so it never outlives logout.
+  const clearLocalAccountState = () => {
+    try { for (const key of Object.keys(localStorage)) if (key.startsWith('dwgc2e.payment.pending.')) localStorage.removeItem(key); } catch {}
+    try { localStorage.removeItem('dwgc2e.device-id'); } catch {}
+    sessionStorage.removeItem(storageKey);
+  };
+
   $('#logoutButton')?.addEventListener('click', async () => {
     const button = $('#logoutButton'); button.disabled = true;
     sessionGeneration++;
     try {
       await window.DWGC2E_API.auth.logout();
-      sessionStorage.removeItem(storageKey); showAuth('已退出登录，APP 设备绑定不受影响。');
+      clearLocalAccountState(); showAuth('已退出登录，APP 设备绑定不受影响。');
     } catch (error) {
-      if (error.authExpired) { sessionStorage.removeItem(storageKey); showAuth('登录已失效。'); }
+      if (error.authExpired) { clearLocalAccountState(); showAuth('登录已失效。'); }
       else { $('#dashboardMessage').textContent = '服务端退出尚未确认，请检查网络后重试。'; }
     } finally { button.disabled = false; }
   });
