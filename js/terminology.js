@@ -126,7 +126,19 @@
     if (!remove || !confirm('确定删除这条词汇吗？')) return;
     commit({rows:rows.filter(row => row.id !== remove.dataset.delete), resetForm:editingId === remove.dataset.delete, message:'词条已删除。'});
   });
-  search.addEventListener('input', render);
+
+  // 每次按键都全量重建整张表会卡；中文输入法组合期间更不该触发任何重建。
+  // 组合中跳过，组合结束后统一补一次；非 IME 输入（粘贴/拉丁字母）走同一条 debounce。
+  let glossarySearchTimer = 0, glossarySearchComposing = false;
+  const glossarySearchSchedule = () => {
+    if (glossarySearchComposing) return;
+    clearTimeout(glossarySearchTimer);
+    glossarySearchTimer = setTimeout(render, 180);
+  };
+  search.addEventListener('compositionstart', () => { glossarySearchComposing = true; });
+  search.addEventListener('compositionend', () => { glossarySearchComposing = false; glossarySearchSchedule(); });
+  search.addEventListener('blur', () => { if (glossarySearchComposing) { glossarySearchComposing = false; glossarySearchSchedule(); } });
+  search.addEventListener('input', glossarySearchSchedule);
   list.addEventListener('change', event => { if (event.target.matches('[data-check]')) syncSelection(); });
   selectAll.addEventListener('change', () => { list.querySelectorAll('[data-check]').forEach(input => { input.checked = selectAll.checked; }); syncSelection(); });
   $('#deleteSelected').onclick = () => {
