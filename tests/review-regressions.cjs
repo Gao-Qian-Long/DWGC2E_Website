@@ -14,7 +14,7 @@ async function pageFor(t,file,api,emptyDownload=false){
   const u=new URL(r.request().url());if(u.origin!==origin)return r.abort();
   if(u.pathname.startsWith('/api/')){const result=await api?.(u,r);if(result)return;return r.fulfill({json:u.pathname.endsWith('/profile')?{user_id:'review'}:u.pathname.endsWith('/health')?{api:'operational',database:'operational'}:{}});}
   const f=path.resolve(root,'.'+u.pathname);if(!f.startsWith(root+path.sep)||!fs.existsSync(f))return r.fulfill({status:404,body:''});
-  let body=fs.readFileSync(f);if(emptyDownload&&u.pathname==='/js/site-config.js')body=Buffer.from("window.DWGC2E_SITE={apiBaseUrl:'/api',downloadUrl:''};");
+  let body=fs.readFileSync(f);if(emptyDownload&&u.pathname==='/js/site-config.js')body=Buffer.from("window.QLCAD_SITE={apiBaseUrl:'/api',downloadUrl:''};");
   return r.fulfill({body,headers:{'content-security-policy':csp},contentType:({'.html':'text/html','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png'})[path.extname(f)]||'application/octet-stream'});
  });await p.goto(origin+'/'+file);return p;
 }

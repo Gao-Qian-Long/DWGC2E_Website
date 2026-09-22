@@ -6,8 +6,8 @@ const source=readFileSync(new URL('../js/api-client.js',import.meta.url),'utf8')
 function setup(fetch) {
  const data=new Map([['dwgc2e.session',JSON.stringify({token:'old'})]]);
  const storage={getItem:k=>data.get(k)||null,removeItem:k=>data.delete(k),setItem:(k,v)=>data.set(k,v)};
- const context={window:{DWGC2E_SITE:{apiBaseUrl:'/api'}},sessionStorage:storage,fetch,AbortController,FormData,setTimeout,clearTimeout,TypeError,console};
- vm.runInNewContext(source,context);return {api:context.window.DWGC2E_API,storage};
+ const context={window:{QLCAD_SITE:{apiBaseUrl:'/api'}},sessionStorage:storage,fetch,AbortController,FormData,setTimeout,clearTimeout,TypeError,console};
+ vm.runInNewContext(source,context);return {api:context.window.QLCAD_API,storage};
 }
 test('web login uses scoped endpoint without bearer or device data',async()=>{const x=setup(async(path,options)=>{assert.equal(path,'/api/v1/auth/web/login');assert.equal(options.headers.Authorization,undefined);assert.deepEqual(JSON.parse(options.body),{account:'a',password:'p'});return Response.json({token:'new'});});await x.api.auth.login({account:'a',password:'p'});});
 test('incorrect password does not discard existing account session',async()=>{const x=setup(async()=>Response.json({error_code:'invalid_credentials'},{status:401}));await assert.rejects(x.api.auth.login({}),e=>e.code==='invalid_credentials'&&!e.authExpired);assert.ok(x.storage.getItem('dwgc2e.session'));});

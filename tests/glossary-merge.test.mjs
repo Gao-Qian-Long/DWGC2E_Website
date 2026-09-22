@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import {readFileSync} from 'node:fs';
-const ctx={};vm.runInNewContext(readFileSync(new URL('../js/glossary-merge.js',import.meta.url),'utf8'),ctx);const {plan,resolve}=ctx.DWGC2E_GLOSSARY_MERGE;const plain=x=>JSON.parse(JSON.stringify(x));
+const ctx={};vm.runInNewContext(readFileSync(new URL('../js/glossary-merge.js',import.meta.url),'utf8'),ctx);const {plan,resolve}=ctx.QLCAD_GLOSSARY_MERGE;const plain=x=>JSON.parse(JSON.stringify(x));
 const id='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',entry={id,source:'法兰',target:'Flange',note:'note',enabled:true};
 test('disjoint edits and additions merge without dropping cloud changes',()=>{const p=plan([entry],[{...entry,target:'Local'}, {source:'新词',target:'New'}],[entry,{source:'云端新增',target:'Cloud',id:'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'}]);const r=plain(resolve(p));assert.equal(r.length,3);assert.equal(r[0].target,'Local');assert.equal(r[2].source,'云端新增');});
 test('concurrent edits require explicit choice and preserve remote ID',()=>{const p=plan([entry],[{...entry,target:'Local'}],[{...entry,target:'Remote'}]);assert.throws(()=>resolve(p),/每个冲突/);assert.equal(resolve(p,{0:'local'})[0].target,'Local');assert.equal(resolve(p,{0:'remote'})[0].target,'Remote');});
