@@ -1,8 +1,8 @@
 /* AI routing operations module. Secrets are deliberately kept out of storage, URLs and logs. */
 (() => {
   'use strict';
-  const auth = window.DWGC2E_ADMIN_AUTH;
-  const base = (window.DWGC2E_SITE || {}).apiBaseUrl || '/api';
+  const auth = window.QLCAD_ADMIN_AUTH;
+  const base = (window.QLCAD_SITE || {}).apiBaseUrl || '/api';
   const $ = id => document.getElementById(id);
   const api = (path, options = {}) => {
     const controller = new AbortController();

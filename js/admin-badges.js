@@ -2,12 +2,12 @@
 // While an admin session is live, scans the operations feedback list (max 4 pages x 25 rows)
 // for workflow_status === 'new' and shows the count on the "用户反馈" nav link. The count is
 // cached in sessionStorage (90s) so switching between admin modules paints the badge instantly
-// without waiting for the network. admin-users.js calls DWGC2E_ADMIN_BADGES.refresh() right
+// without waiting for the network. admin-users.js calls QLCAD_ADMIN_BADGES.refresh() right
 // after a feedback note is saved so the badge clears without waiting for the next poll.
 (() => {
  'use strict';
  const KEY = 'dwgc2e.admin.feedbackBadge';
- const base = (window.DWGC2E_SITE || {}).apiBaseUrl || '/api';
+ const base = (window.QLCAD_SITE || {}).apiBaseUrl || '/api';
  const link = document.querySelector('.admin-module-nav a[href="admin-feedback.html"]');
  if (!link) return;
  let timer = null, running = false;
@@ -50,7 +50,7 @@
   } catch { /* keep the last painted badge; the next cycle retries */ }
   finally { running = false; }
  }
- window.DWGC2E_ADMIN_BADGES = { refresh };
+ window.QLCAD_ADMIN_BADGES = { refresh };
  refresh();
  timer = setInterval(() => { if (!document.hidden) refresh(); }, 120000);
  window.addEventListener('admin-logout', () => {

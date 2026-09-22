@@ -1,4 +1,4 @@
-/* DWGC2E / shared print-workshop primitives. No external font requests. */
+/* QLCAD / shared print-workshop primitives. No external font requests. */
 @font-face {
   font-family:Inter;
   src:url('../assets/fonts/inter-latin.woff2') format('woff2');

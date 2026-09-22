@@ -1,10 +1,10 @@
 (async () => {
   'use strict';
-  const auth=window.DWGC2E_AUTH||window.DWGC2E_CLOUD_SESSION; if(!auth.active())return;
+  const auth=window.QLCAD_AUTH||window.QLCAD_CLOUD_SESSION; if(!auth.active())return;
   // Disable the form before awaiting identity; no native GET submission on load failure.
   document.querySelectorAll('#glossaryForm input, #glossaryForm button, #importGlossary, #deleteSelected, #syncGlossary').forEach(control=>{control.disabled=true;});
   let profile;
-  try { profile = await window.DWGC2E_API.account.profile(); }
+  try { profile = await window.QLCAD_API.account.profile(); }
   catch(error) { auth.failure(error); auth.showError('术语库暂时无法读取，请重新加载。'); return; }
   if (!profile.user_id) { auth.showError('账户信息不完整，请重新加载。'); return; }
   if(!auth.active())return;auth.ready();
@@ -58,7 +58,7 @@
     say('正在保存到云端…');
     try {
       const entries=transaction.rows.map(row=>{const copy={...row};if(!/^[a-f0-9-]{36}$/.test(copy.id||''))delete copy.id;return copy;});
-      const saved=await window.DWGC2E_API.glossary.save(entries,transaction.revision);
+      const saved=await window.QLCAD_API.glossary.save(entries,transaction.revision);
       if(!Array.isArray(saved.entries)||typeof saved.revision!=='string')throw Error('云端保存结果无法确认，请读取最新词库核对。');
       if(!auth.active())return false;
       rows=saved.entries;revision=saved.revision;pending=null;
@@ -85,11 +85,11 @@
     const transaction=pending;syncing=true;updateRecovery();say('正在读取最新云端用于比较，尚未保存…');
     let merged=null, latest;
     try {
-      latest=await window.DWGC2E_API.glossary.latest();
+      latest=await window.QLCAD_API.glossary.latest();
       if(!auth.active()||pending!==transaction)return;
       if(!Array.isArray(latest.entries)||typeof latest.revision!=='string')throw Error('云端内容无法确认，草稿未变。');
-      const groups=window.DWGC2E_GLOSSARY_MERGE.plan(transaction.basis,transaction.rows,latest.entries);
-      merged=await window.DWGC2E_GLOSSARY_MERGE_DIALOG(groups,()=>auth.active()&&pending===transaction);
+      const groups=window.QLCAD_GLOSSARY_MERGE.plan(transaction.basis,transaction.rows,latest.entries);
+      merged=await window.QLCAD_GLOSSARY_MERGE_DIALOG(groups,()=>auth.active()&&pending===transaction);
       if(!auth.active()||pending!==transaction)return;
       if(!merged)say('已取消合并，原草稿仍保留。');
     }catch(error){auth.failure(error);say(error.message||'无法比较云端内容，原草稿仍保留。',true);}
@@ -194,7 +194,7 @@
     if(ready && [...form.querySelectorAll('input')].some(input=>input.value.trim()) && !confirm('刷新将放弃表单中尚未保存的内容，是否继续？'))return;
     syncing=true;updateRecovery();say('正在读取云端最新词库…');
     try{
-      const data=await window.DWGC2E_API.glossary.latest();
+      const data=await window.QLCAD_API.glossary.latest();
       if(!Array.isArray(data.entries)||typeof data.revision!=='string')throw Error('云端返回格式无效');
       if(!auth.active())return;
       rows=data.entries.map((row,i)=>({...row,id:row.id||'legacy-'+i}));revision=data.revision;ready=true;

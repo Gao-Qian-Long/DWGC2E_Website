@@ -1,5 +1,5 @@
 (() => {
-  const site = window.DWGC2E_SITE || {};
+  const site = window.QLCAD_SITE || {};
   const form = document.querySelector('#feedbackForm');
   const message = document.querySelector('#feedbackMessage');
   const email = document.querySelector('#contactEmail');
@@ -13,8 +13,8 @@
     }
     const button = form.querySelector('button[type="submit"]'); button.disabled = true; button.textContent = '提交中…';
     try {
-      if (!window.DWGC2E_API) throw new Error('feedback_not_configured');
-      await window.DWGC2E_API.feedback.submit(data);
+      if (!window.QLCAD_API) throw new Error('feedback_not_configured');
+      await window.QLCAD_API.feedback.submit(data);
       form.reset(); message.textContent = '反馈已提交，感谢你的帮助。'; message.className = 'form-message';
     } catch (error) {
       message.textContent = error.message === 'feedback_not_configured' ? '反馈接口尚未开放，请暂时保留截图并等待客服邮箱公布。' : (error.message || '提交失败，请稍后重试。');

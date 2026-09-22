@@ -1,7 +1,7 @@
-/* DWGC2E Web API adapter. Keeps transport, auth and response envelopes consistent. */
+/* QLCAD Web API adapter. Keeps transport, auth and response envelopes consistent. */
 (() => {
   'use strict';
-  const site = window.DWGC2E_SITE || {};
+  const site = window.QLCAD_SITE || {};
   const base = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const sessionKey = 'dwgc2e.session';
   const readToken = () => { try { const s=JSON.parse(sessionStorage.getItem(sessionKey) || 'null'); return typeof s?.token==='string' && (!s.expiresAt || Date.parse(s.expiresAt)>Date.now()) ? s.token : ''; } catch { return ''; } };
@@ -11,7 +11,7 @@
   };
   const request = async (path, options = {}) => {
     if (!base) throw Object.assign(new Error('尚未配置 API 地址。'), { code: 'API_NOT_CONFIGURED' });
-    if (!options.anonymous && !readToken()) { const error=Object.assign(new Error('请先登录后继续。'),{code:'unauthenticated',authExpired:true}); window.DWGC2E_AUTH?.failure(error); throw error; }
+    if (!options.anonymous && !readToken()) { const error=Object.assign(new Error('请先登录后继续。'),{code:'unauthenticated',authExpired:true}); window.QLCAD_AUTH?.failure(error); throw error; }
     const controller = new AbortController();
     const sessionAtStart = readToken();
     const cancel = () => controller.abort();
@@ -49,14 +49,14 @@
       if (!result || typeof result !== 'object') throw Object.assign(new Error('服务返回格式不完整，请重新读取确认操作结果。'), { code: 'invalid_response' });
       return result;
     } catch (error) {
-      window.DWGC2E_AUTH?.failure(error);
+      window.QLCAD_AUTH?.failure(error);
       if (error.name === 'AbortError' && options.signal?.aborted) throw Object.assign(new Error('请求已取消。'), { code:'request_cancelled', name:'AbortError' });
       if (error.name === 'AbortError') throw Object.assign(new Error('连接账户服务超时，请稍后重试；下单请求请勿重复提交。'), { code: 'request_timeout' });
       if (error instanceof TypeError && !error.status) throw Object.assign(new Error('无法连接账户服务，请检查网络后刷新页面。'), { code: 'network_error' });
       throw error;
     } finally { clearTimeout(timer); options.signal?.removeEventListener('abort', cancel); }
   };
-  window.DWGC2E_API = Object.freeze({
+  window.QLCAD_API = Object.freeze({
     request,
     auth: {
       login: body => request('/v1/auth/web/login', { method: 'POST', anonymous:true, body: JSON.stringify(body) }),

@@ -45,7 +45,7 @@
     content.addEventListener('click',e=>{if(!active()){e.preventDefault();e.stopImmediatePropagation();}},true);
     if(session?.expiresAt&&token){let timer;const schedule=()=>{clearTimeout(timer);if(!active())return;timer=setTimeout(()=>{inspect();if(active())schedule();},Math.min(2147483647,Math.max(1,Date.parse(session.expiresAt)-Date.now()+5)));};schedule();window.addEventListener('pagehide',()=>clearTimeout(timer));window.addEventListener('pageshow',schedule);}
   }
-  window.DWGC2E_AUTH=Object.freeze({read,valid:()=>valid(read()),safeReturn,active,requireLogin,
+  window.QLCAD_AUTH=Object.freeze({read,valid:()=>valid(read()),safeReturn,active,requireLogin,
     ready:()=>{if(active())setState('AUTHENTICATED_READY');},error:()=>{if(active())setState('AUTHENTICATED_ERROR');},
     failure:error=>{if(error?.authExpired||error?.code==='session_changed'||!valid(read()))requireLogin();},
     showError:message=>{if(!active())return;setState('AUTHENTICATED_ERROR');content.hidden=true;gate.hidden=false;gate.querySelector('p').textContent=message;const a=gate.querySelector('a');a.hidden=false;a.href=location.pathname+location.search;a.textContent='重新加载';},

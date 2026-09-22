@@ -1,5 +1,5 @@
 (() => {
-  const site = window.DWGC2E_SITE || {};
+  const site = window.QLCAD_SITE || {};
   const APP_VERSION = site.version || "";
   const DOWNLOAD_URL = site.downloadUrl || "";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

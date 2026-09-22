@@ -42,5 +42,5 @@
   if(new Set(pairs).size!==pairs.length)throw Error('合并后存在重复原文和译文，请重新选择。');
   return result;
  }
- root.DWGC2E_GLOSSARY_MERGE=Object.freeze({plan,resolve,equal});
+ root.QLCAD_GLOSSARY_MERGE=Object.freeze({plan,resolve,equal});
 })(globalThis);

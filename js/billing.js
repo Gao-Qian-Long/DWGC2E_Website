@@ -1,12 +1,12 @@
 (() => {
  'use strict';
- const auth=window.DWGC2E_AUTH; if(!auth.active())return;
+ const auth=window.QLCAD_AUTH; if(!auth.active())return;
  const $=s=>document.querySelector(s),money=n=>`¥${(n/100).toFixed(2)}`;
  const readSession=()=>{try{const s=JSON.parse(sessionStorage.getItem('dwgc2e.session')||'null');return s?.token&&(!s.expiresAt||Date.parse(s.expiresAt)>Date.now())?s.token:'';}catch{return '';}};
  const boundSession=readSession();
  const guardSession=()=>{if(!boundSession||readSession()!==boundSession){stopped=true;authenticated=false;stop();clearTimeout(expiryTimer);$('#checkout').hidden=true;$('#qrBox').replaceChildren();$('#orderList').replaceChildren();$('#plans').replaceChildren();$('#membership').textContent='登录状态已失效，请重新登录。';$('#loginLink').hidden=false;throw Object.assign(Error('账号会话已切换或过期，请重新加载购买页。'),{code:'session_changed'});}};
  const bindGroup=group=>Object.fromEntries(Object.entries(group).map(([name,fn])=>[name,async(...args)=>{guardSession();try{const result=await fn(...args);guardSession();return result;}catch(error){guardSession();throw error;}}]));
- const api={account:bindGroup(window.DWGC2E_API.account),billing:bindGroup(window.DWGC2E_API.billing)};
+ const api={account:bindGroup(window.QLCAD_API.account),billing:bindGroup(window.QLCAD_API.billing)};
  const node=(tag,text,cls)=>{const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;};
  const say=(text,error=false)=>{$('#portalMessage').textContent=text;$('#portalMessage').className=`form-message${error?' error':''}`;};
 

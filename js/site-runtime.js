@@ -1,6 +1,6 @@
 (() => {
  'use strict';
- const site=window.DWGC2E_SITE||{},$$=s=>[...document.querySelectorAll(s)];
+ const site=window.QLCAD_SITE||{},$$=s=>[...document.querySelectorAll(s)];
  const safe=value=>{try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password;}catch{return false;}};
  const text=(tag,value)=>{const el=document.createElement(tag);el.textContent=value;return el;};
  async function refresh(){try{

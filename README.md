@@ -1,4 +1,4 @@
-# DWGC2E 官网
+# QLCAD 官网
 
 原生 HTML / CSS / JavaScript 网站，采用「工程翻译工坊」视觉体系，可沿用现有 Cloudflare Pages 部署流程，无前端框架或构建迁移。
 

@@ -1,10 +1,10 @@
 (() => {
   'use strict';
 
-  const site = window.DWGC2E_SITE || {};
+  const site = window.QLCAD_SITE || {};
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
-  const returnTarget = window.DWGC2E_AUTH.safeReturn(new URLSearchParams(location.search).get('return') || new URLSearchParams(location.search).get('returnTo'));
+  const returnTarget = window.QLCAD_AUTH.safeReturn(new URLSearchParams(location.search).get('return') || new URLSearchParams(location.search).get('returnTo'));
   const $ = selector => document.querySelector(selector);
   const form = $('#accountForm');
   const root = document.documentElement;
@@ -68,7 +68,7 @@
     setMessage('');
   };
 
-  const request = (path, options = {}) => window.DWGC2E_API.request(path, {
+  const request = (path, options = {}) => window.QLCAD_API.request(path, {
     ...options, anonymous:path.startsWith('/v1/auth/') && path !== '/v1/auth/logout'
   });
   const checkApiStatus = async () => {
@@ -287,7 +287,7 @@
     const button = $('#logoutButton'); button.disabled = true;
     sessionGeneration++;
     try {
-      await window.DWGC2E_API.auth.logout();
+      await window.QLCAD_API.auth.logout();
       clearLocalAccountState(); showAuth('已退出登录，APP 设备绑定不受影响。');
     } catch (error) {
       if (error.authExpired) { clearLocalAccountState(); showAuth('登录已失效。'); }

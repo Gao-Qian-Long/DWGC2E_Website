@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const auth=window.DWGC2E_AUTH||window.DWGC2E_CLOUD_SESSION; if(!auth.active())return;
+  const auth=window.QLCAD_AUTH||window.QLCAD_CLOUD_SESSION; if(!auth.active())return;
   const list = document.querySelector('#historyList'), msg = document.querySelector('#historyMessage'), filter = document.querySelector('#historyFilter');
   if (!list || !msg || !filter) return;
   auth.ready();
@@ -21,7 +21,7 @@
     const data = rows.filter(row => [row.file_name, statusText(row.status), row.source_language, row.target_language, row.created_at, row.completed_at].join(' ').toLowerCase().includes(query));
     list.innerHTML = data.length ? data.map(row => { const id = idOf(row), download = safeDownload(row.download_url || row.result_url); return `<tr><td>${esc(row.file_name || '未命名任务')}</td><td>${esc(statusText(row.status))}</td><td>${esc(row.source_language || '未记录')}</td><td>${esc(row.target_language || '未记录')}</td><td>${esc(timeText(row))}</td><td>${id ? `<button class="btn btn-ghost btn-sm" data-detail="${esc(id)}">刷新</button>` : ''}${download ? `<a class="btn btn-primary btn-sm" href="${esc(download)}" target="_blank" rel="noopener noreferrer">下载</a>` : '<span>—</span>'}</td></tr>`; }).join('') : '<tr><td colspan="6" class="table-empty">'+(query?'没有匹配的翻译记录。':loaded?'暂无翻译记录。':'翻译记录暂未加载，请刷新重试。')+'</td></tr>';
   };
-  list.addEventListener('click', async event => { const button = event.target.closest('[data-detail]'); if (!button) return; button.disabled = true; try { const row = rows.find(item => idOf(item) === button.dataset.detail); if (row) Object.assign(row, await window.DWGC2E_API.history.detail(button.dataset.detail)); render(); say('任务状态已刷新。'); } catch (error) { auth.failure(error);say(error.status === 404 ? '记录不存在或已不可访问。' : (error.message || '任务状态刷新失败。'), true); } finally { button.disabled = false; } });
+  list.addEventListener('click', async event => { const button = event.target.closest('[data-detail]'); if (!button) return; button.disabled = true; try { const row = rows.find(item => idOf(item) === button.dataset.detail); if (row) Object.assign(row, await window.QLCAD_API.history.detail(button.dataset.detail)); render(); say('任务状态已刷新。'); } catch (error) { auth.failure(error);say(error.status === 404 ? '记录不存在或已不可访问。' : (error.message || '任务状态刷新失败。'), true); } finally { button.disabled = false; } });
 
   // 每次按键都全量重建整张表会卡；中文输入法组合期间更不该触发任何重建。
   // 组合中跳过，组合结束后统一补一次；非 IME 输入（粘贴/拉丁字母）走同一条 debounce。
@@ -35,6 +35,6 @@
   filter.addEventListener('compositionend', () => { historyFilterComposing = false; historyFilterSchedule(); });
   filter.addEventListener('blur', () => { if (historyFilterComposing) { historyFilterComposing = false; historyFilterSchedule(); } });
   filter.addEventListener('input', historyFilterSchedule);
-  async function load(append=false){if(loading)return;loading=true;more.disabled=true;retry.disabled=true;say('正在读取翻译记录…');try{const data=await window.DWGC2E_API.history.list(append?nextCursor:null);rows=append?[...rows,...normalize(data)]:normalize(data);loaded=true;nextCursor=data.nextCursor;more.hidden=!nextCursor;render();say(rows.length?'':'暂无翻译记录。');}catch(error){auth.failure(error);render();say(error.message||'翻译记录暂时无法读取。',true);}finally{loading=false;more.disabled=false;retry.disabled=false;}}
+  async function load(append=false){if(loading)return;loading=true;more.disabled=true;retry.disabled=true;say('正在读取翻译记录…');try{const data=await window.QLCAD_API.history.list(append?nextCursor:null);rows=append?[...rows,...normalize(data)]:normalize(data);loaded=true;nextCursor=data.nextCursor;more.hidden=!nextCursor;render();say(rows.length?'':'暂无翻译记录。');}catch(error){auth.failure(error);render();say(error.message||'翻译记录暂时无法读取。',true);}finally{loading=false;more.disabled=false;retry.disabled=false;}}
 more.onclick=()=>load(true);retry.onclick=()=>load();load();
 })();

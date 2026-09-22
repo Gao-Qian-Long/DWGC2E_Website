@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const api = window.DWGC2E_API;
+  const api = window.QLCAD_API;
   const readSession = () => { try { return JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null'); } catch { return null; } };
   const session = readSession();
   const valid = () => { const current = readSession(); return !!(session?.token && current?.token === session.token && (!current.expiresAt || Date.parse(current.expiresAt) > Date.now())); };
@@ -9,7 +9,7 @@
   const say = (text, error = false) => { const node = document.querySelector('#portalMessage'); if (node) { node.textContent = text; node.className = 'form-message' + (error ? ' error' : ''); } };
   let ended = false;
   function requireLogin(text = '登录已失效，请重新登录后继续。') {
-    ended = true; window.DWGC2E_AUTH.requireLogin(text);
+    ended = true; window.QLCAD_AUTH.requireLogin(text);
     if (list) list.replaceChildren();
     profile?.reset(); password?.reset();
     document.querySelectorAll("main input,main button,main select,main textarea").forEach(el=>el.disabled=true);
@@ -30,8 +30,8 @@
       profile.elements.display_name.value = data?.display_name || '';
       profile.dataset.savedName = profile.elements.display_name.value;
       profile.elements.email.value = data?.email || data?.account || '';
-      profile.elements.display_name.placeholder = '输入显示名称'; profileReady = true; window.DWGC2E_AUTH.ready(); say('');
-    } catch (error) { if (active()) { window.DWGC2E_AUTH.error(); profile.elements.display_name.placeholder='暂不可用'; say('资料暂时无法读取，请点击「重新读取」重试。' + (profileReady ? ' 已保留之前的资料。' : ''), true); } }
+      profile.elements.display_name.placeholder = '输入显示名称'; profileReady = true; window.QLCAD_AUTH.ready(); say('');
+    } catch (error) { if (active()) { window.QLCAD_AUTH.error(); profile.elements.display_name.placeholder='暂不可用'; say('资料暂时无法读取，请点击「重新读取」重试。' + (profileReady ? ' 已保留之前的资料。' : ''), true); } }
     finally { profileBusy = false; if (!ended) { retryProfile.disabled = false; profile.elements.display_name.disabled = !profileReady; submit.disabled = !profileReady; } }
   }
   if (profile) {
@@ -76,8 +76,8 @@
           }; row.append(button); }
         list.append(row);
       }
-      devicesReady = true; window.DWGC2E_AUTH.ready(); emptyDevices(); say('设备列表已更新。');
-    } catch (error) { if (active()) { window.DWGC2E_AUTH.error(); if (!devicesReady) { list.textContent = '设备列表暂不可用。'; } say('设备读取失败，请点击「刷新设备」重试。' + (devicesReady ? ' 已保留之前的列表。' : ''), true); } }
+      devicesReady = true; window.QLCAD_AUTH.ready(); emptyDevices(); say('设备列表已更新。');
+    } catch (error) { if (active()) { window.QLCAD_AUTH.error(); if (!devicesReady) { list.textContent = '设备列表暂不可用。'; } say('设备读取失败，请点击「刷新设备」重试。' + (devicesReady ? ' 已保留之前的列表。' : ''), true); } }
     finally { devicesBusy = false; if (!ended) retryDevices.disabled = false; }
   }
   function emptyDevices() { if (!list.children.length) { const empty = document.createElement('div'); empty.className = 'portal-empty'; empty.textContent = '还没有已绑定设备。在 Windows 客户端登录后，设备会显示在这里。'; list.append(empty); } }

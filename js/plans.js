@@ -1,6 +1,6 @@
 (() => {
- 'use strict';const auth=window.DWGC2E_AUTH;
- const api=window.DWGC2E_API,$=s=>document.querySelector(s),node=(tag,text,cls)=>{const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;};let busy=false;
+ 'use strict';const auth=window.QLCAD_AUTH;
+ const api=window.QLCAD_API,$=s=>document.querySelector(s),node=(tag,text,cls)=>{const n=document.createElement(tag);n.textContent=text;if(cls)n.className=cls;return n;};let busy=false;
  async function load(){if(busy)return;busy=true;$('#plansReload').disabled=true;$('#plansMessage').textContent='正在同步套餐权益…';
   const signedIn=auth.active();
   try{const requests=[signedIn?api.billing.plans():api.billing.publicPlans()];if(signedIn)requests.push(api.billing.entitlements());
