@@ -16,6 +16,8 @@ export async function onRequest({ request, env = {} }) {
   // the same-origin gate above in addition to the Worker's own administrator check.
   // Enumerated to match the Worker's actual admin/ai routes exactly — no prefix wildcard.
   const aiAdmin = (path === '/v1/admin/ai/providers' && ['GET','POST'].includes(request.method))
+    || (/^\/v1\/admin\/ai\/providers\/[A-Za-z0-9_-]{1,100}$/.test(path) && ['PUT','DELETE'].includes(request.method))
+    || (/^\/v1\/admin\/ai\/providers\/[A-Za-z0-9_-]{1,100}\/test$/.test(path) && request.method === 'POST')
     || (path === '/v1/admin/ai/policy' && request.method === 'GET')
     || (path === '/v1/admin/ai/publish' && request.method === 'POST')
     || (path === '/v1/admin/ai/rollback' && request.method === 'POST')
