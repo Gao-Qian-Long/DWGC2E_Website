@@ -281,6 +281,8 @@ for (const width of [390,1440]) {
     assert.equal(await terms.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
     if (out) await terms.screenshot({path:path.join(out,`terminology-unsaved-${width}.png`),fullPage:true});
     await p.setViewportSize({width,height:430}); await p.locator('.ws-support-button').click();
+    assert.match(await p.locator('#wsSupport [name=email]').inputValue(), /^long-address-/,
+      'signed-in support form reuses the email cached from the current profile');
     await p.locator('#wsSupport button[type=submit]').scrollIntoViewIfNeeded();
     const bounds = await p.locator('#wsSupport').boundingBox();
     assert.ok(bounds.y>=0 && bounds.y+bounds.height<=430);
