@@ -1,0 +1,55 @@
+name: website-ci
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "functions/**"
+      - "docs/**"
+      - "**/*.md"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "functions/**"
+      - "docs/**"
+      - "**/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: website-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install browser test runtime
+        shell: pwsh
+        run: npm install --no-save playwright
+
+      - name: Run isolated regression suite
+        shell: pwsh
+        run: |
+          $tests = Get-ChildItem tests -File | Where-Object { $_.Extension -in '.cjs', '.mjs' } | ForEach-Object { $_.FullName }
+          node --test $tests
+
+      - name: Verify responsive browser smoke
+        shell: pwsh
+        run: node tests/browser-smoke.cjs
+
+      - name: Verify public release staging
+        shell: pwsh
+        run: node tools/stage-site.cjs
