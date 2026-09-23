@@ -1,6 +1,6 @@
 window.QLCAD_SITE = Object.freeze({
   name: "QLCAD",
-  version: "1.0.0",
+  version: "2.1.1",
   downloadUrl: "https://maplehouse.lanzoum.com/ilNZe3nhk7ne",
   downloadLabel: "蓝奏云下载",
   siteOrigin: "https://cad.pocketter.dpdns.org",
