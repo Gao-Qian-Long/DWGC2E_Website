@@ -42,6 +42,17 @@ test('authoritative empty download revokes old links on a restored page',async t
  assert.ok(reads>=2);assert.equal(await p.locator('[data-download]').first().getAttribute('target'),null);
  assert.equal(await p.locator('[data-download]').first().evaluate(el=>{let prevented;el.addEventListener('click',e=>{prevented=e.defaultPrevented;e.preventDefault();},{once:true});el.click();return prevented;}),true);
 });
+test('homepage account identity refreshes after a bfcache-style return',async t=>{
+ const p=await pageFor(t,'index.html');
+ await p.evaluate(()=>sessionStorage.setItem('dwgc2e.session',JSON.stringify({token:'fixture',expiresAt:'2099-01-01',profileName:'缓存用户'})));
+ await p.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));
+ await p.waitForFunction(()=>document.querySelector('[data-account-nav]').classList.contains('is-signed-in'));
+ assert.match(await p.locator('[data-account-label]').textContent(),/缓存用户/);
+ await p.evaluate(()=>sessionStorage.removeItem('dwgc2e.session'));
+ await p.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));
+ await p.waitForFunction(()=>!document.querySelector('[data-account-nav]').classList.contains('is-signed-in'));
+ assert.equal(await p.locator('[data-account-label]').textContent(),'登录');
+});
 test('malformed history refresh preserves the last loaded records',async t=>{
  let malformed=null;
  const p=await pageFor(t,'history.html',async(u,r)=>{if(!u.pathname.endsWith('/translation/history'))return false;await r.fulfill({json:malformed||{items:[{id:'task',file_name:'保留的任务',status:'completed'}],nextCursor:null}});return true;});
