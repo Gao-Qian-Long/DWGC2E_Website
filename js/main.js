@@ -39,15 +39,16 @@
   /* 登录状态：在首页顶部明确显示头像、显示名称和登录状态。 */
   const accountNav = $('[data-account-nav]');
   if (accountNav) {
-    try {
-      const saved = JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null');
-      const loggedIn = !!(saved?.token && (!saved.expiresAt || new Date(saved.expiresAt) > new Date()));
+    const syncAccountNav = () => {
       const avatar = $('[data-account-avatar]', accountNav);
       const label = $('[data-account-label]', accountNav);
+      let saved = null;
+      try { saved = JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null'); } catch {}
+      const loggedIn = !!(saved?.token && (!saved.expiresAt || Date.parse(saved.expiresAt) > Date.now()));
       accountNav.classList.toggle('is-signed-in', loggedIn);
       if (loggedIn) {
-        let cachedName = ''; try { cachedName = JSON.parse(sessionStorage.getItem('dwgc2e.session') || 'null')?.profileName || ''; } catch {}
-        const initials = (cachedName || '用户').trim().slice(0, 1).toUpperCase();
+        const cachedName = typeof saved.profileName === 'string' ? saved.profileName.trim() : '';
+        const initials = (cachedName || '用户').slice(0, 1).toUpperCase();
         avatar.textContent = initials;
         avatar.setAttribute('aria-label', `${cachedName || '用户'}，已登录`);
         label.textContent = `${cachedName || '账户中心'} · 已登录`;
@@ -56,7 +57,12 @@
         avatar.setAttribute('aria-label', '未登录');
         label.textContent = '登录';
       }
-    } catch { /* sessionStorage 不可用时保持默认未登录状态 */ }
+    };
+    syncAccountNav();
+    // Back/forward cache restores the existing DOM without rerunning this script. Re-read the
+    // per-tab session so returning from login/logout never leaves a stale header identity.
+    window.addEventListener('pageshow', syncAccountNav);
+    window.addEventListener('focus', syncAccountNav);
   }
   /* 头部滚动态（只切 class） */
   const header = $('.site-header');
