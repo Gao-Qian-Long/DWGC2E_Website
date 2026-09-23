@@ -105,7 +105,7 @@
     mobileNav.classList.remove("open");
     menuBtn.setAttribute("aria-expanded", "false");
     mobileNav.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("lightbox-open");
+    document.body.classList.remove("menu-open");
   }));
 
   /* 入场揭示（只切 class，动画由 CSS 负责） */
