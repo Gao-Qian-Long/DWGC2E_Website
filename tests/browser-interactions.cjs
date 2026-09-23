@@ -58,6 +58,15 @@ const server = http.createServer((req, res) => {
         await page.keyboard.press('Escape');
         assert.equal(await menu.getAttribute('aria-expanded'), 'false');
         assert.equal(await menu.evaluate(el => el === document.activeElement), true);
+
+        // Re-open and close through a real navigation item: this path used to remove
+        // lightbox-open instead of menu-open, leaving the page in the menu-open body state.
+        await menu.click();
+        assert.equal(await page.locator('body').evaluate(el => el.classList.contains('menu-open')), true);
+        await page.locator('.mobile-nav a[href="#features"]').click();
+        assert.equal(await menu.getAttribute('aria-expanded'), 'false');
+        assert.equal(await page.locator('.mobile-nav').getAttribute('aria-hidden'), 'true');
+        assert.equal(await page.locator('body').evaluate(el => el.classList.contains('menu-open')), false);
       }
       const opener = page.locator('.ws-support-button');
       await opener.click();
