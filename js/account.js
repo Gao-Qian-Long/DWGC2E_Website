@@ -118,7 +118,18 @@
       if ($('#profileShortName')) $('#profileShortName').textContent = displayName.split(/\s+/)[0];
       $('#profileAvatar').textContent = displayName.trim().slice(0, 1).toUpperCase();
       $('#profileEmail').textContent = data.account && data.email && data.account !== data.email ? `账号：${data.account} · ${data.email}` : (data.account || data.email || '');
-      try { const current = readSession(); if (current?.token === token) { current.profileName = displayName; sessionStorage.setItem(storageKey, JSON.stringify(current)); } } catch {}
+      try {
+        const current = readSession();
+        if (current?.token === token) {
+          current.profileName = displayName;
+          const email = typeof data.email === 'string' && data.email.includes('@')
+            ? data.email
+            : typeof data.account === 'string' && data.account.includes('@') ? data.account : '';
+          if (email) current.profileEmail = email;
+          else delete current.profileEmail;
+          sessionStorage.setItem(storageKey, JSON.stringify(current));
+        }
+      } catch {}
     } else if (name === 'subscription') {
       if (!data.plan_name) throw Error('会员信息不完整');
       $('#planName').textContent = data.plan_name;
