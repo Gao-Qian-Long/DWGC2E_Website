@@ -128,6 +128,7 @@
           if (email) current.profileEmail = email;
           else delete current.profileEmail;
           sessionStorage.setItem(storageKey, JSON.stringify(current));
+          window.dispatchEvent(new Event('dwgc2e:profile-updated'));
         }
       } catch {}
     } else if (name === 'subscription') {
@@ -352,4 +353,3 @@
     showAuth();
   }
 })();
-

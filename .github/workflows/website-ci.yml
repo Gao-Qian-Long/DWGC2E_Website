@@ -31,6 +31,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout API Worker test fixture
+        uses: actions/checkout@v4
+        with:
+          repository: Gao-Qian-Long/DWGC2E
+          ref: pro
+          path: DWGC2E
+          sparse-checkout: cf-worker
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -43,8 +51,12 @@ jobs:
       - name: Run isolated regression suite
         shell: pwsh
         run: |
+          $env:PLAYWRIGHT_MODULE = 'playwright'
+          $env:WORKER_ROOT = Join-Path $env:GITHUB_WORKSPACE 'DWGC2E/cf-worker'
+          $env:AUDIT_OUTPUT = Join-Path $env:RUNNER_TEMP 'website-ci-evidence'
+          New-Item -ItemType Directory -Force -Path $env:AUDIT_OUTPUT | Out-Null
           $tests = Get-ChildItem tests -File | Where-Object { $_.Extension -in '.cjs', '.mjs' } | ForEach-Object { $_.FullName }
-          node --test $tests
+          node --test --test-concurrency=1 $tests
 
       - name: Verify responsive browser smoke
         shell: pwsh

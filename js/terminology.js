@@ -15,7 +15,7 @@
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const read = () => { try { const value = JSON.parse(localStorage.getItem(key) || 'null'); return Array.isArray(value) ? value : []; } catch { return []; } };
   const say = (text, error = false) => { msg.textContent = text || ''; msg.className = `form-message${error ? ' error' : ''}`; };
-  let localRows = read(), rows = [], revision = '', ready = false, editingId = '', pending = null, syncing = false;
+  let localRows = read(), rows = [], revision = '', ready = false, editingId = '', pending = null, syncing = false, glossarySearchPending = false;
   const localButton = document.createElement('button');
   localButton.type='button'; localButton.className='btn btn-ghost'; localButton.textContent='合并本机词条到云端'; localButton.hidden=!localRows.length;
   $('#syncGlossary').after(localButton);
@@ -23,14 +23,18 @@
   recovery.hidden = true;
   recovery.innerHTML = '<button type="button" id="mergePendingGlossary" class="btn btn-primary btn-sm">对比最新云端并合并</button> <button type="button" id="retryGlossary" class="btn btn-primary btn-sm">重试保存</button> <button type="button" id="exportPendingGlossary" class="btn btn-ghost btn-sm">导出待保存备份</button> <button type="button" id="discardPendingGlossary" class="btn btn-ghost btn-sm">放弃本次未保存修改</button>';
   msg.after(recovery);
-  const mutationControls = () => [...form.querySelectorAll('input, textarea, button'), ...document.querySelectorAll('[data-edit], [data-delete], #deleteSelected, #importGlossary, #syncGlossary')];
+  const mutationControls = () => [...form.querySelectorAll('input, textarea, button'), ...document.querySelectorAll('[data-check], [data-edit], [data-delete], #deleteSelected, #importGlossary, #syncGlossary')];
   const updateRecovery = () => {
     recovery.hidden = !pending;
     localButton.disabled=!!pending||syncing||!ready;
     $('#retryGlossary').disabled=syncing;
     $('#mergePendingGlossary').disabled=syncing;
     $('#discardPendingGlossary').disabled=syncing;
-    mutationControls().forEach(control => { control.disabled = control.id === 'syncGlossary' ? syncing || !!pending : !!pending || syncing || !ready; });
+    mutationControls().forEach(control => {
+      const blocked = control.id === 'syncGlossary' ? syncing || !!pending : !!pending || syncing || !ready;
+      control.disabled = blocked || (glossarySearchPending && control.matches('[data-check], [data-edit], [data-delete], #deleteSelected, #syncGlossary'));
+    });
+    selectAll.disabled = !!pending || syncing || !ready || glossarySearchPending;
   };
   const syncSelection = () => {
     const checks = [...list.querySelectorAll('[data-check]')];
@@ -69,7 +73,7 @@
       if(transaction.resetForm)resetForm();
       render();say('已保存到云端。'+(transaction.message||'')+'APP 下次读取云端词库即可获取最新内容。');return true;
     }catch(error){
-      auth.failure(error);say(error.status===409?'未覆盖云端：词库已变化或词条冲突。可对比最新云端并选择合并；也可导出草稿或放弃本次修改。':(error.message||'云端保存失败，请重试或导出待保存内容。'),true);
+      auth.failure(error);say(error.status===409?'未保存：云端词库已变化或词条冲突。当前草稿仍保留，可对比最新云端并合并，也可导出或放弃。':`未保存：${error.message||'云端保存失败。'} 当前草稿仍保留，可重试、合并或导出。`,true);
       return false;
     }finally{syncing=false;updateRecovery();}
   };
@@ -133,7 +137,11 @@
   const glossarySearchSchedule = () => {
     if (glossarySearchComposing) return;
     clearTimeout(glossarySearchTimer);
-    glossarySearchTimer = setTimeout(render, 180);
+    glossarySearchPending = true;
+    list.querySelectorAll('[data-check]:checked').forEach(input => { input.checked = false; });
+    syncSelection();
+    updateRecovery();
+    glossarySearchTimer = setTimeout(() => { glossarySearchPending = false; render(); }, 180);
   };
   search.addEventListener('compositionstart', () => { glossarySearchComposing = true; });
   search.addEventListener('compositionend', () => { glossarySearchComposing = false; glossarySearchSchedule(); });

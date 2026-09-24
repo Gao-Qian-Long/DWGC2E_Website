@@ -126,6 +126,8 @@ test('row selection updates all/partial state and search clears selections', asy
   await p.locator('[data-check=a]').uncheck();
   assert.equal(await p.locator('#selectAll').evaluate(e=>e.indeterminate),true);
   await p.locator('#glossarySearch').fill('bolt');
+  assert.equal(await p.locator('#selectAll').isDisabled(),true);
+  assert.equal(await p.locator('#deleteSelected').isDisabled(),true);
   assert.equal(await p.locator('[data-check]:checked').count(),0);
   assert.equal(await p.locator('#selectAll').isChecked(),false);
   assert.equal(await p.locator('#selectAll').evaluate(e=>e.indeterminate),false);
@@ -179,7 +181,7 @@ test('discarding failed edit reloads latest cloud without saving the draft', asy
 });
 test('bulk delete respects filtering and cancellation', async t => {
   const p = await pageFor(t,'terminology.html',{rows:initialRows});
-  await p.locator('#glossarySearch').fill('bolt'); await p.locator('#selectAll').check();
+  await p.locator('#glossarySearch').fill('bolt'); await p.waitForFunction(()=>document.querySelector('#glossaryCount').textContent==='显示 1 / 共 2 条'); await p.locator('#selectAll').check();
   p.once('dialog',d=>d.dismiss()); await p.locator('#deleteSelected').click();
   assert.deepEqual(await stored(p),initialRows);
   p.once('dialog',d=>d.accept()); await p.locator('#deleteSelected').click();

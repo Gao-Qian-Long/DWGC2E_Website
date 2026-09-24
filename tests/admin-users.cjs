@@ -1,5 +1,5 @@
 const {test,before,after}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http');
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE);const root=path.resolve(__dirname,'..');let server,browser,origin;
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const root=path.resolve(__dirname,'..');let server,browser,origin;
 before(async()=>{server=http.createServer((req,res)=>{const file=path.join(root,new URL(req.url,'http://local').pathname);fs.readFile(file,(e,b)=>{res.writeHead(e?404:200,{'content-type':({'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml'})[path.extname(file)]||'application/octet-stream'});res.end(e?'missing':b)})});await new Promise(r=>server.listen(0,'127.0.0.1',r));origin='http://127.0.0.1:'+server.address().port;browser=await chromium.launch({channel:'msedge',headless:true})});after(async()=>{await browser.close();await new Promise(r=>server.close(r))});
 for(const width of [390,1440])test('user admin full interaction '+width,async t=>{
  const p=await browser.newPage({viewport:{width,height:900},timezoneId:'Asia/Shanghai'});t.after(()=>p.close());const errors=[];p.on('pageerror',e=>errors.push(e.message));

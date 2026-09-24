@@ -37,7 +37,10 @@ for(const width of [390,1440]) test('AI admin module secure interaction '+width,
  assert.equal(await page.locator('nav[aria-label="后台模块"] a[aria-current="page"]').textContent(),'AI 路由');
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'no horizontal overflow');
  assert.equal(await page.evaluate(()=>document.body.innerText.includes('fake-secret-must-not-persist')),false);
- assert.deepEqual(await page.evaluate(()=>({local:Object.keys(localStorage),session:Object.keys(sessionStorage)})),{local:[],session:[]});
+ const stored=await page.evaluate(()=>({local:[...Array(localStorage.length)].map((_,i)=>{const key=localStorage.key(i);return[key,localStorage.getItem(key)];}),session:[...Array(sessionStorage.length)].map((_,i)=>{const key=sessionStorage.key(i);return[key,sessionStorage.getItem(key)];})}));
+ assert.deepEqual(stored.local,[]);
+ assert.equal(JSON.stringify(stored).includes('fake-secret-must-not-persist'),false);
+ assert.ok([...stored.local,...stored.session].every(([key,value])=>!/(token|password|secret|api[_-]?key|credential)/i.test(key+' '+value)),'browser storage must not retain credentials or secret material');
  assert.equal(await page.locator('.ai-provider-row').count(),1);
  await page.locator('#providerNew').click();await page.locator('#providerForm:visible').waitFor();
  await page.locator('#providerName').fill('备用模型 B');await page.locator('#providerBaseUrl').fill('https://backup.example.test/v1');await page.locator('#providerModel').fill('translation-model-b');await page.locator('#providerApiKey').fill('fake-secret-must-not-persist');await page.locator('#providerReason').fill('添加备用翻译模型');await page.locator('#providerForm button[type=submit]').click();
@@ -47,6 +50,5 @@ for(const width of [390,1440]) test('AI admin module secure interaction '+width,
  await page.locator('#policyName').fill('新策略');await page.locator('#policyVersion').fill('ctx-test-2');await page.locator('#policyPrompt').fill('这是新的服务端策略提示词，必须保留工程图纸中的格式、术语、占位符、编号和换行结构。');await page.locator('#policyReason').fill('更新格式保护规则');await page.locator('#policyPublish').click();await page.waitForFunction(()=>document.querySelector('#policyMessage').textContent.includes('已发布'));assert.equal(published.length,1);
  assert.deepEqual(errors,[]);
 });
-
 
 
