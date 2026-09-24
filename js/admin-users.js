@@ -153,7 +153,7 @@
     try {
       const data = await request('/v1/admin/users/' + encodeURIComponent(id));
       if (generation !== epoch || run !== detailRun) return;
-      renderDetail(data); attempt = null;
+      renderDetail(data); attempt = null; detailDirty = false;
       tell('#detailMessage', saved ? '会员修改已保存，以下为重新读取的生效数据。' : '');
     } catch (error) { if (generation === epoch && run === detailRun) tell('#detailMessage', (saved ? '修改已保存，但详情刷新失败。' : '') + describe(error), true); }
     finally { if (generation === epoch && run === detailRun) { detailBusy = false; controls(); } }
@@ -283,4 +283,3 @@
   restoreSession();
   controls();
 })();
-
