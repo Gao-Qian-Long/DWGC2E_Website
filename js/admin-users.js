@@ -200,9 +200,25 @@
   $('#userRefresh').onclick = () => load();
   $('#userLogout').onclick = async () => {if((opsDirty||planDirty||detailDirty)&&!confirm('退出会丢弃尚未保存的输入，继续吗？'))return;$('#userLogout').disabled=true;try{await adminAuth.logout();tell('#userMessage','已退出全部后台页面。');}catch(error){tell('#userMessage','退出未完成，请重试。'+describe(error),true);}finally{$('#userLogout').disabled=false;}};
   $('#userPrev').onclick = () => load(page - 1); $('#userNext').onclick = () => load(page + 1);
-  $('#detailClose').onclick = () => $('#userDetail').close();
-  $('#userDetail').addEventListener('close', () => { detailRun++; detailBusy = false; current = null; selectedId = null; attempt = null; $('#detailContent').hidden = true; controls(); });
-  $('#detailReload').onclick = () => { if (selectedId && (!$('#editReason').value.trim() || confirm('重新加载会清除尚未保存的输入，是否继续？'))) openDetail(selectedId); };
+  const confirmDiscardDetail = message => !detailDirty || confirm(message);
+  $('#detailClose').onclick = () => {
+    if (!confirmDiscardDetail('关闭会丢弃尚未保存的会员修改，是否继续？')) return;
+    detailDirty = false;
+    $('#userDetail').close();
+  };
+  $('#userDetail').addEventListener('cancel', event => {
+    if (!confirmDiscardDetail('关闭会丢弃尚未保存的会员修改，是否继续？')) {
+      event.preventDefault();
+      return;
+    }
+    detailDirty = false;
+  });
+  $('#userDetail').addEventListener('close', () => { detailRun++; detailBusy = false; detailDirty = false; current = null; selectedId = null; attempt = null; $('#detailContent').hidden = true; controls(); });
+  $('#detailReload').onclick = () => {
+    if (!selectedId || !confirmDiscardDetail('重新加载会清除尚未保存的输入，是否继续？')) return;
+    detailDirty = false;
+    openDetail(selectedId);
+  };
   $('#editPlan').onchange = controls;
   $('#membershipForm').oninput = () => { detailDirty = true; };
   $('#membershipForm').onsubmit = async event => {
