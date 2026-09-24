@@ -49,6 +49,15 @@ test('user detail protects and clears unsaved membership drafts',async t=>{
  await p.locator('#detailClose').click();assert.equal(dialogs,beforeClose+1);assert.equal(await p.locator('#userDetail').evaluate(e=>e.open),true);
 
  dialogMode='accept';await p.locator('#detailClose').click();await p.waitForFunction(()=>!document.querySelector('#userDetail').open);
+
+ // A BFCache return happens soon after the previous session check. pagehide clears all sensitive
+ // in-memory state, so pageshow must bypass the normal 15 s focus throttle and revalidate now.
+ await p.evaluate(()=>{
+   window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+   window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));
+ });
+ await p.locator('#userWorkspace:visible').waitFor();
+
  const beforeLogout=dialogs;await p.locator('#userLogout').click();await p.locator('#userGate:visible').waitFor();assert.equal(dialogs,beforeLogout,'accepted close clears the discarded draft so logout does not warn again');
  assert.deepEqual(errors,[]);
 });

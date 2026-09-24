@@ -290,10 +290,10 @@
   }
   $('#opsRefresh').onclick=()=>{if(!opsDirty||confirm('重新读取将丢弃尚未保存的输入，继续吗？'))loadOps();};
 
+  let checking=false;let lastCheck=0;
   window.addEventListener('admin-logout',()=>{clear();tell('#userMessage','后台会话已退出，请重新登录。');});
   window.addEventListener('beforeunload',e=>{if(opsDirty||planDirty||detailDirty){e.preventDefault();e.returnValue='';}});
-  window.addEventListener('pagehide',()=>{clear();$('#userGate').hidden=true;$('#adminChecking').hidden=false;tell('#userMessage','');});
-  let checking=false;let lastCheck=0;
+  window.addEventListener('pagehide',()=>{lastCheck=0;clear();$('#userGate').hidden=true;$('#adminChecking').hidden=false;tell('#userMessage','');});
   async function restoreSession(){if(checking||Date.now()-lastCheck<15000)return;checking=true;const generation=epoch;try{await adminAuth.check();if(generation!==epoch)return;if(!key)await startAdmin();}catch(error){if(generation!==epoch)return;if(error.status===401){clear();tell('#userMessage','请登录后台；有效会话内切换页面和刷新无需重输密钥。');}else {$('#adminChecking').hidden=true;$('#userGate').hidden=!!key;tell('#userMessage','暂时无法检查后台登录状态，请重试。',true);}}finally{checking=false;lastCheck=Date.now();}}
   window.addEventListener('pageshow',e=>{if(e.persisted)restoreSession();});window.addEventListener('focus',restoreSession);document.addEventListener('visibilitychange',()=>{if(!document.hidden)restoreSession();});
   restoreSession();
