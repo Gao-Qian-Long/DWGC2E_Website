@@ -4,7 +4,9 @@
   const site = window.QLCAD_SITE || {};
   const api = String(site.apiBaseUrl || '').replace(/\/$/, '');
   const storageKey = 'dwgc2e.session';
-  const returnTarget = window.QLCAD_AUTH.safeReturn(new URLSearchParams(location.search).get('return') || new URLSearchParams(location.search).get('returnTo'));
+  const query = new URLSearchParams(location.search);
+  const returnTarget = window.QLCAD_AUTH.safeReturn(query.get('return') || query.get('returnTo'));
+  const requestedAuthMode = ['login','register','forgot'].includes(query.get('mode')) ? query.get('mode') : 'login';
   const $ = selector => document.querySelector(selector);
   const form = $('#accountForm');
   const root = document.documentElement;
@@ -16,6 +18,7 @@
   if (!form || !api || !authPanel || !accountPanel) return;
 
   let mode = 'login';
+  let initialAuthMode = requestedAuthMode;
   let sessionGeneration = 0;
   let authSubmitting = false;
   const codeTimers = new Map();
@@ -31,7 +34,8 @@
     clearEntryState();
     accountPanel.hidden = true;
     authPanel.hidden = false;
-    setMode('login');
+    setMode(initialAuthMode);
+    initialAuthMode = 'login';
     if (message) setMessage(message);
     if (returnTarget) { const name={billing:'套餐与订单',profile:'资料与安全',devices:'设备管理',history:'翻译记录',terminology:'术语库'}[returnTarget.split('.')[0]] || '原页面'; $('#accountStatus').textContent='登录后返回'+name+'。'; }
   };
