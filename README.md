@@ -19,7 +19,7 @@ python -m http.server 8080
 - Build output directory: `public`
 - Production branch: `main`
 
-2026-09-15 治理批次已发布新会话适配，并改成白名单 public 输出构建。当前记录见 `docs/GOVERNANCE_20260915.md`；`docs/DEPLOYMENT_20260915.md` 保留为早期视觉改版历史。源码以 main 为生产分支，禁止恢复旧 root-output 发布设置。
+本站使用白名单 `public` 输出构建；源码以 `main` 为生产分支。`docs/`、`tests/`、`.git` 等内部内容不进入 Pages 发布目录，禁止恢复旧 root-output 发布设置。
 
 ## 下载与版本配置
 
@@ -37,7 +37,7 @@ python -m http.server 8080
 - 账户／支付／工具／协议页面统一工作台样式，二维码保持纯白底。
 - 可见焦点、菜单和弹层关闭后焦点返回、减少动态效果支持。
 
-共享样式位于 `css/theme.css`；详细变更、字体维护方式、本地验证范围及限制见 `docs/WORKSHOP_REDESIGN.md`。接口接入说明继续保留在 `docs/WEB_INTEGRATION.md`。
+共享样式位于 `css/theme.css`；接口接入说明保留在 `docs/WEB_INTEGRATION.md`。
 
 ## 运营后台
 
