@@ -9,7 +9,7 @@ for(const name of fs.readdirSync(root).filter(n=>n.endsWith('.html')||ROOT_FILES
 // Asset trees: extension allowlist (deny by default) — anything not listed here fails the build loudly.
 // Source maps would expose unminified sources (and any comments in them) to every visitor.
 const ALLOWED_EXT=new Set(['.css','.js','.svg','.png','.webp','.woff2','.txt']);
-const ALLOWED_DIR_FILES=new Set(['LICENSE','README.md']); // vendor license/readme companions
+const ALLOWED_DIR_FILES=new Set(['LICENSE']); // vendor license companion
 const copyAllowed=(src,destPath)=>{
   const rel=path.relative(root,src);
   const ext=path.extname(src).toLowerCase();
